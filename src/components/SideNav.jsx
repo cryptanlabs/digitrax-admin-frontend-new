@@ -23,7 +23,7 @@ export default function SideNav() {
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
-          borderRight: "1px solid black",
+          borderRight: "1px solid lightgrey",
           display: 'flex',
           justifyContent: 'space-between'
         },
