@@ -4,60 +4,40 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchBar from "../components/Searchbar";
-import { useState, useContext } from "react";
-import { Typography, Paper, Grid } from "@mui/material";
+import { useState, useContext, useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {DataTableData} from '../context/DataTableContext'
 
 const Dashboard = () => {
   const [showSearch, setShowSearch] = useState(false);
-  const {currentDataSet, columnNames, columnDetails} = useContext(DataTableData);
+  const {currentDataSet, columnDetails} = useContext(DataTableData);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [sortInstructions, setSortIntructions] = useState(false)
+
+
+  useEffect(() => {
+  setFilteredResults(currentDataSet)
+  },[currentDataSet])
 
   const columns = columnDetails
-  const headers = columnNames ?? [
-    "ID",
-    "gnrId",
-    "isoId",
-    "sgmId1",
-    "sgmId2",
-    "catDescription",
-    "catRecordingIdNumber",
-    "catRecordingTitle",
-    "catInTheStyleOfArtist",
-    "catHfaSongCode",
-    "catISWC",
-    "catRecordingType",
-    "catRecordingArtist",
-    "catLabel",
-    "catISRCCAMixVocal",
-    "catISRCCCMixKaraoke",
-    "catISRCCDMixInstrumental",
-    "catISRCAAMixVocal",
-    "catISRCACMixKaraoke",
-    "catISRCADMixInstrumental",
-    "catReleaseYear",
-    "catDuration",
-    "catGenre",
-    "catSongKey",
-    "catHFALicenseNumber",
-    "catMechanicalRegistrationNumberA",
-    "catMechanicalRegistrationNumberC",
-    "catMechanicalRegistrationNumberD",
-    "catUpdatedAt",
-    "catCreatedAt",
-    "catSentForIngestion",
-    "catSongCrossId",
-    "catCheckMixes",
-    "catCrossIdA",
-    "catCrossIdC",
-    "catCrossIdD",
-    "catTimestamp",
-  ];
 
-  const data = Array.from(Array(10).keys());
 
-  console.log('STM pages-Dashboard.jsx:58', currentDataSet); // todo remove dev item
+  const sortTitlesAlphabetically = () => {
+    const sortedArray = [...currentDataSet].sort((a, b) => {
+      const titleA = a.Title.toLowerCase();
+      const titleB = b.Title.toLowerCase();
+  
+      if (titleA < titleB) return sortInstructions ? 1 : -1;
+      if (titleA > titleB) return sortInstructions ? -1 : 1;
+      return 0;
+    });
+  
+    setFilteredResults(sortedArray);
+    setSortIntructions(prev => !prev)
+  };
+  
+
+  console.log('STM pages-Dashboard.jsx:58', currentDataSet); 
 
   return (
     <div>
@@ -87,6 +67,7 @@ const Dashboard = () => {
           <Button
             variant="outlined"
             startIcon={<SortByAlphaIcon />}
+            onClick={sortTitlesAlphabetically}
             sx={{
               borderColor: "gray",
               color: "black",
@@ -117,13 +98,13 @@ const Dashboard = () => {
       <div className="w-full h-20 mt-5 flex items-center justify-between ">
         <h1 className="text-xl ml-8 font-medium">Catalogue</h1>
         <div className="w-1/5 mr-8 flex items-center justify-center">
-          {showSearch && <SearchBar />}
+          {showSearch && <SearchBar currentDataSet={currentDataSet} filteredResults={filteredResults} setFilteredResults={setFilteredResults} />}
         </div>
       </div>
       <div className="w-full flex justify-center">
         <div className="w-[95%] h-[40rem] border border-gray-400 rounded-xl overflow-x-scroll overflow-y-scroll scrollbar">
           <DataGrid
-            rows={currentDataSet}
+            rows={filteredResults}
             columns={columns}
             initialState={{
               pagination: {

@@ -44,7 +44,7 @@ const DataTableContext = ({children}) => {
   const [currentTable, setCurrentTable] = useState('SongCatalog');
   const [columnNames, setColumnNames] = useState(undefined);
   const [columnDetails, setColumnDetails] = useState([]);
-  const base_url = 'http://localhost:3000'
+  const base_url = 'https://dev.digitrax.live'
   const getData = async () => {
     const res = await axios.get(`${base_url}/catalogInternal?limit=-1`)
     const lowercaseId = res?.data?.data?.map(item => {
@@ -56,10 +56,16 @@ const DataTableContext = ({children}) => {
     setTotalPages(res.data.totalPages)
     setNextPage(res.data.nextPage)
 
-    console.log(res)
+    console.log("Result:", res)
 
 
   }
+
+  useEffect(() => {
+    console.log("Total Results:", totalResults)
+    console.log("Total pages:", totalPages)
+    console.log("Column Details:", columnDetails)
+  },[totalResults, totalPages, columnDetails])
 
 
   const getColumnNames = async () => {
