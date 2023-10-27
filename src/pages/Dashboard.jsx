@@ -4,13 +4,18 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchBar from "../components/Searchbar";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Typography, Paper, Grid } from "@mui/material";
+import { DataGrid } from '@mui/x-data-grid';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import {DataTableData} from '../context/DataTableContext'
 
 const Dashboard = () => {
   const [showSearch, setShowSearch] = useState(false);
-  const headers = [
+  const {currentDataSet, columnNames, columnDetails} = useContext(DataTableData);
+
+  const columns = columnDetails
+  const headers = columnNames ?? [
     "ID",
     "gnrId",
     "isoId",
@@ -49,7 +54,10 @@ const Dashboard = () => {
     "catCrossIdD",
     "catTimestamp",
   ];
+
   const data = Array.from(Array(10).keys());
+
+  console.log('STM pages-Dashboard.jsx:58', currentDataSet); // todo remove dev item
 
   return (
     <div>
@@ -114,8 +122,23 @@ const Dashboard = () => {
       </div>
       <div className="w-full flex justify-center">
         <div className="w-[95%] h-[40rem] border border-gray-400 rounded-xl overflow-x-scroll overflow-y-scroll scrollbar">
+          <DataGrid
+            rows={currentDataSet}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 20,
+                },
+              },
+            }}
+            pageSizeOptions={[5]}
+            checkboxSelection
+            disableRowSelectionOnClick
+          />
+          {/*
           <Grid container  wrap="nowrap">
-            {/* Table Headers */}
+             Table Headers
             <Grid
               item
               container
@@ -134,7 +157,7 @@ const Dashboard = () => {
                     alignItems: "center",
                     borderBottom: "1px solid grey",
                     minWidth: 350
-                    
+
                   }}
                 >
                   <Typography style={{ color: "#696969", marginRight: 5, fontSize: 15 }} variant="h6">
@@ -144,7 +167,7 @@ const Dashboard = () => {
                 </Grid>
               ))}
             </Grid>
-          </Grid>
+          </Grid>*/}
         </div>
       </div>
     </div>
