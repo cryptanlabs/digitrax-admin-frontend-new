@@ -7,13 +7,15 @@ import SearchBar from "../components/Searchbar";
 import { useState, useContext, useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import {DataTableData} from '../context/DataTableContext'
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [showSearch, setShowSearch] = useState(false);
   const {currentDataSet, columnDetails} = useContext(DataTableData);
   const [filteredResults, setFilteredResults] = useState([]);
   const [sortInstructions, setSortIntructions] = useState(false)
-
+ 
+  const navigate = useNavigate()
 
   useEffect(() => {
   setFilteredResults(currentDataSet)
@@ -34,6 +36,11 @@ const Dashboard = () => {
   
     setFilteredResults(sortedArray);
     setSortIntructions(prev => !prev)
+  };
+
+  const handleRowClick = (params) => {
+    const rowData = params.row;
+    navigate('/details', { state: { rowData } });
   };
   
 
@@ -106,6 +113,7 @@ const Dashboard = () => {
           <DataGrid
             rows={filteredResults}
             columns={columns}
+            onRowClick={handleRowClick}
             initialState={{
               pagination: {
                 paginationModel: {
