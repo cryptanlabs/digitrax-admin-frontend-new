@@ -11,12 +11,3 @@
   padding-left: 240px; 
 }
 
-.scrollbar::-webkit-scrollbar {
-  width: 5px; /* Vertical Scrollbar Width */
-  height: 5px; /* Horizontal Scrollbar Height */
-}
-
-.scrollbar::-webkit-scrollbar-thumb {
-  background-color: grey;
-  border-radius: 5px; /* Optional: Add border-radius to make it rounded */
-}

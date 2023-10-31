@@ -84,7 +84,7 @@ const DataTableContext = ({children}) => {
       return {
         field: items.name,
         headerName: items.name,
-        flex: 0.5
+        width: 150
       }
     })
     setColumnDetails(columns2)
