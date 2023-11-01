@@ -15,7 +15,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/details" element={<SongDetails />} />
+            <Route path="/songdata" element={<SongDetails />} />
           </Routes>
         </div>
       </DataTableContext>

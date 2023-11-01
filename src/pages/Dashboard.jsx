@@ -43,7 +43,7 @@ const Dashboard = () => {
 
   const handleRowClick = (params) => {
     const rowData = params.row;
-    navigate("/details", { state: { rowData } });
+    navigate("/songdata", { state: { rowData } });
   };
 
   console.log("STM pages-Dashboard.jsx:58", currentDataSet);

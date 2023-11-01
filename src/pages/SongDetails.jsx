@@ -3,44 +3,101 @@ import { useLocation } from "react-router-dom";
 import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Description } from "@mui/icons-material";
+
+const publishingHeaders = [
+  "ISRC",
+  "HFA Song Code",
+  "HFA-Mechanical-A Mix",
+  "HFA-Mechanical-D Mix",
+  "Territories",
+  "Writer",
+];
+
+const songPublisherHeaders = [
+  "Id",
+  "PublisherAdmin",
+  "PublisherDatabaseId",
+  "Share",
+  "SongNumber",
+  "SubPublisherDetails",
+];
+
+const democomment = {
+  name: "Tory Flenniken",
+  date: "9/6/2023 2:20pm",
+  text: `I've uploaded all of the files and they are ready for Quality Assurance`,
+};
+
+const democomment2 = {
+  name: "Tory Flenniken",
+  date: "9/6/2023 2:20pm",
+  text: `I've uploaded all of the files and they are ready for Quality Assurance`,
+};
+const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const [data, setData] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  const publishingHeaders = [
-    "ISRC",
-    "HFA Song Code",
-    "HFA-Mechanical-A Mix",
-    "HFA-Mechanical-D Mix",
-    "Territories",
-    "Writer",
-  ];
+  const [basicInformation, setBasicInformation] = useState({
+    Title: "",
+    Artist: "",
+    Genre: "",
+    Id: 0,
+    SubGenre: "",
+    BarIntro: "",
+    SongKey: "",
+    Duration: "",
+    Mixes: "",
+    MixRendered: "",
+    SongReleaseYear: "",
+    Description: "",
+  });
 
-  const songPublisherHeaders = [
-    "Id",
-    "PublisherAdmin",
-    "PublisherDatabaseId",
-    "Share",
-    "SongNumber",
-    "SubPublisherDetails",
-  ];
+  useEffect(() => {
+    if (location.state) {
+      setBasicInformation((prev) => ({
+        ...prev,
+        Title: location.state.rowData.Title,
+        Artist: location.state.rowData.Artist,
+        Genre: location.state.rowData.Genre,
+        Id: location.state.rowData.Id,
+        SubGenre: location.state.rowData.SubGenre,
+        BarIntro: location.state.rowData.BarIntro,
+        SongKey: location.state.rowData.SongKey,
+        Duration: location.state.rowData.Duration,
+        Mixes: location.state.rowData.Mixes,
+        MixRendered: location.state.rowData.MixRendered,
+        SongReleaseYear: location.state.rowData.SongReleaseYear,
+        Description: location.state.rowData.Description,
+      }));
+    }
+  }, []);
 
-  const democomment = {
-    name: "Tory Flenniken",
-    date: "9/6/2023 2:20pm",
-    text: `I've uploaded all of the files and they are ready for Quality Assurance`,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBasicInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const democomment2 = {
-    name: "Tory Flenniken",
-    date: "9/6/2023 2:20pm",
-    text: `I've uploaded all of the files and they are ready for Quality Assurance`,
-  };
-  const demoComments = [democomment, democomment2];
+ // Top Section Upload Handlers
+ 
+  const handleSongEdit = () => {
+    console.log(basicInformation)
+  }
 
+
+  const handleSongUpload = () => {
+    console.log(basicInformation)
+  }
+
+  
+  // File Upload Handlers
+  
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -52,13 +109,6 @@ const SongDetails = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(location);
-    if (location.state) {
-      setData(location.state.rowData);
-      console.log(location.state.rowData);
-    }
-  }, []);
 
   return (
     <div className="w-full mt-4 flex flex-col items-center justify-between">
@@ -108,181 +158,154 @@ const SongDetails = () => {
       <div className="w-full mt-10 flex">
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.Id}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            name="Id"
+            type="number"
+            onChange={handleChange}
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.Id}
+            variant="outlined"
+          />
         </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
         <div className="flex flex-col ml-20 w-[40%]">
           <Typography sx={{ fontWeight: "bold" }}>Song Title</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.Title}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            name="Title"
+            onChange={handleChange}
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.Title}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-20 w-[40%]">
           <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.Artist}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            name="Artist"
+            onChange={handleChange}
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.Artist}
+            variant="outlined"
+          />
         </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
         <div className="flex flex-col ml-20 w-[40%]">
           <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.Genre}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="Genre"
+            value={basicInformation.Genre}
+            onChange={handleChange}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-20 w-[40%]">
           <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.SubGenre}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="SubGenre"
+            onChange={handleChange}
+            value={basicInformation.SubGenre}
+            variant="outlined"
+          />
         </div>
       </div>
       <div className="w-[90%] flex flex-row mt-10 flex">
         <div className="flex flex-col  w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.BarIntro}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            name="BarIntro"
+            hiddenLabel
+            onChange={handleChange}
+            value={basicInformation.BarIntro}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Key</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.SongKey}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.SongKey}
+            name="SongKey"
+            onChange={handleChange}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.Duration}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="Duration"
+            onChange={handleChange}
+            value={basicInformation.Duration}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Mixes</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.Mixes}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="Mixes"
+            onChange={handleChange}
+            value={basicInformation.Mixes}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Mix Rendered</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.MixRendered}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="MixRendered"
+            onChange={handleChange}
+            value={basicInformation.MixRendered}
+            variant="outlined"
+          />
         </div>
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Release Year</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              defaultValue={location.state.rowData.SongReleaseYear.toString()}
-              variant="outlined"
-            />
-          ) : (
-            <TextField sx={{ marginTop: 1 }} hiddenLabel variant="outlined" />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            type="number"
+            name="SongReleaseYear"
+            onChange={handleChange}
+            value={basicInformation.SongReleaseYear}
+            variant="outlined"
+          />
         </div>
       </div>
       <div className="w-full mt-10 flex">
         <div className="flex flex-col w-[90%] ml-20">
           <Typography sx={{ fontWeight: "bold" }}>Song Description</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              multiline
-              rows={4}
-              defaultValue={location.state.rowData.Description}
-              variant="outlined"
-            />
-          ) : (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              multiline
-              rows={4}
-              variant="outlined"
-            />
-          )}
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            multiline
+            rows={4}
+            name="Description"
+            onChange={handleChange}
+            value={basicInformation.Description}
+            variant="outlined"
+          />
         </div>
       </div>
       <div className="w-full mt-10 flex items-center justify-center">
         {!location.state ? (
           <Button
             variant="outlined"
+            onClick={handleSongUpload}
             sx={{
               marginRight: "15px",
               borderColor: "#00b00e",
@@ -299,6 +322,7 @@ const SongDetails = () => {
         ) : (
           <Button
             variant="outlined"
+            onClick={handleSongEdit}
             sx={{
               marginRight: "15px",
               borderColor: "#00b00e",
@@ -768,7 +792,13 @@ const SongDetails = () => {
               className="w-full h-full object-cover rounded-lg"
             />
           )}
-          {!selectedFile && <Typography sx={{fontWeight: 'bold', padding: 2, color: 'gray'}}>Song title no background</Typography>}
+          {!selectedFile && (
+            <Typography
+              sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
+            >
+              Song title no background
+            </Typography>
+          )}
         </div>
         <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg"></div>
       </div>
@@ -783,7 +813,7 @@ const SongDetails = () => {
             "&:hover": {
               borderColor: "#FF6969",
               backgroundColor: "#white",
-              color: "#FF6969"
+              color: "#FF6969",
             },
           }}
           onClick={() => setSelectedFile(null)}
@@ -803,7 +833,7 @@ const SongDetails = () => {
             },
           }}
         >
-          Save 
+          Save
         </Button>
       </div>
     </div>
