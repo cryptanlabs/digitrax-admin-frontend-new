@@ -103,7 +103,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="w-full flex justify-center">
-        <div className="w-[95%] h-[40rem] border border-gray-400 rounded-xl overflow-x-scroll overflow-y-scroll scrollbar">
+        <div className="w-[95%] h-[40rem] border border-gray-400 rounded-xl ">
           <DataGrid
             rows={filteredResults}
             sx={{
@@ -131,38 +131,6 @@ const Dashboard = () => {
             checkboxSelection
             disableRowSelectionOnClick
           />
-          {/*
-          <Grid container  wrap="nowrap">
-             Table Headers
-            <Grid
-              item
-              container
-              spacing={2}
-              wrap="nowrap"
-            >
-              {headers.map((header, index) => (
-                <Grid
-                  item
-                  key={index}
-                  style={{
-                    height: 60,
-                    textAlign: "center",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderBottom: "1px solid grey",
-                    minWidth: 350
-
-                  }}
-                >
-                  <Typography style={{ color: "#696969", marginRight: 5, fontSize: 15 }} variant="h6">
-                    {header}
-                  </Typography>
-                  <ArrowDownwardIcon style={{color: 'gray'}} />
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>*/}
         </div>
       </div>
     </div>
