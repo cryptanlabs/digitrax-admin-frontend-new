@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import {useEffect, useState, useRef, useContext} from 'react';
 import { useLocation } from "react-router-dom";
 import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Description } from "@mui/icons-material";
+import {SongDetailsContext} from '../context/SongDetailsContext';
 
 const publishingHeaders = [
   "ISRC",
@@ -14,38 +14,60 @@ const publishingHeaders = [
   "Writer",
 ];
 
+const publishingHeadersMappedToColumn = {
+  "ISRC": "ISRCCAMixVocal",
+  "HFA Song Code": "HFASongCode",
+  "HFA-Mechanical-A Mix": "MechanicalRegistrationNumberA",
+  "HFA-Mechanical-D Mix": "MechanicalRegistrationNumberD",
+  "Territories": "Territories",
+  "Writer": "Writer"
+}
+
 const songPublisherHeaders = [
-  "Id",
+  // "Id",
   "PublisherAdmin",
-  "PublisherDatabaseId",
-  "Share",
-  "SongNumber",
+  // "PublisherDatabaseId",
+  // "SongNumber",
   "SubPublisherDetails",
+  "Share",
 ];
 
 const democomment = {
-  name: "Tory Flenniken",
+  UserName: "Tory Flenniken",
   date: "9/6/2023 2:20pm",
-  text: `I've uploaded all of the files and they are ready for Quality Assurance`,
+  Content: `I've uploaded all of the files and they are ready for Quality Assurance`,
 };
 
 const democomment2 = {
-  name: "Tory Flenniken",
+  UserName: "Tory Flenniken",
   date: "9/6/2023 2:20pm",
-  text: `I've uploaded all of the files and they are ready for Quality Assurance`,
+  Content: `I've uploaded all of the files and they are ready for Quality Assurance`,
 };
 const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
+  const {generatedSets, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState(demoComments)
   const fileInputRef = useRef(null);
+
+
+  const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
+  const [licensingInformation, setLicensingInformation] = useState({
+    ISRCCAMixVocal: "",
+    HFASongCode: "",
+    MechanicalRegistrationNumberA: "",
+    MechanicalRegistrationNumberD: "",
+    Writer: ""
+  });
 
   const [basicInformation, setBasicInformation] = useState({
     Title: "",
     Artist: "",
     Genre: "",
-    Id: 0,
+    SongNumber: "",
     SubGenre: "",
     BarIntro: "",
     SongKey: "",
@@ -58,12 +80,22 @@ const SongDetails = () => {
 
   useEffect(() => {
     if (location.state) {
+      console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
+      setLicensingInformation((prev) => ({
+        ...prev,
+        ISRCCAMixVocal: location.state.rowData.ISRCCAMixVocal,
+        HFASongCode: location.state.rowData.HFASongCode,
+        MechanicalRegistrationNumberA: location.state.rowData.MechanicalRegistrationNumberA,
+        MechanicalRegistrationNumberD: location.state.rowData.MechanicalRegistrationNumberD,
+        Writer: location.state.rowData.Writer,
+      }));
+
       setBasicInformation((prev) => ({
         ...prev,
         Title: location.state.rowData.Title,
         Artist: location.state.rowData.Artist,
         Genre: location.state.rowData.Genre,
-        Id: location.state.rowData.Id,
+        SongNumber: location.state.rowData.SongNumber,
         SubGenre: location.state.rowData.SubGenre,
         BarIntro: location.state.rowData.BarIntro,
         SongKey: location.state.rowData.SongKey,
@@ -73,8 +105,43 @@ const SongDetails = () => {
         SongReleaseYear: location.state.rowData.SongReleaseYear,
         Description: location.state.rowData.Description,
       }));
+
+      getCommentsForSong()
+
+      console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
     }
   }, []);
+
+
+  useEffect(() => {
+      const getComments = async () => {
+        if (location.state && location.state?.rowData?.SongNumber) {
+          const results = await getCommentsForSong(location.state?.rowData?.SongNumber)
+          console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
+          setComments((prev) => ([
+            ...results,
+            ...prev,
+          ]))
+        }
+      }
+
+    getComments()
+
+  }, [setBasicInformation])
+
+  useEffect(() => {
+    return () => {
+      const detailsInOrder = publishingHeaders.map(val => {
+        return {key: publishingHeadersMappedToColumn[val], value:licensingInformation[publishingHeadersMappedToColumn[val]]}
+      })
+
+      console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
+      setLicensingInfoDisplay(detailsInOrder)
+    };
+
+  }, [licensingInformation]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,9 +151,27 @@ const SongDetails = () => {
     }));
   };
 
+  const handleLicensingChange = (e) => {
+    const { name, value } = e.target;
+    setLicensingInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
  // Top Section Upload Handlers
- 
-  const handleSongEdit = () => {
+
+  const handleSongEdit = async () => {
+   const updatedDetails =  await updateSong(basicInformation)
+    setBasicInformation(updatedDetails)
+    console.log(basicInformation)
+  }
+
+  const handleLicensingEdit = async () => {
+    const withSongNumber = {...licensingInformation, SongNumber: basicInformation.SongNumber}
+
+    const updatedDetails =  await updateSong(withSongNumber)
+    setLicensingInformation(updatedDetails)
     console.log(basicInformation)
   }
 
@@ -95,9 +180,27 @@ const SongDetails = () => {
     console.log(basicInformation)
   }
 
-  
+  const handleCommentChange = (e) => {
+    const { value } = e.target;
+    setNewComment(value);
+  };
+  const handleCreateComment = async () => {
+    const copyComment = {
+      SongNumber: basicInformation.SongNumber,
+      Content: newComment,
+      UserName: 'DTE'
+    }
+    await createComment(copyComment)
+    setComments((prev) => ([
+      copyComment,
+      ...prev,
+    ]))
+    setNewComment('')
+  }
+
+
   // File Upload Handlers
-  
+
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -164,7 +267,7 @@ const SongDetails = () => {
             onChange={handleChange}
             sx={{ marginTop: 1 }}
             hiddenLabel
-            value={basicInformation.Id}
+            value={basicInformation.SongNumber}
             variant="outlined"
           />
         </div>
@@ -338,6 +441,7 @@ const SongDetails = () => {
           </Button>
         )}
       </div>
+      {/* LICENSING INFORMATION VIEW/EDIT */}
       <div className="w-full mt-20 flex">
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold" }}>
@@ -358,80 +462,37 @@ const SongDetails = () => {
           ))}
         </div>
         <div className="w-full h-20 flex">
-          <div className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-            {location.state ? (
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                defaultValue={location.state.rowData.ISRCAAMixVocal}
-                variant="outlined"
-              />
-            ) : (
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              />
-            )}
-          </div>
-          <div className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-            {location.state ? (
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                defaultValue={location.state.rowData.HFASongCode}
-                variant="outlined"
-              />
-            ) : (
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              />
-            )}
-          </div>
-          <div className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            />
-          </div>
-          <div className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            />
-          </div>
-          <div className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            />
-          </div>
-          <div className="w-[20%] h-full flex items-center justify-center">
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            />
-          </div>
+          {/* publishingHeadersMappedToColumn */}
+          {licensingInfoDisplay.map((header, index) => (
+            <div key={index} className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
+              {location.state ? (
+                <TextField
+                  sx={{ marginTop: 1, width: "90%" }}
+                  size="small"
+                  hiddenLabel
+                  name={header.key}
+                  onChange={handleLicensingChange}
+                  defaultValue={header.value}
+                  variant="outlined"
+                />
+              ) : (
+                <TextField
+                  sx={{ marginTop: 1, width: "90%" }}
+                  size="small"
+                  hiddenLabel
+                  variant="outlined"
+                  defaultValue={header.value}
+                />
+              )}
+            </div>
+          ))}
         </div>
       </div>
       <div className="w-[90%] mt-5 flex items-center justify-end">
         {!location.state ? (
           <Button
             variant="outlined"
+            onClick={handleLicensingEdit}
             sx={{
               marginRight: "15px",
               borderColor: "#00b00e",
@@ -481,7 +542,7 @@ const SongDetails = () => {
           {songPublisherHeaders.map((header, index) => (
             <div
               key={index}
-              className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
+              className="w-[30%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
             >
               <Typography sx={{ fontSize: 14 }}>{header}</Typography>
             </div>
@@ -493,65 +554,18 @@ const SongDetails = () => {
               key={index}
               className="w-full border-b flex border-gray-300 h-20"
             >
-              <div className="w-[20%] h-full flex items-center justify-center ">
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={publisher.Id}
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={publisher.PublisherAdmin}
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={publisher.PublisherDatabaseId}
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={publisher.Share}
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center ">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={publisher.SongNumber}
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center  ">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={publisher.SubPublisherDetails}
-                ></TextField>
-              </div>
+              {songPublisherHeaders.map((header) => (
+                <div key={header} className="w-[30%] h-full flex items-center justify-center">
+                  {" "}
+                  <TextField
+                    sx={{ marginTop: 1, width: "90%" }}
+                    size="small"
+                    hiddenLabel
+                    variant="outlined"
+                    defaultValue={publisher[header] ?? ''}
+                  ></TextField>
+                </div>
+              ))}
             </div>
           ))}
         {location.state &&
@@ -711,16 +725,16 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-[90%] mt-10 flex overflow-x-scroll">
-        {demoComments.map((comment) => (
-          <div key={comment.id} className="flex flex-col ml-10 mb-10">
+        {comments.map((comment, index) => (
+          <div key={index} className="flex flex-col ml-10 mb-10">
             <div className="flex flex-row items-center p-5">
-              <Typography variant="body1">{comment.name}</Typography>
+              <Typography variant="body1">{comment.UserName}</Typography>
               <Typography sx={{ marginLeft: 10 }} variant="body2">
                 {comment.date}
               </Typography>
             </div>
             <div className="bg-gray-300 w-80 ml-5 p-2 rounded-md rounded-tl-none">
-              <Typography>{comment.text}</Typography>
+              <Typography>{comment.Content}</Typography>
             </div>
           </div>
         ))}
@@ -734,7 +748,8 @@ const SongDetails = () => {
               hiddenLabel
               multiline
               rows={4}
-              defaultValue={location.state.rowData.Description}
+              value={newComment}
+              onChange={handleCommentChange}
               variant="outlined"
             />
           ) : (
@@ -751,6 +766,7 @@ const SongDetails = () => {
       <div className="w-[90%] mt-5 flex items-center justify-end">
         <Button
           variant="outlined"
+          onClick={handleCreateComment}
           sx={{
             marginRight: "15px",
             borderColor: "#00b00e",
@@ -765,8 +781,9 @@ const SongDetails = () => {
           Save Comment
         </Button>
       </div>
+
       <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
-        <Typography sx={{ fontWeight: "bold" }}>Example Song 720p</Typography>
+        <Typography sx={{ fontWeight: "bold" }}>720-blk-background</Typography>
       </div>
       <div className="w-[90%] mt-10 flex flex-row justify-between">
         <input
@@ -782,7 +799,7 @@ const SongDetails = () => {
         >
           <CloudUploadIcon sx={{ height: 40, width: 40 }} />
           <Typography sx={{ marginTop: 1 }}>Click to Upload</Typography>
-          <Typography>SVG, PNG, or JPG</Typography>
+
         </div>
         <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
           {selectedFile && (

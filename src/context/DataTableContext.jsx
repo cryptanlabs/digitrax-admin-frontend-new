@@ -1,5 +1,6 @@
 import {createContext, useEffect, useState} from 'react';
 import axios from 'axios'
+import {base_url} from '../helpers/requests.js'
 
 export const DataTableData = createContext(undefined);
 
@@ -44,9 +45,10 @@ const DataTableContext = ({children}) => {
   const [currentTable, setCurrentTable] = useState('SongCatalog');
   const [columnNames, setColumnNames] = useState(undefined);
   const [columnDetails, setColumnDetails] = useState([]);
-  const base_url = 'https://dev.digitrax.live'
+
   const getData = async () => {
-    const res = await axios.get(`${base_url}/catalogInternal?limit=-1`)
+    // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
+    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=-1&orderDir=desc`)
     const lowercaseId = res?.data?.data?.map(item => {
 
       return {id:item.Id, ...item}
@@ -70,6 +72,7 @@ const DataTableContext = ({children}) => {
 
   const getColumnNames = async () => {
     const res = await axios.get(`${base_url}/columnNames`)
+
     setCurrentTable('SongCatalog')
     const columns = res.data?.datamodel?.models?.find(item => item.name = 'SongCatalog')?.fields?.map(items => items.name)
 
@@ -102,7 +105,7 @@ const DataTableContext = ({children}) => {
 
 
   return (
-    <DataTableData.Provider value={{currentDataSet, nextPage, totalPages, totalResults, columnNames, columnDetails}}>
+    <DataTableData.Provider value={{getData, currentDataSet, nextPage, totalPages, totalResults, columnNames, columnDetails}}>
       {children}
     </DataTableData.Provider>
   )
