@@ -5,7 +5,7 @@ import {TextField, Typography} from '@mui/material';
 
 
 
-const textFields40pct = ({onChange, value, name, label}) => {
+function TextFields40Pct ({onChange, value, name, label}) {
 
   return (
     <div className="flex flex-col ml-20 w-[40%]">
@@ -18,11 +18,12 @@ const textFields40pct = ({onChange, value, name, label}) => {
       onChange={onChange}
       variant="outlined"
     />
-  </div>)
+  </div>
+  )
 }
 
 
-const textFields15pct = ({onChange, value, name, label}) => {
+function TextFields15Pct ({onChange, value, name, label})  {
 
   return (
     <div className="flex flex-col  w-[15%]">
@@ -43,6 +44,6 @@ const textFields15pct = ({onChange, value, name, label}) => {
 
 
 export {
-  textFields40pct,
-  textFields15pct
+  TextFields40Pct,
+  TextFields15Pct
 }

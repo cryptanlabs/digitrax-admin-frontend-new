@@ -4,7 +4,7 @@ import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {SongDetailsContext} from '../context/SongDetailsContext';
-import {textFields40pct, textFields15pct} from '../components/textFields.js'
+import {  TextFields40Pct, TextFields15Pct} from '../components/textFields'
 
 const publishingHeaders = [
   "ISRC",
@@ -275,13 +275,13 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
-        <textFields40pct
+        <TextFields40Pct
           value={basicInformation.Title}
           onChange={handleChange}
           name='Title'
           label="Song Title"
         />
-        <textFields40pct
+        <TextFields40Pct
           value={basicInformation.Artist}
           onChange={handleChange}
           name='Artist'
@@ -311,13 +311,13 @@ const SongDetails = () => {
         {/*</div>*/}
       </div>
       <div className="w-full flex flex-row mt-10 flex">
-        <textFields40pct
+        <TextFields40Pct
           value={basicInformation.Genre}
           onChange={handleChange}
           name='Genre'
           label="Genre"
         />
-        <textFields40pct
+        <TextFields40Pct
           value={basicInformation.SubGenre}
           onChange={handleChange}
           name='SubGenre'
@@ -347,29 +347,29 @@ const SongDetails = () => {
         {/*</div>*/}
       </div>
       <div className="w-[90%] flex flex-row mt-10 flex">
-        <textFields15pct
+        <TextFields15Pct
           value={basicInformation.BarIntro}
           onChange={handleChange}
           name='BarIntro'
           label="Bar Intro"
         />
-        <textFields15pct
+        <TextFields15Pct
           value={basicInformation.SongKey}
           onChange={handleChange}
           name='SongKey'
           label="Key"
         />
-        <textFields15pct
+        <TextFields15Pct
           value={basicInformation.Duration}
           onChange={handleChange}
           name='Duration'
           label="Duration"
         />
-        <textFields15pct
-          value={basicInformation.SongKey}
+        <TextFields15Pct
+          value={basicInformation.Mixes}
           onChange={handleChange}
-          name='SongKey'
-          label="Key"
+          name='Mixes'
+          label="Mixes"
         />
         {/*<div className="flex flex-col  w-[15%]">*/}
         {/*  <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>*/}
@@ -393,28 +393,28 @@ const SongDetails = () => {
         {/*    variant="outlined"*/}
         {/*  />*/}
         {/*</div>*/}
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Duration"
-            onChange={handleChange}
-            value={basicInformation.Duration}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Mixes</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Mixes"
-            onChange={handleChange}
-            value={basicInformation.Mixes}
-            variant="outlined"
-          />
-        </div>
+        {/*<div className="flex flex-col ml-10 w-[15%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>*/}
+        {/*  <TextField*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    name="Duration"*/}
+        {/*    onChange={handleChange}*/}
+        {/*    value={basicInformation.Duration}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
+        {/*<div className="flex flex-col ml-10 w-[15%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Mixes</Typography>*/}
+        {/*  <TextField*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    name="Mixes"*/}
+        {/*    onChange={handleChange}*/}
+        {/*    value={basicInformation.Mixes}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Mix Rendered</Typography>
           <TextField
