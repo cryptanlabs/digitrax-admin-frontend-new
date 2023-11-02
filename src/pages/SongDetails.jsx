@@ -4,6 +4,7 @@ import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {SongDetailsContext} from '../context/SongDetailsContext';
+import {textFields40pct, textFields15pct} from '../components/textFields.js'
 
 const publishingHeaders = [
   "ISRC",
@@ -110,6 +111,7 @@ const SongDetails = () => {
 
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
     }
   }, []);
 
@@ -273,76 +275,124 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Song Title</Typography>
-          <TextField
-            name="Title"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.Title}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>
-          <TextField
-            name="Artist"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.Artist}
-            variant="outlined"
-          />
-        </div>
+        <textFields40pct
+          value={basicInformation.Title}
+          onChange={handleChange}
+          name='Title'
+          label="Song Title"
+        />
+        <textFields40pct
+          value={basicInformation.Artist}
+          onChange={handleChange}
+          name='Artist'
+          label="Artist"
+        />
+        {/*<div className="flex flex-col ml-20 w-[40%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Song Title</Typography>*/}
+        {/*  <TextField*/}
+        {/*    name="Title"*/}
+        {/*    onChange={handleChange}*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    value={basicInformation.Title}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
+        {/*<div className="flex flex-col ml-20 w-[40%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>*/}
+        {/*  <TextField*/}
+        {/*    name="Artist"*/}
+        {/*    onChange={handleChange}*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    value={basicInformation.Artist}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
       </div>
       <div className="w-full flex flex-row mt-10 flex">
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Genre"
-            value={basicInformation.Genre}
-            onChange={handleChange}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="SubGenre"
-            onChange={handleChange}
-            value={basicInformation.SubGenre}
-            variant="outlined"
-          />
-        </div>
+        <textFields40pct
+          value={basicInformation.Genre}
+          onChange={handleChange}
+          name='Genre'
+          label="Genre"
+        />
+        <textFields40pct
+          value={basicInformation.SubGenre}
+          onChange={handleChange}
+          name='SubGenre'
+          label="SubGenre"
+        />
+        {/*<div className="flex flex-col ml-20 w-[40%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>*/}
+        {/*  <TextField*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    name="Genre"*/}
+        {/*    value={basicInformation.Genre}*/}
+        {/*    onChange={handleChange}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
+        {/*<div className="flex flex-col ml-20 w-[40%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>*/}
+        {/*  <TextField*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    name="SubGenre"*/}
+        {/*    onChange={handleChange}*/}
+        {/*    value={basicInformation.SubGenre}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
       </div>
       <div className="w-[90%] flex flex-row mt-10 flex">
-        <div className="flex flex-col  w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            name="BarIntro"
-            hiddenLabel
-            onChange={handleChange}
-            value={basicInformation.BarIntro}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Key</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.SongKey}
-            name="SongKey"
-            onChange={handleChange}
-            variant="outlined"
-          />
-        </div>
+        <textFields15pct
+          value={basicInformation.BarIntro}
+          onChange={handleChange}
+          name='BarIntro'
+          label="Bar Intro"
+        />
+        <textFields15pct
+          value={basicInformation.SongKey}
+          onChange={handleChange}
+          name='SongKey'
+          label="Key"
+        />
+        <textFields15pct
+          value={basicInformation.Duration}
+          onChange={handleChange}
+          name='Duration'
+          label="Duration"
+        />
+        <textFields15pct
+          value={basicInformation.SongKey}
+          onChange={handleChange}
+          name='SongKey'
+          label="Key"
+        />
+        {/*<div className="flex flex-col  w-[15%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>*/}
+        {/*  <TextField*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    name="BarIntro"*/}
+        {/*    hiddenLabel*/}
+        {/*    onChange={handleChange}*/}
+        {/*    value={basicInformation.BarIntro}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
+        {/*<div className="flex flex-col ml-10 w-[15%]">*/}
+        {/*  <Typography sx={{ fontWeight: "bold" }}>Key</Typography>*/}
+        {/*  <TextField*/}
+        {/*    sx={{ marginTop: 1 }}*/}
+        {/*    hiddenLabel*/}
+        {/*    value={basicInformation.SongKey}*/}
+        {/*    name="SongKey"*/}
+        {/*    onChange={handleChange}*/}
+        {/*    variant="outlined"*/}
+        {/*  />*/}
+        {/*</div>*/}
         <div className="flex flex-col ml-10 w-[15%]">
           <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>
           <TextField
