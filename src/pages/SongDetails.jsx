@@ -288,70 +288,121 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
-        <TextFields40Pct
-          value={basicInformation.Title}
-          onChange={handleChange}
-          name='Title'
-          label="Song Title"
-        />
-        <TextFields40Pct
-          value={basicInformation.Artist}
-          onChange={handleChange}
-          name='Artist'
-          label="Artist"
-        />
+        <div className="flex flex-col ml-20 w-[40%]">
+          <Typography sx={{ fontWeight: "bold" }}>Song Title</Typography>
+          <TextField
+            name="Title"
+            onChange={handleChange}
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.Title}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-20 w-[40%]">
+          <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>
+          <TextField
+            name="Artist"
+            onChange={handleChange}
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.Artist}
+            variant="outlined"
+          />
+        </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
-        <TextFields40Pct
-          value={basicInformation.Genre}
-          onChange={handleChange}
-          name='Genre'
-          label="Genre"
-        />
-        <TextFields40Pct
-          value={basicInformation.SubGenre}
-          onChange={handleChange}
-          name='SubGenre'
-          label="SubGenre"
-        />
+        <div className="flex flex-col ml-20 w-[40%]">
+          <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="Genre"
+            value={basicInformation.Genre}
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-20 w-[40%]">
+          <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="SubGenre"
+            onChange={handleChange}
+            value={basicInformation.SubGenre}
+            variant="outlined"
+          />
+        </div>
       </div>
-      <div className="w-[90%] flex flex-row mt-10">
-        <TextFields15Pct
-          value={basicInformation.BarIntro}
-          onChange={handleChange}
-          name='BarIntro'
-          label="Bar Intro"
-        />
-        <TextFields15Pct
-          value={basicInformation.SongKey}
-          onChange={handleChange}
-          name='SongKey'
-          label="Key"
-        />
-        <TextFields15Pct
-          value={basicInformation.Duration}
-          onChange={handleChange}
-          name='Duration'
-          label="Duration"
-        />
-        <TextFields15Pct
-          value={basicInformation.Mixes}
-          onChange={handleChange}
-          name='Mixes'
-          label="Mixes"
-        />
-        <TextFields15Pct
-          value={basicInformation.MixRendered}
-          onChange={handleChange}
-          name='MixRendered'
-          label="Mix Rendered"
-        />
-        <TextFields15Pct
-          value={basicInformation.SongReleaseYear}
-          onChange={handleChange}
-          name='SongReleaseYear'
-          label="Release Year"
-        />
+      <div className="w-[90%] flex flex-row mt-10 flex">
+        <div className="flex flex-col  w-[15%]">
+          <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            name="BarIntro"
+            hiddenLabel
+            onChange={handleChange}
+            value={basicInformation.BarIntro}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-10 w-[15%]">
+          <Typography sx={{ fontWeight: "bold" }}>Key</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            value={basicInformation.SongKey}
+            name="SongKey"
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-10 w-[15%]">
+          <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="Duration"
+            onChange={handleChange}
+            value={basicInformation.Duration}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-10 w-[15%]">
+          <Typography sx={{ fontWeight: "bold" }}>Mixes</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="Mixes"
+            onChange={handleChange}
+            value={basicInformation.Mixes}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-10 w-[15%]">
+          <Typography sx={{ fontWeight: "bold" }}>Mix Rendered</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            name="MixRendered"
+            onChange={handleChange}
+            value={basicInformation.MixRendered}
+            variant="outlined"
+          />
+        </div>
+        <div className="flex flex-col ml-10 w-[15%]">
+          <Typography sx={{ fontWeight: "bold" }}>Release Year</Typography>
+          <TextField
+            sx={{ marginTop: 1 }}
+            hiddenLabel
+            type="number"
+            name="SongReleaseYear"
+            onChange={handleChange}
+            value={basicInformation.SongReleaseYear}
+            variant="outlined"
+          />
+        </div>
       </div>
       <div className="w-full mt-10 flex">
         <div className="flex flex-col w-[90%] ml-20">
@@ -429,31 +480,21 @@ const SongDetails = () => {
           {/* publishingHeadersMappedToColumn */}
           {licensingInfoDisplay.map((header, index) => (
             <div key={index} className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-              {location.state ? (
                 <TextField
                   sx={{ marginTop: 1, width: "90%" }}
                   size="small"
                   hiddenLabel
                   name={header.key}
                   onChange={handleLicensingChange}
-                  defaultValue={header.value}
+                 value={licensingInformation[header.key]}
                   variant="outlined"
                 />
-              ) : (
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                  defaultValue={header.value}
-                />
-              )}
             </div>
           ))}
         </div>
       </div>
       <div className="w-[90%] mt-5 flex items-center justify-end">
-        {!location.state ? (
+
           <Button
             variant="outlined"
             onClick={handleLicensingEdit}
@@ -468,37 +509,14 @@ const SongDetails = () => {
               },
             }}
           >
-            UPLOAD
+           Save Changes
           </Button>
-        ) : (
-          <Button
-            variant="outlined"
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            Save Changes
-          </Button>
-        )}
       </div>
       <div className="w-full mt-20 flex">
         <div className="flex flex-col ml-20">
-          {location.state && location.state.rowData.SongPublisher.length > 0 ? (
             <Typography sx={{ fontWeight: "bold" }}>
               Edit Publisher Details
             </Typography>
-          ) : (
-            <Typography sx={{ fontWeight: "bold" }}>
-              Add Publisher Details
-            </Typography>
-          )}
         </div>
       </div>
       <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
@@ -518,7 +536,7 @@ const SongDetails = () => {
               key={index}
               className="w-full border-b flex border-gray-300 h-20"
             >
-              {songPublisherHeaders.map((header) => (
+              {songPublisherHeaders.map((header, index) => (
                 <div key={header} className="w-[30%] h-full flex items-center justify-center">
                   {" "}
                   <TextField
