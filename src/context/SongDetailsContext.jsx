@@ -65,8 +65,21 @@ const SongDetailsProvider = ({children}) => {
     return result.data
   }
 
+  const uploadMediaFile = async (data, force) => {
+    const result = await axiosBase({
+      method: 'post',
+      url: '/upload',
+      data: data
+    })
+      .catch(error => {
+        console.log(error)
+      })
+
+    return result.data
+  }
+
   return (
-    <SongDetailsContext.Provider value={{generatedSets, updateSong, createComment, getCommentsForSong}}>
+    <SongDetailsContext.Provider value={{generatedSets, uploadMediaFile, updateSong, createComment, getCommentsForSong}}>
       {children}
     </SongDetailsContext.Provider>
   )
