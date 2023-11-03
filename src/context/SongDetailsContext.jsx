@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useState} from 'react';
-import {axiosBase} from '../helpers/requests.js'
+import {axiosBase, base_url} from '../helpers/requests.js';
 import axios from 'axios';
 import {DataTableData} from './DataTableContext.jsx';
 export const SongDetailsContext = createContext(undefined);
@@ -65,7 +65,7 @@ const SongDetailsProvider = ({children}) => {
     return result.data
   }
 
-  const uploadMediaFile = async (data, force) => {
+  const uploadMediaFile = async (data) => {
     const result = await axiosBase({
       method: 'post',
       url: '/upload',
@@ -78,8 +78,27 @@ const SongDetailsProvider = ({children}) => {
     return result.data
   }
 
+  const addSong = async (data) => {
+    const result = await axiosBase({
+      method: 'post',
+      url: '/addSong',
+      data: data
+    })
+      .catch(error => {
+        console.log(error)
+      })
+
+    return result.data
+  }
+
+  const getDetailsForSong = async (SongNumber) => {
+    console.log('STM context-SongDetailsContext.jsx:82', SongNumber); // todo remove dev item
+    const result = await axios.get(`${base_url}/catalogInternal?SongNumber=${SongNumber}`)
+    return result.data.data[0]
+  }
+
   return (
-    <SongDetailsContext.Provider value={{generatedSets, uploadMediaFile, updateSong, createComment, getCommentsForSong}}>
+    <SongDetailsContext.Provider value={{generatedSets, addSong, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong}}>
       {children}
     </SongDetailsContext.Provider>
   )

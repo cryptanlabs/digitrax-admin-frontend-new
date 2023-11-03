@@ -50,13 +50,14 @@ const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const {generatedSets, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
+  const {generatedSets, addSong,getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [filesForUpload, setFilesForUpload] = useState({});
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState(demoComments)
   const [showFileUpload, setShowFileUpload] = useState(false);
   const fileInputRef = useRef(null);
+  const [generatedMedia, setGeneratedMedia] = useState([])
 
  const [songPublishers, setSongPublishers] = useState([])
 
@@ -87,6 +88,9 @@ const SongDetails = () => {
   useEffect(() => {
     if (location.state) {
       console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
+
+      setGeneratedMedia(location.state.rowData.GeneratedMedia)
+
       setLicensingInformation((prev) => ({
         ...prev,
         ISRCCAMixVocal: location.state.rowData.ISRCCAMixVocal,
@@ -112,6 +116,7 @@ const SongDetails = () => {
         Description: location.state.rowData.Description,
       }));
 
+      // localStorage.setItem('items', JSON.stringify(items));
 
       setSongPublishers(location.state.rowData.songPublishers)
       getCommentsForSong()
@@ -119,6 +124,7 @@ const SongDetails = () => {
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
   }, []);
 
@@ -151,6 +157,10 @@ const SongDetails = () => {
 
   }, [licensingInformation]);
 
+  const checkButton = async () => {
+    const songData = await getDetailsForSong(basicInformation.SongNumber)
+    console.log('STM pages-SongDetails.jsx:180', songData); // todo remove dev item
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -167,6 +177,13 @@ const SongDetails = () => {
       [name]: value,
     }));
   };
+
+  const uploadMediaFileAndRefresh = async (data) => {
+    await uploadMediaFile(data)
+    const songData = await getDetailsForSong(basicInformation.SongNumber)
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+    //
+  }
 
  // Top Section Upload Handlers
 
@@ -185,7 +202,7 @@ const SongDetails = () => {
   }
 
 
-  const handleSongUpload = () => {
+  const handleSongUpload = async () => {
     console.log(basicInformation)
   }
 
@@ -238,6 +255,7 @@ const SongDetails = () => {
         <div className="flex w-1/3  mr-3 justify-center">
           <Button
             variant="outlined"
+            // onClick={checkButton}
             sx={{
               borderColor: "gray",
               color: "black",
@@ -766,6 +784,11 @@ const SongDetails = () => {
         </Button>
       </div>
 
+      <div className="w-full mt-10 flex">
+        <div className="flex flex-col ml-20">
+          <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>
+        </div>
+      </div>
       {!showFileUpload ? (
         <div className="w-[90%] mt-5 flex items-center justify-start">
           <Button
@@ -787,7 +810,8 @@ const SongDetails = () => {
         </div>
       ) : (
         <FileAdd
-          submit={uploadMediaFile}
+          songNumber={basicInformation.SongNumber}
+          submit={uploadMediaFileAndRefresh}
           buckets={generatedSets}
           hideHandler = {() => {setShowFileUpload(false)}}
         ></FileAdd>
@@ -795,7 +819,7 @@ const SongDetails = () => {
 
 
 
-      {location?.state?.rowData?.GeneratedMedia?.length > 0 ? (location.state.rowData.GeneratedMedia.map((entry, index) => (
+      {generatedMedia?.length > 0 ? (generatedMedia.map((entry, index) => (
                 <FileUpload
                   mediaObject={entry}
                   returnUploadFile={returnUploadFile}

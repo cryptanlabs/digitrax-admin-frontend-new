@@ -4,6 +4,7 @@ import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { SongDetailsContext } from "../context/SongDetailsContext";
+import {FileAdd} from '../components/fileAdd.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -32,45 +33,50 @@ const songPublisherHeaders = [
   "Share",
 ];
 
+const defaultLicensingInformationState = {
+  ISRCCAMixVocal: "",
+  HFASongCode: "",
+  MechanicalRegistrationNumberA: "",
+  MechanicalRegistrationNumberD: "",
+  Writer: "",
+}
 
+const defaultBasicInfoState = {
+  Title: "",
+  Artist: "",
+  Genre: "",
+  SongNumber: "",
+  SubGenre: "",
+  BarIntro: "",
+  SongKey: "",
+  Duration: "",
+  Mixes: "",
+  MixRendered: "",
+  SongReleaseYear: "",
+  Description: "",
+  ISRCCAMixVocal: "",
+  HFASongCode: "",
+  MechanicalRegistrationNumberA: "",
+  MechanicalRegistrationNumberD: "",
+  Writer: "",
+}
 
 const CreateSong = () => {
   const location = useLocation();
-  const { generatedSets, updateSong, createComment, getCommentsForSong } =
+  const { generatedSets, addSong, updateSong, uploadMediaFile, getDetailsForSong, createComment, getCommentsForSong } =
     useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [newComment, setNewComment] = useState("");
 
   const fileInputRef = useRef(null);
+  const [showFileUpload, setShowFileUpload] = useState(false);
+  const [generatedMedia, setGeneratedMedia] = useState([])
+  const [generatedMediaForUpload, setGeneratedMediaForUpload] = useState([]);
 
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
-  const [licensingInformation, setLicensingInformation] = useState({
-    ISRCCAMixVocal: "",
-    HFASongCode: "",
-    MechanicalRegistrationNumberA: "",
-    MechanicalRegistrationNumberD: "",
-    Writer: "",
-  });
+  const [licensingInformation, setLicensingInformation] = useState(defaultLicensingInformationState);
 
-  const [basicInformation, setBasicInformation] = useState({
-    Title: "",
-    Artist: "",
-    Genre: "",
-    SongNumber: "",
-    SubGenre: "",
-    BarIntro: "",
-    SongKey: "",
-    Duration: "",
-    Mixes: "",
-    MixRendered: "",
-    SongReleaseYear: "",
-    Description: "",
-    ISRCCAMixVocal: "",
-    HFASongCode: "",
-    MechanicalRegistrationNumberA: "",
-    MechanicalRegistrationNumberD: "",
-    Writer: "",
-  });
+  const [basicInformation, setBasicInformation] = useState(defaultBasicInfoState);
 
   useEffect(() => {
     return () => {
@@ -94,9 +100,43 @@ const CreateSong = () => {
     }));
   };
 
+  const uploadMediaFileAndForCreateSong = async (data) => {
+    for(const thing of data.entries()){
+      if(thing[0] === 'bucketName'){
+
+      }
+      console.log('STM components-fileAdd.jsx:23', thing); // todo remove dev item
+    }
+    setGeneratedMediaForUpload([...generatedMediaForUpload, data])
+    // await uploadMediaFile(data)
+    // const songData = await getDetailsForSong(basicInformation.SongNumber)
+    // setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+    //
+  }
   // Top Section Upload Handlers
 
-  const handleSongUpload = () => {
+  const handleSongUpload = async () => {
+    const newSongData = {
+      ...basicInformation,
+      ...licensingInformation
+    }
+    console.log('STM pages-CreateSong.jsx:121', newSongData); // todo remove dev item
+    await addSong(newSongData)
+
+    for(let i=0; i< generatedMediaForUpload.length; i++){
+      console.log('STM pages-CreateSong.jsx:125', generatedMediaForUpload[i]); // todo remove dev item
+      for(const thing of generatedMediaForUpload[i].entries()){
+        console.log('STM components-fileAdd.jsx:23', thing); // todo remove dev item
+      }
+      try {
+        await uploadMediaFile(generatedMediaForUpload[i]);
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    setLicensingInformation(defaultLicensingInformationState)
+    setBasicInformation(defaultBasicInfoState)
     console.log(basicInformation);
   };
 
@@ -135,7 +175,7 @@ const CreateSong = () => {
   return (
     <div className="w-full mt-4 flex flex-col items-center justify-between">
       <div className="w-full mt-4 flex items-center justify-between">
-        <h1 className="text-4xl ml-20 font-medium">Song Data</h1>
+        <h1 className="text-4xl ml-20 font-medium">Create Song Entry</h1>
         <div className="flex w-1/3  mr-3 justify-center">
           <Button
             variant="outlined"
@@ -181,7 +221,7 @@ const CreateSong = () => {
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
           <TextField
-            name="Id"
+            name="SongNumber"
             type="number"
             onChange={handleChange}
             sx={{ marginTop: 1 }}
@@ -471,6 +511,32 @@ const CreateSong = () => {
         </Button>
       </div>
 
+      <div className="w-full mt-10 flex">
+        <div className="flex flex-col ml-20">
+          <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>
+        </div>
+      </div>
+
+      <FileAdd
+        songNumber={basicInformation.SongNumber}
+        submit={uploadMediaFileAndForCreateSong}
+        buckets={generatedSets}
+        hideHandler = {() => {setShowFileUpload(false)}}
+      ></FileAdd>
+
+      {generatedSets.map((generatedSet, index) => (
+          <>
+            <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
+              <Typography sx={{ fontWeight: "bold" }}>{generatedSet}</Typography>
+            </div>
+            <FileAdd
+              songNumber={basicInformation.SongNumber}
+              submit={uploadMediaFileAndForCreateSong}
+              preSetBucketTo={generatedSet}
+              hideHandler = {() => {setShowFileUpload(false)}}
+            ></FileAdd>
+          </>
+      ))}
       <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
         <Typography sx={{ fontWeight: "bold" }}>720-blk-background</Typography>
       </div>
@@ -527,6 +593,7 @@ const CreateSong = () => {
         </Button>
         <Button
           variant="outlined"
+          onClick={handleSongUpload}
           sx={{
             marginRight: "15px",
             borderColor: "#00b00e",
