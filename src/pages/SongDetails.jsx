@@ -4,6 +4,9 @@ import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {SongDetailsContext} from '../context/SongDetailsContext';
+import {  TextFields40Pct, TextFields15Pct} from '../components/textFields'
+import { FileUpload } from '../components/fileUpload'
+import {FileAdd} from '../components/fileAdd.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -47,11 +50,14 @@ const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const {generatedSets, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
+  const {generatedSets, addSong,getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [filesForUpload, setFilesForUpload] = useState({});
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState(demoComments)
+  const [showFileUpload, setShowFileUpload] = useState(false);
   const fileInputRef = useRef(null);
+  const [generatedMedia, setGeneratedMedia] = useState([])
 
  const [songPublishers, setSongPublishers] = useState([])
 
@@ -82,6 +88,9 @@ const SongDetails = () => {
   useEffect(() => {
     if (location.state) {
       console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
+
+      setGeneratedMedia(location.state.rowData.GeneratedMedia)
+
       setLicensingInformation((prev) => ({
         ...prev,
         ISRCCAMixVocal: location.state.rowData.ISRCCAMixVocal,
@@ -107,12 +116,15 @@ const SongDetails = () => {
         Description: location.state.rowData.Description,
       }));
 
+      // localStorage.setItem('items', JSON.stringify(items));
 
       setSongPublishers(location.state.rowData.songPublishers)
       getCommentsForSong()
 
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
   }, []);
 
@@ -145,6 +157,10 @@ const SongDetails = () => {
 
   }, [licensingInformation]);
 
+  const checkButton = async () => {
+    const songData = await getDetailsForSong(basicInformation.SongNumber)
+    console.log('STM pages-SongDetails.jsx:180', songData); // todo remove dev item
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -161,6 +177,13 @@ const SongDetails = () => {
       [name]: value,
     }));
   };
+
+  const uploadMediaFileAndRefresh = async (data) => {
+    await uploadMediaFile(data)
+    const songData = await getDetailsForSong(basicInformation.SongNumber)
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+    //
+  }
 
  // Top Section Upload Handlers
 
@@ -179,7 +202,7 @@ const SongDetails = () => {
   }
 
 
-  const handleSongUpload = () => {
+  const handleSongUpload = async () => {
     console.log(basicInformation)
   }
 
@@ -204,6 +227,15 @@ const SongDetails = () => {
 
   // File Upload Handlers
 
+  const returnUploadFile = (fileDataToAdd) => {
+    console.log('STM pages-SongDetails.jsx:209', fileDataToAdd); // todo remove dev item
+    if(Object.keys(filesForUpload).includes(fileDataToAdd.generatedSet)){
+
+    }
+    setFilesForUpload((prevState) => {
+
+    })
+  }
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -223,6 +255,7 @@ const SongDetails = () => {
         <div className="flex w-1/3  mr-3 justify-center">
           <Button
             variant="outlined"
+            // onClick={checkButton}
             sx={{
               borderColor: "gray",
               color: "black",
@@ -482,7 +515,6 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-[90%] mt-5 flex items-center justify-end">
-      
           <Button
             variant="outlined"
             onClick={handleLicensingEdit}
@@ -752,43 +784,88 @@ const SongDetails = () => {
         </Button>
       </div>
 
-      <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
-        <Typography sx={{ fontWeight: "bold" }}>720-blk-background</Typography>
+      <div className="w-full mt-10 flex">
+        <div className="flex flex-col ml-20">
+          <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>
+        </div>
       </div>
-      <div className="w-[90%] mt-10 flex flex-row justify-between">
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-          accept="image/svg+xml,image/png,image/jpeg"
-        />
-        <div
-          className="w-[33%] h-60 border border-green-600 border-2 rounded-lg flex flex-col justify-center items-center cursor-pointer"
-          onClick={handleFileUploadClick}
-        >
-          <CloudUploadIcon sx={{ height: 40, width: 40 }} />
-          <Typography sx={{ marginTop: 1 }}>Click to Upload</Typography>
+      {!showFileUpload ? (
+        <div className="w-[90%] mt-5 flex items-center justify-start">
+          <Button
+            variant="outlined"
+            onClick={() => {setShowFileUpload(true)}}
+            sx={{
+              marginRight: "15px",
+              borderColor: "#00b00e",
+              backgroundColor: "#00b00e",
+              color: "white",
+              "&:hover": {
+                borderColor: "#F1EFEF",
+                backgroundColor: "#86A789",
+              },
+            }}
+          >
+            Add Media
+          </Button>
+        </div>
+      ) : (
+        <FileAdd
+          songNumber={basicInformation.SongNumber}
+          submit={uploadMediaFileAndRefresh}
+          buckets={generatedSets}
+          hideHandler = {() => {setShowFileUpload(false)}}
+        ></FileAdd>
+      )}
 
-        </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
-          {selectedFile && (
-            <img
-              src={selectedFile}
-              alt="Selected"
-              className="w-full h-full object-cover rounded-lg"
+
+
+      {generatedMedia?.length > 0 ? (generatedMedia.map((entry, index) => (
+                <FileUpload
+                  mediaObject={entry}
+                  returnUploadFile={returnUploadFile}
+                />
+            ))) : (
+        <>
+          <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
+            <Typography sx={{ fontWeight: "bold" }}>720-blk-background</Typography>
+          </div>
+          <div className="w-[90%] mt-10 flex flex-row justify-between">
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileChange}
+              accept="image/svg+xml,image/png,image/jpeg"
             />
-          )}
-          {!selectedFile && (
-            <Typography
-              sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
+            <div
+              className="w-[33%] h-60 border border-green-600 border-2 rounded-lg flex flex-col justify-center items-center cursor-pointer"
+              onClick={handleFileUploadClick}
             >
-              Song title no background
-            </Typography>
-          )}
-        </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg"></div>
-      </div>
+              <CloudUploadIcon sx={{ height: 40, width: 40 }} />
+              <Typography sx={{ marginTop: 1 }}>Click to Replace</Typography>
+
+            </div>
+            <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
+              {selectedFile && (
+                <img
+                  src={selectedFile}
+                  alt="Selected"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              )}
+              {!selectedFile && (
+                <Typography
+                  sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
+                >
+                  Song title no background
+                </Typography>
+              )}
+            </div>
+            <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg"></div>
+          </div>
+        </>
+      )}
+
       <div className="w-[90%] mt-5 flex items-center justify-end">
         <Button
           variant="outlined"

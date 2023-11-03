@@ -47,8 +47,9 @@ const DataTableContext = ({children}) => {
   const [columnDetails, setColumnDetails] = useState([]);
 
   const getData = async () => {
+    const limit = -1 //1000 // -1
     // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
-    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=-1&orderDir=desc`)
+    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${limit}&orderDir=desc`)
     const lowercaseId = res?.data?.data?.map(item => {
 
       return {id:item.Id, ...item}
