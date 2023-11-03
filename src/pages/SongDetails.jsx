@@ -58,6 +58,7 @@ const SongDetails = () => {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const fileInputRef = useRef(null);
 
+ const [songPublishers, setSongPublishers] = useState([])
 
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
   const [licensingInformation, setLicensingInformation] = useState({
@@ -111,6 +112,8 @@ const SongDetails = () => {
         Description: location.state.rowData.Description,
       }));
 
+
+      setSongPublishers(location.state.rowData.songPublishers)
       getCommentsForSong()
 
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
@@ -494,7 +497,6 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-[90%] mt-5 flex items-center justify-end">
-
           <Button
             variant="outlined"
             onClick={handleLicensingEdit}

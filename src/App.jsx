@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import DataTableContext from './context/DataTableContext';
 import SongDetails from './pages/SongDetails';
 import SongDetailsProvider from './context/SongDetailsContext.jsx';
+import CreateSong from './pages/CreateSong';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/songdata" element={<SongDetails />} />
+              <Route path='/createsong' element={<CreateSong />} />
             </Routes>
           </div>
         </SongDetailsProvider>

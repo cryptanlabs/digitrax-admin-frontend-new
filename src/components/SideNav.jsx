@@ -36,7 +36,7 @@ export default function SideNav() {
         <img src="/digitrax.png" alt="Digitrax" width="500" height="600" />
       </Toolbar>
       <List>
-        {["Home", "Dashboard", "Song Data", "Users"].map((text, index) => (
+        {["Home", "Dashboard", "Create Song", "Users"].map((text, index) => (
           <ListItem key={text}>
             <Link
               to={(() => {
@@ -46,7 +46,7 @@ export default function SideNav() {
                   case 1:
                     return "/dashboard";
                     case 2: 
-                    return "/songdata";
+                    return "/createsong";
                   // case 3: return "/path4";
                   default:
                     return "/";
