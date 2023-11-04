@@ -45,6 +45,7 @@ const DataTableContext = ({children}) => {
   const [currentTable, setCurrentTable] = useState('SongCatalog');
   const [columnNames, setColumnNames] = useState(undefined);
   const [columnDetails, setColumnDetails] = useState([]);
+  const [recentSongs, setRecentSongs] = useState([]);
 
   const getData = async () => {
     const limit = -1 //1000 // -1
@@ -103,10 +104,15 @@ const DataTableContext = ({children}) => {
     getColumnNames()
   }, []);
 
+  const addToRecentSongs = (song) => {
+    setRecentSongs((prev) =>(
+      [...prev, song]
+    ))
+  }
 
 
   return (
-    <DataTableData.Provider value={{getData, currentDataSet, nextPage, totalPages, totalResults, columnNames, columnDetails}}>
+    <DataTableData.Provider value={{getData, recentSongs, addToRecentSongs, currentDataSet, nextPage, totalPages, totalResults, columnNames, columnDetails}}>
       {children}
     </DataTableData.Provider>
   )

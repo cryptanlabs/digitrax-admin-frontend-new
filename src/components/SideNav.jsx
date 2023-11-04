@@ -45,7 +45,7 @@ export default function SideNav() {
                     return "/";
                   case 1:
                     return "/dashboard";
-                    case 2: 
+                    case 2:
                     return "/createsong";
                   // case 3: return "/path4";
                   default:
@@ -77,6 +77,9 @@ export default function SideNav() {
           </ListItem>
         ))}
       </List>
+      </Box>
+      <Box>
+
       </Box>
       <Box sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
       <Button
