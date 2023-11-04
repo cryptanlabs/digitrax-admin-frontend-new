@@ -48,7 +48,7 @@ const DataTableContext = ({children}) => {
   const [recentSongs, setRecentSongs] = useState([]);
 
   const getData = async () => {
-    const limit = -1 //1000 // -1
+    const limit = 1000 //-1 // -1
     // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
     const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${limit}&orderDir=desc`)
     const lowercaseId = res?.data?.data?.map(item => {
@@ -100,14 +100,17 @@ const DataTableContext = ({children}) => {
   }
 
   useEffect(() => {
-    getData()
     getColumnNames()
+    getData()
   }, []);
 
   const addToRecentSongs = (song) => {
-    setRecentSongs((prev) =>(
-      [...prev, song]
-    ))
+    setRecentSongs((prev) =>{
+      if(prev.length > 7){
+        prev.shift()
+      }
+      return [...prev, song]
+    })
   }
 
 

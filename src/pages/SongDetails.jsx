@@ -85,53 +85,65 @@ const SongDetails = () => {
     Description: "",
   });
 
+  const setup = (rowData) => {
+    setGeneratedMedia(rowData.GeneratedMedia)
+
+    setLicensingInformation((prev) => ({
+      ...prev,
+      ISRCCAMixVocal: rowData.ISRCCAMixVocal,
+      HFASongCode: rowData.HFASongCode,
+      MechanicalRegistrationNumberA: rowData.MechanicalRegistrationNumberA,
+      MechanicalRegistrationNumberD: rowData.MechanicalRegistrationNumberD,
+      Writer: rowData.Writer,
+    }));
+
+    setBasicInformation((prev) => ({
+      ...prev,
+      Title: rowData.Title,
+      Artist: rowData.Artist,
+      Genre: rowData.Genre,
+      SongNumber: rowData.SongNumber,
+      SubGenre: rowData.SubGenre,
+      BarIntro: rowData.BarIntro,
+      SongKey: rowData.SongKey,
+      Duration: rowData.Duration,
+      Mixes: rowData.Mixes,
+      MixRendered: rowData.MixRendered,
+      SongReleaseYear: rowData.SongReleaseYear,
+      Description: rowData.Description,
+    }));
+
+    // localStorage.setItem('items', JSON.stringify(items));
+
+    setSongPublishers(rowData.songPublishers)
+    getCommentsForSong()
+  }
+
   useEffect(() => {
-    if (location.state) {
+    if (location.state.rowData) {
       console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
+      setup(location.state.rowData)
 
-      setGeneratedMedia(location.state.rowData.GeneratedMedia)
-
-      setLicensingInformation((prev) => ({
-        ...prev,
-        ISRCCAMixVocal: location.state.rowData.ISRCCAMixVocal,
-        HFASongCode: location.state.rowData.HFASongCode,
-        MechanicalRegistrationNumberA: location.state.rowData.MechanicalRegistrationNumberA,
-        MechanicalRegistrationNumberD: location.state.rowData.MechanicalRegistrationNumberD,
-        Writer: location.state.rowData.Writer,
-      }));
-
-      setBasicInformation((prev) => ({
-        ...prev,
-        Title: location.state.rowData.Title,
-        Artist: location.state.rowData.Artist,
-        Genre: location.state.rowData.Genre,
-        SongNumber: location.state.rowData.SongNumber,
-        SubGenre: location.state.rowData.SubGenre,
-        BarIntro: location.state.rowData.BarIntro,
-        SongKey: location.state.rowData.SongKey,
-        Duration: location.state.rowData.Duration,
-        Mixes: location.state.rowData.Mixes,
-        MixRendered: location.state.rowData.MixRendered,
-        SongReleaseYear: location.state.rowData.SongReleaseYear,
-        Description: location.state.rowData.Description,
-      }));
-
-      // localStorage.setItem('items', JSON.stringify(items));
-
-      setSongPublishers(location.state.rowData.songPublishers)
-      getCommentsForSong()
 
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
+    if(location.state.SongNumber){
+      getDetailsForSong(location.state.SongNumber)
+        .then(songDetails => {
+          setup(songDetails)
+          location.state.rowData = songDetails
+        })
+
+    }
   }, []);
 
 
   useEffect(() => {
       const getComments = async () => {
-        if (location.state && location.state?.rowData?.SongNumber) {
+        if (location.state.rowData && location.state?.rowData?.SongNumber) {
           const results = await getCommentsForSong(location.state?.rowData?.SongNumber)
           console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
           setComments((prev) => ([
@@ -441,7 +453,7 @@ const SongDetails = () => {
         </div>
       </div>
       <div className="w-full mt-10 flex items-center justify-center">
-        {!location.state ? (
+        {!location.state.rowData ? (
           <Button
             variant="outlined"
             onClick={handleSongUpload}
@@ -550,7 +562,7 @@ const SongDetails = () => {
             </div>
           ))}
         </div>
-        {location.state &&
+        {location.state.rowData &&
           location.state.rowData.SongPublisher.map((publisher, index) => (
             <div
               key={index}
@@ -570,7 +582,7 @@ const SongDetails = () => {
               ))}
             </div>
           ))}
-        {location.state &&
+        {location.state.rowData &&
           location.state.rowData.SongPublisher.length === 0 && (
             <div className="w-full border-b flex border-gray-300 h-20">
               <div className="w-[20%] h-full flex items-center justify-center ">
@@ -628,7 +640,7 @@ const SongDetails = () => {
               </div>
             </div>
           )}
-        {!location.state && (
+        {!location.state.rowData && (
           <div className="w-full border-b flex border-gray-300 h-20">
             <div className="w-[20%] h-full flex items-center justify-center ">
               <TextField
@@ -687,7 +699,7 @@ const SongDetails = () => {
         )}
       </div>
       <div className="w-[90%] mt-5 flex items-center justify-end">
-        {!location.state ? (
+        {!location.state.rowData ? (
           <Button
             variant="outlined"
             sx={{
@@ -744,7 +756,7 @@ const SongDetails = () => {
       <div className="w-full mt-10 flex">
         <div className="flex flex-col w-[90%] ml-20">
           <Typography sx={{ fontWeight: "bold" }}>Add a Comment</Typography>
-          {location.state ? (
+          {location.state.rowData ? (
             <TextField
               sx={{ marginTop: 1 }}
               hiddenLabel

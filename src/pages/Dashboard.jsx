@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [showSearch, setShowSearch] = useState(false);
-  const { currentDataSet, columnDetails } = useContext(DataTableData);
+  const { currentDataSet, columnDetails, addToRecentSongs } = useContext(DataTableData);
   const [filteredResults, setFilteredResults] = useState([]);
   const [sortInstructions, setSortIntructions] = useState(false);
 
@@ -43,6 +43,7 @@ const Dashboard = () => {
 
   const handleRowClick = (params) => {
     const rowData = params.row;
+    addToRecentSongs(params.row.SongNumber)
     navigate("/songdata", { state: { rowData } });
   };
 

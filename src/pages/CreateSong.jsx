@@ -5,6 +5,10 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { SongDetailsContext } from "../context/SongDetailsContext";
 import {FileAdd} from '../components/fileAdd.jsx';
+import {BasicSongInfoDisplay} from '../components/BasicSongInfoDisplay.jsx';
+import {LicensingInfoDisplay} from '../components/LicensingInfoDisplay.jsx';
+import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
+import {DataTableData} from '../context/DataTableContext.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -24,14 +28,7 @@ const publishingHeadersMappedToColumn = {
   Writer: "Writer",
 };
 
-const songPublisherHeaders = [
-  // "Id",
-  "PublisherAdmin",
-  // "PublisherDatabaseId",
-  // "SongNumber",
-  "SubPublisherDetails",
-  "Share",
-];
+
 
 const defaultLicensingInformationState = {
   ISRCCAMixVocal: "",
@@ -63,8 +60,9 @@ const defaultBasicInfoState = {
 
 const CreateSong = () => {
   const location = useLocation();
-  const { generatedSets, addSong, updateSong, uploadMediaFile, getDetailsForSong, createComment, getCommentsForSong } =
+  const { generatedSets, addSong, addPublisher, uploadMediaFile, getDetailsForSong, createComment, getCommentsForSong } =
     useContext(SongDetailsContext);
+  const { addToRecentSongs } = useContext(DataTableData);
   const [selectedFile, setSelectedFile] = useState(null);
   const [newComment, setNewComment] = useState("");
 
@@ -72,6 +70,7 @@ const CreateSong = () => {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [generatedMedia, setGeneratedMedia] = useState([])
   const [generatedMediaForUpload, setGeneratedMediaForUpload] = useState([]);
+  const [publishersForUpload, setPublishersForUpload] = useState([]);
 
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
   const [licensingInformation, setLicensingInformation] = useState(defaultLicensingInformationState);
@@ -100,6 +99,14 @@ const CreateSong = () => {
     }));
   };
 
+  const handleLicensingChange = (e) => {
+    const { name, value } = e.target;
+    setLicensingInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const uploadMediaFileAndForCreateSong = async (data) => {
     for(const thing of data.entries()){
       if(thing[0] === 'bucketName'){
@@ -113,23 +120,41 @@ const CreateSong = () => {
     // setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
     //
   }
+
+
+  const savePublisher = (data) => {
+    setPublishersForUpload([...publishersForUpload, data])
+  }
   // Top Section Upload Handlers
 
   const handleSongUpload = async () => {
+    const SongNumber = basicInformation.SongNumber
+
+    if(!SongNumber){
+      return;
+    }
     const newSongData = {
       ...basicInformation,
       ...licensingInformation
     }
-    console.log('STM pages-CreateSong.jsx:121', newSongData); // todo remove dev item
     await addSong(newSongData)
 
+    addToRecentSongs(SongNumber)
     for(let i=0; i< generatedMediaForUpload.length; i++){
-      console.log('STM pages-CreateSong.jsx:125', generatedMediaForUpload[i]); // todo remove dev item
       for(const thing of generatedMediaForUpload[i].entries()){
-        console.log('STM components-fileAdd.jsx:23', thing); // todo remove dev item
       }
       try {
         await uploadMediaFile(generatedMediaForUpload[i]);
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    for(let i=0; i< publishersForUpload.length; i++){
+
+      try {
+        publishersForUpload[i].SongNumber = SongNumber
+        await addPublisher(publishersForUpload[i]);
       } catch (e) {
         console.error(e)
       }
@@ -209,247 +234,24 @@ const CreateSong = () => {
           </Button>
         </div>
       </div>
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>
-            Basic Song Information
-          </Typography>
-          <Typography>Fill out available song Metadata below</Typography>
-        </div>
-      </div>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
-          <TextField
-            name="SongNumber"
-            type="number"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.SongNumber}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-full flex flex-row mt-10 flex">
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Song Title</Typography>
-          <TextField
-            name="Title"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.Title}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>
-          <TextField
-            name="Artist"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.Artist}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-full flex flex-row mt-10 flex">
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Genre"
-            value={basicInformation.Genre}
-            onChange={handleChange}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="SubGenre"
-            onChange={handleChange}
-            value={basicInformation.SubGenre}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-[90%] flex flex-row mt-10 flex">
-        <div className="flex flex-col  w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            name="BarIntro"
-            hiddenLabel
-            onChange={handleChange}
-            value={basicInformation.BarIntro}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Key</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.SongKey}
-            name="SongKey"
-            onChange={handleChange}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Duration"
-            onChange={handleChange}
-            value={basicInformation.Duration}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Mixes</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Mixes"
-            onChange={handleChange}
-            value={basicInformation.Mixes}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Mix Rendered</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="MixRendered"
-            onChange={handleChange}
-            value={basicInformation.MixRendered}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Release Year</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            type="number"
-            name="SongReleaseYear"
-            onChange={handleChange}
-            value={basicInformation.SongReleaseYear}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col w-[90%] ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Song Description</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            multiline
-            rows={4}
-            name="Description"
-            onChange={handleChange}
-            value={basicInformation.Description}
-            variant="outlined"
-          />
-        </div>
-      </div>
+      <BasicSongInfoDisplay
+        handleChange={handleChange}
+        basicInformation={basicInformation}
+      />
       {/* LICENSING INFORMATION VIEW/EDIT */}
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>
-            Publishing Information
-          </Typography>
-          <Typography>Update the publishing information here</Typography>
-        </div>
-      </div>
-      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-        <div className="w-full h-10 border-b flex border-gray-300">
-          {publishingHeaders.map((header, index) => (
-            <div
-              key={index}
-              className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
-            >
-              <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-            </div>
-          ))}
-        </div>
-        <div className="w-full h-20 flex">
-          {/* publishingHeadersMappedToColumn */}
-          {licensingInfoDisplay.map((header, index) => (
-            <div
-              key={index}
-              className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 "
-            >
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                name={header.key}
-                onChange={handleChange}
-                value={basicInformation[header.key]}
-                variant="outlined"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>
-            Edit Publisher Details
-          </Typography>
-        </div>
-      </div>
-      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-        <div className="w-full h-10 border-b flex border-gray-300">
-          {songPublisherHeaders.map((header, index) => (
-            <div
-              key={index}
-              className="w-[33%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
-            >
-              <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-            </div>
-          ))}
-        </div>
-        <div className="w-full border-b flex border-gray-300 h-20">
-          <div className="w-[33%] h-full flex items-center justify-center ">
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            ></TextField>
-          </div>
-          <div className="w-[33%] h-full flex items-center justify-center">
-            {" "}
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            ></TextField>
-          </div>
-          <div className="w-[33%] h-full flex items-center justify-center">
-            {" "}
-            <TextField
-              sx={{ marginTop: 1, width: "90%" }}
-              size="small"
-              hiddenLabel
-              variant="outlined"
-            ></TextField>
-          </div>
-        </div>
-      </div>
+      <LicensingInfoDisplay
+        publishingHeaders={publishingHeaders}
+        licensingInfoDisplay={licensingInfoDisplay}
+        handleChange={handleLicensingChange}
+        basicInformation={basicInformation}
+      />
+
+      <PublisherInfoDisplay
+        songNumber={basicInformation.SongNumber}
+        saveNewPublisher={savePublisher}
+        songPublishers={publishersForUpload}
+        setSongPublishers={setPublishersForUpload}
+      />
       <div className="w-full mt-10 flex items-center justify-center">
         <Button
           variant="outlined"

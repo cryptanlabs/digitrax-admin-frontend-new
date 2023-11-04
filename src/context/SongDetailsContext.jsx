@@ -2,12 +2,13 @@ import {createContext, useContext, useEffect, useState} from 'react';
 import {axiosBase, base_url} from '../helpers/requests.js';
 import axios from 'axios';
 import {DataTableData} from './DataTableContext.jsx';
+
 export const SongDetailsContext = createContext(undefined);
 
 
 const SongDetailsProvider = ({children}) => {
   const [generatedSets, setGeneratedSets] = useState([]);
-  const { getData } = useContext(DataTableData);
+  const {getData} = useContext(DataTableData);
 
   useEffect(() => {
     axiosBase({
@@ -15,9 +16,9 @@ const SongDetailsProvider = ({children}) => {
       url: '/getExistingBuckets',
     })
       .then(response => {
-        const buckets = response.data?.map(item => item.bucket)
-        setGeneratedSets(buckets)
-      })
+        const buckets = response.data?.map(item => item.bucket);
+        setGeneratedSets(buckets);
+      });
   }, []);
 
 
@@ -29,26 +30,26 @@ const SongDetailsProvider = ({children}) => {
       data: data
     })
       .catch(error => {
-        console.log(error?.response?.data?.message)
-      })
-    getData()
-    return result.data
-  }
+        console.log(error?.response?.data?.message);
+      });
+    getData();
+    return result.data;
+  };
 
 
   const createComment = async (data) => {
-    data.UserId = '051c927a-d980-40fa-aeca-2d599b466aa2'
+    data.UserId = '051c927a-d980-40fa-aeca-2d599b466aa2';
     const result = await axiosBase({
       method: 'post',
       url: '/createComment',
       data: data
     })
       .catch(error => {
-        console.log(error)
-      })
+        console.log(error);
+      });
 
-    return result.data
-  }
+    return result.data;
+  };
 
   const getCommentsForSong = async (SongNumber) => {
     const result = await axiosBase({
@@ -59,11 +60,11 @@ const SongDetailsProvider = ({children}) => {
       }
     })
       .catch(error => {
-        console.log(error)
-      })
+        console.log(error);
+      });
 
-    return result.data
-  }
+    return result.data;
+  };
 
   const uploadMediaFile = async (data) => {
     const result = await axiosBase({
@@ -72,11 +73,11 @@ const SongDetailsProvider = ({children}) => {
       data: data
     })
       .catch(error => {
-        console.log(error)
-      })
+        console.log(error);
+      });
 
-    return result.data
-  }
+    return result.data;
+  };
 
   const addSong = async (data) => {
     const result = await axiosBase({
@@ -85,25 +86,49 @@ const SongDetailsProvider = ({children}) => {
       data: data
     })
       .catch(error => {
-        console.log(error)
-      })
+        console.log(error);
+      });
 
-    return result.data
-  }
+    return result.data;
+  };
+
+  const addPublisher = async (data) => {
+    const result = await axiosBase({
+      method: 'post',
+      url: '/addPublisher',
+      data: data
+    })
+      .catch(error => {
+        console.log(error);
+      });
+
+    return result.data;
+  };
+
+  // addPublisher
 
   const getDetailsForSong = async (SongNumber) => {
     console.log('STM context-SongDetailsContext.jsx:82', SongNumber); // todo remove dev item
-    const result = await axios.get(`${base_url}/catalogInternal?SongNumber=${SongNumber}`)
-    return result.data.data[0]
-  }
+    const result = await axios.get(`${base_url}/catalogInternal?SongNumber=${SongNumber}`);
+    return result.data.data[0];
+  };
 
   return (
-    <SongDetailsContext.Provider value={{generatedSets, addSong, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong}}>
+    <SongDetailsContext.Provider value={{
+      generatedSets,
+      addPublisher,
+      addSong,
+      getDetailsForSong,
+      uploadMediaFile,
+      updateSong,
+      createComment,
+      getCommentsForSong
+    }}>
       {children}
     </SongDetailsContext.Provider>
-  )
+  );
 
-}
+};
 
 
-export default SongDetailsProvider
+export default SongDetailsProvider;
