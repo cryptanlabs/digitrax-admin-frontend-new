@@ -9,12 +9,22 @@ import BungalowIcon from "@mui/icons-material/Bungalow";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Link } from "react-router-dom";
-import { Button, Box } from "@mui/material";
+import {Link, useNavigate} from 'react-router-dom';
+import {Button, Box, Typography} from '@mui/material';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
+import {useContext} from 'react';
+import {DataTableData} from '../context/DataTableContext.jsx';
 
 const drawerWidth = 240;
 export default function SideNav() {
+  const navigate = useNavigate();
+  const { recentSongs } = useContext(DataTableData);
+
+
+  const navigateToRecentSong = (song) => {
+    navigate("/songdata", { state: { SongNumber: song } });
+  }
+
   return (
     <Drawer
       sx={{
@@ -78,8 +88,21 @@ export default function SideNav() {
         ))}
       </List>
       </Box>
-      <Box>
-
+      <Box sx={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+        <Typography sx={{ fontWeight: "bold" , paddingLeft: '30px'}}>
+          Recent Songs
+        </Typography>
+        <List>
+        {recentSongs.map((song, idx) => (
+          <ListItem key={idx}
+            onClick={() => {navigateToRecentSong(song)}}
+          >
+            <ListItemButton>
+              <ListItemText primary={`C${song}`} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        </List>
       </Box>
       <Box sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
       <Button
