@@ -1,6 +1,7 @@
-import {Typography} from '@mui/material';
+import {Button, Typography} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload.js';
 import {useEffect, useRef, useState} from 'react';
+import {base_url} from '../helpers/requests.js';
 
 
 export function FileUpload({mediaObject, returnUploadFile}){
@@ -9,6 +10,7 @@ export function FileUpload({mediaObject, returnUploadFile}){
   const [generatedMedia, setGeneratedMedia] = useState({});
 
   useEffect(() => {
+    console.log('STM components-fileUpload.jsx:12', mediaObject); // todo remove dev item
     setGeneratedMedia(mediaObject)
   }, [mediaObject]);
 
@@ -69,7 +71,26 @@ export function FileUpload({mediaObject, returnUploadFile}){
             </Typography>
           )}
         </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg"></div>
+        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
+          <a href={`${base_url}/fileGetInternal/${generatedMedia.requestString}`} target="_blank" download>
+          <Button
+            variant="outlined"
+            onClick={() => {setShowFileUpload(true)}}
+            sx={{
+              marginRight: "15px",
+              borderColor: "#00b00e",
+              backgroundColor: "#00b00e",
+              color: "white",
+              "&:hover": {
+                borderColor: "#F1EFEF",
+                backgroundColor: "#86A789",
+              },
+            }}
+          >
+            Download File:  {generatedMedia.fullFilename}
+          </Button>
+          </a>
+        </div>
       </div>
     </>
   )

@@ -126,7 +126,6 @@ const SongDetails = () => {
       setup(location.state.rowData)
       getCrossClearForSong(location.state.rowData.SongNumber)
         .then(crossRecords => {
-
           setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)))
         })
         .catch(console.error)
@@ -142,6 +141,11 @@ const SongDetails = () => {
           setup(songDetails)
           location.state.rowData = songDetails
         })
+      getCrossClearForSong(location.state.SongNumber)
+        .then(crossRecords => {
+          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)))
+        })
+        .catch(console.error)
 
 
     }

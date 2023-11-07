@@ -15,10 +15,12 @@ const CrossDashboard = () => {
   const { currentDataSet, crossClearDataSet, crossColumnDetails, addToRecentSongs } = useContext(DataTableData);
   const [filteredResults, setFilteredResults] = useState([]);
   const [sortInstructions, setSortIntructions] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(currentDataSet?.length > 0) setIsLoading(false)
     setFilteredResults(crossClearDataSet);
   }, [crossClearDataSet]);
 
@@ -105,7 +107,7 @@ const CrossDashboard = () => {
           )}
         </div>
       </div>
-      <SimpleDataGrid columns={columns} rows={filteredResults} onRowClick={() => {}}/>
+      <SimpleDataGrid columns={columns} rows={filteredResults} onRowClick={() => {}} loading={isLoading}/>
 
     </div>
   );

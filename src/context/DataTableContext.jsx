@@ -1,6 +1,7 @@
 import {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {base_url} from '../helpers/requests.js';
+import {ColumnHeadersMap} from '../helpers/constants.js';
 
 export const DataTableData = createContext(undefined);
 
@@ -107,6 +108,13 @@ const DataTableContext = ({children}) => {
           field: 'id',
           headerName: items.name,
           width: 75,
+        };
+      }
+      if(ColumnHeadersMap[items.name]){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          width: width ?? 150
         };
       }
       return {

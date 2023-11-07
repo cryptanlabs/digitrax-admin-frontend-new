@@ -98,6 +98,21 @@ export function FileAdd({songNumber, preSetBucketTo, buckets = [], submit = () =
     }
   }
 
+  const handleClosePanel = () => {
+    if(!preSetBucketTo){
+      submit(formData)
+      setSelectedFile(null)
+      setBucketName('')
+      setUploadEnabled(false)
+      setCreateBucket(false)
+      setCurrentFileName('')
+      setShowFileUpload(false)
+      setDifferentFilename(false)
+      setChangeFilename(false)
+    }
+    setShowFileUpload(false)
+  }
+
   const bucketNameEnterSelectElem = () => {
 
     if(preSetBucketTo){
@@ -285,7 +300,7 @@ export function FileAdd({songNumber, preSetBucketTo, buckets = [], submit = () =
       </div>
       <div className="flex-none ml-20 content-start">
         <Button
-          onClick={() => {setShowFileUpload(false)}}
+          onClick={handleClosePanel}
           sx={{
 
             borderColor: "gray",
