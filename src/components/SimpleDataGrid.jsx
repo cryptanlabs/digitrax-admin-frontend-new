@@ -10,7 +10,7 @@ import {createSvgIcon} from '@mui/material/utils';
 import {Button} from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 
-export function SimpleDataGrid({rows, columns, loading, onRowClick = () => {}}) {
+export function SimpleDataGrid({rows = [], columns = [], loading, onRowClick = () => {}}) {
 
   const getRowsFromCurrentPage = ({ apiRef }) =>
     gridPaginatedVisibleSortedGridRowIdsSelector(apiRef);

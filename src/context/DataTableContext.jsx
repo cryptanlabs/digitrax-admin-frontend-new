@@ -101,8 +101,8 @@ const DataTableContext = ({children}) => {
     }
     const computedColumnNames = tableNameSource?.fields?.map(items => items.name);
 
-
-    const computedColumnDetails = tableNameSource?.fields?.filter(item => !excludeFields.includes(item.name)).map(items => {
+    // .filter(item => !excludeFields.includes(item.name))
+    const computedColumnDetails = tableNameSource?.fields?.map(items => {
       if (items.name === 'Id') {
         return {
           field: 'id',

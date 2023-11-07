@@ -53,11 +53,19 @@ const reduceCrossInfoForSong = (crossData) => {
   }
 }
 
+function isWhiteSpace(value) {
+  return /^\s*$/gm.test(value)
+}
 
+function upperCaseKey(field) {
+  return field.slice(0, 1).toUpperCase() + field.slice(1)
+}
 
 export {
   getStatusInfoFromSongData,
   getBasicInfoFromSongData,
   getLicensingInfoFromSongData,
-  reduceCrossInfoForSong
+  reduceCrossInfoForSong,
+  isWhiteSpace,
+  upperCaseKey
 }

@@ -9,6 +9,8 @@ import SongDetailsProvider from './context/SongDetailsContext.jsx';
 import CreateSong from './pages/CreateSong';
 import CrossDashboard from './pages/CrossDashboard.jsx';
 import Reports from './pages/Reports.jsx';
+import ApiUsers from './pages/ApiUsers.jsx';
+import QueryBuilder from './pages/QueryBuilder.jsx';
 
 const App = () => {
   return (
@@ -24,6 +26,8 @@ const App = () => {
               <Route path="/songdata" element={<SongDetails />} />
               <Route path='/createsong' element={<CreateSong />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/queryBuilder" element={<QueryBuilder />} />
+              <Route path="/apiUsers" element={<ApiUsers />} />
             </Routes>
           </div>
         </SongDetailsProvider>
