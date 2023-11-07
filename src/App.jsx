@@ -11,6 +11,7 @@ import CrossDashboard from './pages/CrossDashboard.jsx';
 import Reports from './pages/Reports.jsx';
 import ApiUsers from './pages/ApiUsers.jsx';
 import QueryBuilder from './pages/QueryBuilder.jsx';
+import Users from './pages/Users.jsx';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
               <Route path="/reports" element={<Reports />} />
               <Route path="/queryBuilder" element={<QueryBuilder />} />
               <Route path="/apiUsers" element={<ApiUsers />} />
+              <Route path="/users" element={<Users />} />
             </Routes>
           </div>
         </SongDetailsProvider>

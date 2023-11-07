@@ -65,6 +65,8 @@ export default function SideNav() {
                     return "/apiUsers";
                   case 6:
                     return "/queryBuilder";
+                  case 7:
+                    return "/users";
                   default:
                     return "/";
                 }
@@ -89,6 +91,8 @@ export default function SideNav() {
                         return <AccountCircleIcon />;
                       case 6:
                         return <CheckBoxIcon />;
+                      case 7:
+                        return <AccountCircleIcon />;
                       // case 4:
                       //   return <AccountCircleIcon />;
 
