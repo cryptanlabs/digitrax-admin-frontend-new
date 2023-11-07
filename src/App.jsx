@@ -7,6 +7,8 @@ import DataTableContext from './context/DataTableContext';
 import SongDetails from './pages/SongDetails';
 import SongDetailsProvider from './context/SongDetailsContext.jsx';
 import CreateSong from './pages/CreateSong';
+import CrossDashboard from './pages/CrossDashboard.jsx';
+import Reports from './pages/Reports.jsx';
 
 const App = () => {
   return (
@@ -18,8 +20,10 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/crossDashboard" element={<CrossDashboard />} />
               <Route path="/songdata" element={<SongDetails />} />
               <Route path='/createsong' element={<CreateSong />} />
+              <Route path="/reports" element={<Reports />} />
             </Routes>
           </div>
         </SongDetailsProvider>

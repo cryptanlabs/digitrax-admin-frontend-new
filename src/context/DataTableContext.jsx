@@ -1,125 +1,181 @@
 import {createContext, useEffect, useState} from 'react';
-import axios from 'axios'
-import {base_url} from '../helpers/requests.js'
+import axios from 'axios';
+import {base_url} from '../helpers/requests.js';
 
 export const DataTableData = createContext(undefined);
 
 const excludeFields = [
-  "Id",
-  "Writer",
-  "Artist",
-  "HFASongCode",
-  "ISWC",
-  "RecordingType",
-  "RecordingArtist",
-  "RecordingIdNumber",
-  "RecordingTitle",
-  "Label",
-  "ISRCCAMixVocal",
-  "ISRCCCMixKaraoke",
-  "ISRCCDMixInstrumental",
-  "ISRCAAMixVocal",
-  "ISRCACMixKaraoke",
-  "ISRCADMixInstrumental",
-  "HFALicenseNumber",
-  "MechanicalRegistrationNumberA",
-  "MechanicalRegistrationNumberC",
-  "MechanicalRegistrationNumberD",
-  "SongCrossId",
-  "CheckMixes",
-  "CrossIdA",
-  "CrossIdC",
-  "CrossIdD",
-  "CreatedAt",
-  "UpdatedAt",
-  "SubGenre",
-  "Description",
-  "ReleaseYear"
-]
+  'Id',
+  'Writer',
+  'Artist',
+  'HFASongCode',
+  'ISWC',
+  'RecordingType',
+  'RecordingArtist',
+  'RecordingIdNumber',
+  'RecordingTitle',
+  'Label',
+  'ISRCCAMixVocal',
+  'ISRCCCMixKaraoke',
+  'ISRCCDMixInstrumental',
+  'ISRCAAMixVocal',
+  'ISRCACMixKaraoke',
+  'ISRCADMixInstrumental',
+  'HFALicenseNumber',
+  'MechanicalRegistrationNumberA',
+  'MechanicalRegistrationNumberC',
+  'MechanicalRegistrationNumberD',
+  'SongCrossId',
+  'CheckMixes',
+  'CrossIdA',
+  'CrossIdC',
+  'CrossIdD',
+  'CreatedAt',
+  'UpdatedAt',
+  'SubGenre',
+  'Description',
+  'ReleaseYear'
+];
 
 const DataTableContext = ({children}) => {
   const [currentDataSet, setCurrentDataSet] = useState([]);
   const [nextPage, setNextPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
-  const [currentTable, setCurrentTable] = useState('SongCatalog');
+  const [dataModels, setDataModels] = useState(undefined);
   const [columnNames, setColumnNames] = useState(undefined);
   const [columnDetails, setColumnDetails] = useState([]);
+  const [crossColumnNames, setCrossColumnNames] = useState([]);
+  const [crossColumnDetails, setCrossColumnDetails] = useState([]);
   const [recentSongs, setRecentSongs] = useState([]);
+  const [crossClearDataSet, setCrossClearDataSet] = useState([]);
 
   const getData = async () => {
-    const limit = 1000 //-1 // -1
+    const limit = 1000; //-1 // -1
     // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
-    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${limit}&orderDir=desc`)
+    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${limit}&orderDir=desc`);
     const lowercaseId = res?.data?.data?.map(item => {
 
-      return {id:item.Id, ...item}
-    })
-    setCurrentDataSet(lowercaseId)
-    setTotalResults(res.data.totalResults)
-    setTotalPages(res.data.totalPages)
-    setNextPage(res.data.nextPage)
+      return {id: item.Id, ...item};
+    });
+    setCurrentDataSet(lowercaseId);
+    setTotalResults(res.data.totalResults);
+    setTotalPages(res.data.totalPages);
+    setNextPage(res.data.nextPage);
 
-    console.log("Result:", res)
+    console.log('Result:', res);
 
 
-  }
+  };
+
+  const getCrossData = async () => {
+    const limit = 1000; //-1 // -1
+    // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
+    const res = await axios.get(`${base_url}/getCrossClear`);
+    const lowercaseId = res?.data?.result?.map(item => {
+
+      return {id: item.Id, ...item};
+    });
+    console.log('STM context-DataTableContext.jsx:79', lowercaseId); // todo remove dev item
+    setCrossClearDataSet(lowercaseId);
+
+    console.log('Result getCrossData:', res);
+
+
+  };
 
   useEffect(() => {
-    console.log("Total Results:", totalResults)
-    console.log("Total pages:", totalPages)
-    console.log("Column Details:", columnDetails)
-  },[totalResults, totalPages, columnDetails])
+    console.log('Total Results:', totalResults);
+    console.log('Total pages:', totalPages);
+    console.log('Column Details:', columnDetails);
+  }, [totalResults, totalPages, columnDetails]);
+
+  const getColumnNamesAndHeaderDetails = (tableName, datamodel = dataModels, { width } = {width: 150}) => {
+
+    let tableNameSource
+    if(typeof tableName === 'number'){
+      tableNameSource = datamodel?.models[tableName]
+    } else {
+      tableNameSource = datamodel?.models?.find(item => item.name = tableName)
+    }
+    const computedColumnNames = tableNameSource?.fields?.map(items => items.name);
 
 
-  const getColumnNames = async () => {
-    const res = await axios.get(`${base_url}/columnNames`)
-
-    setCurrentTable('SongCatalog')
-    const columns = res.data?.datamodel?.models?.find(item => item.name = 'SongCatalog')?.fields?.map(items => items.name)
-
-    const columns2 = res.data?.datamodel?.models?.find(item => item.name = 'SongCatalog')?.fields?.filter(item => !excludeFields.includes(item.name)).map(items => {
-      if(items.name === 'Id'){
+    const computedColumnDetails = tableNameSource?.fields?.filter(item => !excludeFields.includes(item.name)).map(items => {
+      if (items.name === 'Id') {
         return {
           field: 'id',
           headerName: items.name,
           width: 75,
-        }
+        };
       }
       return {
         field: items.name,
         headerName: items.name,
-        width: 150
-      }
-    })
-    setColumnDetails(columns2)
-    console.log('STM context-DataTableContext.jsx:43', columns2); // todo remove dev item
-    setColumnNames(columns)
-    console.log(res)
-    console.log('STM context-DataTableContext.jsx:31', columns); // todo remove dev item
+        width: width ?? 150
+      };
+    });
+
+    console.log('STM context-DataTableContext.jsx:111', computedColumnDetails, computedColumnNames); // todo remove dev item
+    return [computedColumnDetails, computedColumnNames]
   }
+
+  const getColumnNames = async () => {
+    const res = await axios.get(`${base_url}/columnNames`);
+    setDataModels(res.data?.datamodel);
+
+    const [columns2, columns] = getColumnNamesAndHeaderDetails('SongCatalog', res.data?.datamodel)
+    setColumnDetails(columns2);
+    setColumnNames(columns);
+    console.log(res);
+
+    const [columns2CrossClear, columnCrossClear] = getColumnNamesAndHeaderDetails(3, res.data?.datamodel, {width: 250})
+    setCrossColumnNames(columnCrossClear)
+    setCrossColumnDetails(columns2CrossClear)
+  };
 
   useEffect(() => {
     getColumnNames()
-    getData()
+      .then(getData)
+      .then(getCrossData)
   }, []);
 
+  // useEffect(() => {
+  //   getColumnNames();
+  //   getData();
+  //   getCrossData();
+  // }, []);
+
   const addToRecentSongs = (song) => {
-    setRecentSongs((prev) =>{
-      if(prev.length > 7){
-        prev.shift()
+    setRecentSongs((prev) => {
+      if (prev.length > 7) {
+        prev.shift();
       }
-      return [...prev, song]
-    })
-  }
+      return [...prev, song];
+    });
+  };
 
 
   return (
-    <DataTableData.Provider value={{getData, recentSongs, addToRecentSongs, currentDataSet, nextPage, totalPages, totalResults, columnNames, columnDetails}}>
+    <DataTableData.Provider value={{
+      getData,
+      getCrossData,
+      crossClearDataSet,
+      crossColumnNames,
+      crossColumnDetails,
+      recentSongs,
+      addToRecentSongs,
+      currentDataSet,
+      nextPage,
+      totalPages,
+      totalResults,
+      columnNames,
+      columnDetails
+    }}>
       {children}
     </DataTableData.Provider>
-  )
-}
+  );
+};
 
 
-export default DataTableContext
+export default DataTableContext;

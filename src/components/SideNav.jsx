@@ -46,7 +46,7 @@ export default function SideNav() {
         <img src="/digitrax.png" alt="Digitrax" width="500" height="600" />
       </Toolbar>
       <List>
-        {["Home", "Dashboard", "Create Song", "Users"].map((text, index) => (
+        {["Home", "Dashboard", "crossDashboard", "Create Song", "Reports", "Users"].map((text, index) => (
           <ListItem key={text}>
             <Link
               to={(() => {
@@ -55,9 +55,12 @@ export default function SideNav() {
                     return "/";
                   case 1:
                     return "/dashboard";
-                    case 2:
+                  case 2:
+                    return "/crossDashboard";
+                  case 3:
                     return "/createsong";
-                  // case 3: return "/path4";
+                  case 4:
+                    return "/reports";
                   default:
                     return "/";
                 }
@@ -73,9 +76,14 @@ export default function SideNav() {
                       case 1:
                         return <BarChartIcon />;
                       case 2:
-                        return <CheckBoxIcon />;
+                        return <BarChartIcon />;
                       case 3:
-                        return <AccountCircleIcon />;
+                        return <CheckBoxIcon />;
+                      case 4:
+                        return <CheckBoxIcon />;
+                      // case 4:
+                      //   return <AccountCircleIcon />;
+
                       default:
                         return null;
                     }

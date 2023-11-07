@@ -105,6 +105,21 @@ const SongDetailsProvider = ({children}) => {
     return result.data;
   };
 
+  const removePublisher = async (data) => {
+    const result = await axiosBase({
+      method: 'post',
+      url: '/removePublisher',
+      data: data
+    })
+      .catch(error => {
+        console.log(error);
+      });
+
+    return result.data;
+  };
+
+  // removePublisher
+
   // addPublisher
 
   const getDetailsForSong = async (SongNumber) => {
@@ -118,6 +133,7 @@ const SongDetailsProvider = ({children}) => {
       generatedSets,
       addPublisher,
       addSong,
+      removePublisher,
       getDetailsForSong,
       uploadMediaFile,
       updateSong,

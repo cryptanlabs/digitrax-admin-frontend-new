@@ -7,6 +7,10 @@ import {SongDetailsContext} from '../context/SongDetailsContext';
 import {  TextFields40Pct, TextFields15Pct} from '../components/textFields'
 import { FileUpload } from '../components/fileUpload'
 import {FileAdd} from '../components/fileAdd.jsx';
+import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
+import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
+import {BasicSongInfoDisplay} from '../components/BasicSongInfoDisplay.jsx';
+import {CommentDisplay} from '../components/CommentDisplay.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -22,6 +26,15 @@ const publishingHeadersMappedToColumn = {
   "HFA Song Code": "HFASongCode",
   "HFA-Mechanical-A Mix": "MechanicalRegistrationNumberA",
   "HFA-Mechanical-D Mix": "MechanicalRegistrationNumberD",
+  "Territories": "Territories",
+  "Writer": "Writer"
+}
+
+const publishingColumnMappedToHeaders = {
+  "ISRCCAMixVocal": "ISRC",
+  "HFASongCode": "HFA Song Code",
+  "MechanicalRegistrationNumberA": "HFA-Mechanical-A Mix",
+  "MechanicalRegistrationNumberD": "HFA-Mechanical-D Mix",
   "Territories": "Territories",
   "Writer": "Writer"
 }
@@ -50,7 +63,7 @@ const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const {generatedSets, addSong,getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
+  const {generatedSets, addPublisher, removePublisher, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [filesForUpload, setFilesForUpload] = useState({});
   const [newComment, setNewComment] = useState('');
@@ -62,6 +75,18 @@ const SongDetails = () => {
  const [songPublishers, setSongPublishers] = useState([])
 
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
+
+  const [statusInformation, setStatusInformation] = useState({
+    ClearedforKaraoke: false,
+    ClearedForTV: false,
+    Kod: false,
+    Vevo: false,
+    VirtualDj: false,
+    KaraokeCloudApi: false,
+    Status: ''
+
+  });
+
   const [licensingInformation, setLicensingInformation] = useState({
     ISRCCAMixVocal: "",
     HFASongCode: "",
@@ -85,8 +110,24 @@ const SongDetails = () => {
     Description: "",
   });
 
+  const getStatusInfoFromSongData = (rowData) => {
+    return {
+      ClearedforKaraoke: rowData.ClearedforKaraoke,
+      ClearedForTV: rowData.ClearedForTV,
+      Kod: rowData.Kod,
+      VirtualDj: rowData.VirtualDj,
+      KaraokeCloudApi: rowData.KaraokeCloudApi,
+      Status: rowData.Status,
+    }
+  }
   const setup = (rowData) => {
     setGeneratedMedia(rowData.GeneratedMedia)
+
+    setStatusInformation((prev) => ({
+      ...prev,
+      ...getStatusInfoFromSongData(rowData)
+    }));
+
 
     setLicensingInformation((prev) => ({
       ...prev,
@@ -115,7 +156,7 @@ const SongDetails = () => {
 
     // localStorage.setItem('items', JSON.stringify(items));
 
-    setSongPublishers(rowData.songPublishers)
+    setSongPublishers(rowData.SongPublisher)
     getCommentsForSong()
   }
 
@@ -190,6 +231,14 @@ const SongDetails = () => {
     }));
   };
 
+  const handleStatusChange = (e) => {
+    const { name, value } = e.target;
+    setStatusInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const uploadMediaFileAndRefresh = async (data) => {
     await uploadMediaFile(data)
     const songData = await getDetailsForSong(basicInformation.SongNumber)
@@ -211,6 +260,37 @@ const SongDetails = () => {
     const updatedDetails =  await updateSong(withSongNumber)
     setLicensingInformation(updatedDetails)
     console.log(basicInformation)
+  }
+
+  const handleStatusEdit = async () => {
+    const withSongNumber = {...statusInformation, SongNumber: basicInformation.SongNumber}
+
+    const updatedDetails =  await updateSong(withSongNumber)
+    setStatusInformation((prev) => ({
+      ...prev,
+      ...getStatusInfoFromSongData(updatedDetails)
+    }));
+    console.log(updatedDetails)
+  }
+
+  const handleSaveNewPublisher = async (data) => {
+    console.log('STM pages-SongDetails.jsx:279', data); // todo remove dev item
+    const newPublisher = await addPublisher(data)
+    setSongPublishers((prev) => ([
+      ...prev,
+      newPublisher
+    ]))
+  }
+
+  const handleRemovePublisher = async (data) => {
+    console.log('STM pages-SongDetails.jsx:279', data); // todo remove dev item
+    const removed = await removePublisher(data)
+    console.log('STM pages-SongDetails.jsx:286', removed); // todo remove dev item
+    setSongPublishers((prev) => {
+      const idx = prev.findIndex(item => item.PublisherDatabaseId === data.PublisherDatabaseId)
+      prev.splice(idx, 1)
+      return prev
+    })
   }
 
 
@@ -298,179 +378,12 @@ const SongDetails = () => {
           </Button>
         </div>
       </div>
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>
-            Basic Song Information
-          </Typography>
-          <Typography>Fill out available song Metadata below</Typography>
-        </div>
-      </div>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
-          <TextField
-            name="Id"
-            type="number"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.SongNumber}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-full flex flex-row mt-10 flex">
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Song Title</Typography>
-          <TextField
-            name="Title"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.Title}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>
-          <TextField
-            name="Artist"
-            onChange={handleChange}
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.Artist}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-full flex flex-row mt-10 flex">
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Genre"
-            value={basicInformation.Genre}
-            onChange={handleChange}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-20 w-[40%]">
-          <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="SubGenre"
-            onChange={handleChange}
-            value={basicInformation.SubGenre}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-[90%] flex flex-row mt-10 flex">
-        <div className="flex flex-col  w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Bar Intro</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            name="BarIntro"
-            hiddenLabel
-            onChange={handleChange}
-            value={basicInformation.BarIntro}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Key</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            value={basicInformation.SongKey}
-            name="SongKey"
-            onChange={handleChange}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Duration</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Duration"
-            onChange={handleChange}
-            value={basicInformation.Duration}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Mixes</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="Mixes"
-            onChange={handleChange}
-            value={basicInformation.Mixes}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Mix Rendered</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            name="MixRendered"
-            onChange={handleChange}
-            value={basicInformation.MixRendered}
-            variant="outlined"
-          />
-        </div>
-        <div className="flex flex-col ml-10 w-[15%]">
-          <Typography sx={{ fontWeight: "bold" }}>Release Year</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            type="number"
-            name="SongReleaseYear"
-            onChange={handleChange}
-            value={basicInformation.SongReleaseYear}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col w-[90%] ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Song Description</Typography>
-          <TextField
-            sx={{ marginTop: 1 }}
-            hiddenLabel
-            multiline
-            rows={4}
-            name="Description"
-            onChange={handleChange}
-            value={basicInformation.Description}
-            variant="outlined"
-          />
-        </div>
-      </div>
+      <BasicSongInfoDisplay
+        handleChange={handleChange}
+        basicInformation={basicInformation}
+      />
+
       <div className="w-full mt-10 flex items-center justify-center">
-        {!location.state.rowData ? (
-          <Button
-            variant="outlined"
-            onClick={handleSongUpload}
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            UPLOAD
-          </Button>
-        ) : (
           <Button
             variant="outlined"
             onClick={handleSongEdit}
@@ -485,47 +398,43 @@ const SongDetails = () => {
               },
             }}
           >
-            Edit
+            Save Changes
           </Button>
-        )}
+      </div>
+      {/*handleStatusEdit*/}
+      <InfoDisplayRow
+        title="Status Information"
+        subTitle="Update the status information here"
+        infoToDisplay={statusInformation}
+        handleChange={handleStatusChange}
+        useDropDown
+      />
+      <div className="w-[90%] mt-5 flex items-center justify-end">
+        <Button
+          variant="outlined"
+          onClick={handleStatusEdit}
+          sx={{
+            marginRight: "15px",
+            borderColor: "#00b00e",
+            backgroundColor: "#00b00e",
+            color: "white",
+            "&:hover": {
+              borderColor: "#F1EFEF",
+              backgroundColor: "#86A789",
+            },
+          }}
+        >
+          Save Changes
+        </Button>
       </div>
       {/* LICENSING INFORMATION VIEW/EDIT */}
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>
-            Publishing Information
-          </Typography>
-          <Typography>Update the publishing information here</Typography>
-        </div>
-      </div>
-      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-        <div className="w-full h-10 border-b flex border-gray-300">
-          {publishingHeaders.map((header, index) => (
-            <div
-              key={index}
-              className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
-            >
-              <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-            </div>
-          ))}
-        </div>
-        <div className="w-full h-20 flex">
-          {/* publishingHeadersMappedToColumn */}
-          {licensingInfoDisplay.map((header, index) => (
-            <div key={index} className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 ">
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  name={header.key}
-                  onChange={handleLicensingChange}
-                 value={licensingInformation[header.key]}
-                  variant="outlined"
-                />
-            </div>
-          ))}
-        </div>
-      </div>
+      <InfoDisplayRow
+        title="Publishing Information"
+        subTitle="Update the publishing information here"
+        infoToDisplay={licensingInformation}
+        headerMap={publishingColumnMappedToHeaders}
+        handleChange={handleLicensingChange}
+      />
       <div className="w-[90%] mt-5 flex items-center justify-end">
           <Button
             variant="outlined"
@@ -544,178 +453,14 @@ const SongDetails = () => {
            Save Changes
           </Button>
       </div>
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-            <Typography sx={{ fontWeight: "bold" }}>
-              Edit Publisher Details
-            </Typography>
-        </div>
-      </div>
-      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-        <div className="w-full h-10 border-b flex border-gray-300">
-          {songPublisherHeaders.map((header, index) => (
-            <div
-              key={index}
-              className="w-[30%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
-            >
-              <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-            </div>
-          ))}
-        </div>
-        {location.state.rowData &&
-          location.state.rowData.SongPublisher.map((publisher, index) => (
-            <div
-              key={index}
-              className="w-full border-b flex border-gray-300 h-20"
-            >
-              {songPublisherHeaders.map((header, index) => (
-                <div key={header} className="w-[30%] h-full flex items-center justify-center">
-                  {" "}
-                  <TextField
-                    sx={{ marginTop: 1, width: "90%" }}
-                    size="small"
-                    hiddenLabel
-                    variant="outlined"
-                    defaultValue={publisher[header] ?? ''}
-                  ></TextField>
-                </div>
-              ))}
-            </div>
-          ))}
-        {location.state.rowData &&
-          location.state.rowData.SongPublisher.length === 0 && (
-            <div className="w-full border-b flex border-gray-300 h-20">
-              <div className="w-[20%] h-full flex items-center justify-center ">
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                ></TextField>
-              </div>
-              <div className="w-[20%] h-full flex items-center justify-center">
-                {" "}
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  variant="outlined"
-                ></TextField>
-              </div>
-            </div>
-          )}
-        {!location.state.rowData && (
-          <div className="w-full border-b flex border-gray-300 h-20">
-            <div className="w-[20%] h-full flex items-center justify-center ">
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              ></TextField>
-            </div>
-            <div className="w-[20%] h-full flex items-center justify-center">
-              {" "}
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              ></TextField>
-            </div>
-            <div className="w-[20%] h-full flex items-center justify-center">
-              {" "}
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              ></TextField>
-            </div>
-            <div className="w-[20%] h-full flex items-center justify-center">
-              {" "}
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              ></TextField>
-            </div>
-            <div className="w-[20%] h-full flex items-center justify-center ">
-              {" "}
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              ></TextField>
-            </div>
-            <div className="w-[20%] h-full flex items-center justify-center  ">
-              {" "}
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                variant="outlined"
-              ></TextField>
-            </div>
-          </div>
-        )}
-      </div>
+      <PublisherInfoDisplay
+        songNumber={basicInformation.SongNumber}
+        setSongPublishers={setSongPublishers}
+        songPublishers={songPublishers}
+        saveNewPublisher={handleSaveNewPublisher}
+        removePublisher={handleRemovePublisher}
+      />
       <div className="w-[90%] mt-5 flex items-center justify-end">
-        {!location.state.rowData ? (
-          <Button
-            variant="outlined"
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            Save
-          </Button>
-        ) : (
           <Button
             variant="outlined"
             sx={{
@@ -731,71 +476,10 @@ const SongDetails = () => {
           >
             Save Changes
           </Button>
-        )}
       </div>
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Comments</Typography>
-        </div>
-      </div>
-      <div className="w-[90%] mt-10 flex overflow-x-scroll">
-        {comments.map((comment, index) => (
-          <div key={index} className="flex flex-col ml-10 mb-10">
-            <div className="flex flex-row items-center p-5">
-              <Typography variant="body1">{comment.UserName}</Typography>
-              <Typography sx={{ marginLeft: 10 }} variant="body2">
-                {comment.date}
-              </Typography>
-            </div>
-            <div className="bg-gray-300 w-80 ml-5 p-2 rounded-md rounded-tl-none">
-              <Typography>{comment.Content}</Typography>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col w-[90%] ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Add a Comment</Typography>
-          {location.state.rowData ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              multiline
-              rows={4}
-              value={newComment}
-              onChange={handleCommentChange}
-              variant="outlined"
-            />
-          ) : (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              multiline
-              rows={4}
-              variant="outlined"
-            />
-          )}
-        </div>
-      </div>
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-        <Button
-          variant="outlined"
-          onClick={handleCreateComment}
-          sx={{
-            marginRight: "15px",
-            borderColor: "#00b00e",
-            backgroundColor: "#00b00e",
-            color: "white",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#86A789",
-            },
-          }}
-        >
-          Save Comment
-        </Button>
-      </div>
-
+      <CommentDisplay
+        comments={comments}
+      />
       <div className="w-full mt-10 flex">
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>

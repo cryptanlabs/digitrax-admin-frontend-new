@@ -1,7 +1,8 @@
-import {Button, TextField, Typography} from '@mui/material';
+import {Button, TextField, Typography, IconButton } from '@mui/material';
 import {useState} from 'react';
-import CloseIcon from '@mui/icons-material/Close.js';
 import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
 
 const songPublisherHeaders = [
   // "Id",
@@ -15,13 +16,11 @@ const songPublisherHeaders = [
 
 // Save new publisher is separate because it has its own upload endpoint.  And each publisher
 // is its own database row
-export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublishers, saveNewPublisher}) {
+export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublishers, saveNewPublisher  = () => {}, removePublisher = () => {}}) {
   const [localSongPublishers, setLocalSongPublishers] = useState([]);
   const [addNewPublisher, setAddNewPublisher] = useState(false);
+  const [showRemovePublisher, setShowRemovePublisher] = useState(false);
 
-  // if(songPublishers?.length === 0){
-  //   setAddNewPublisher(true)
-  // }
   const handleChange = (idx) => {
     const index = idx
     return (e) => {
@@ -77,7 +76,7 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             onChange={e => setShare(e.target.value)}
           ></TextField>
         </div>
-        <Button
+        <IconButton
           onClick={() => {
             console.log('STM components-PublisherInfoDisplay.jsx:79', {
               SongNumber: songNumber,
@@ -103,13 +102,29 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             },
           }}
         >
-          <SaveIcon></SaveIcon>
-        </Button>
+          <SaveIcon fontSize="small"/>
+        </IconButton>
+        <IconButton
+          onClick={() => {
+            setAddNewPublisher(false)
+          }}
+          size="small"
+          sx={{
+            borderColor: "gray",
+            color: "black",
+            "&:hover": {
+              borderColor: "#F1EFEF",
+              backgroundColor: "#F5F7F8",
+            },
+          }}
+        >
+          <CloseIcon fontSize="small"/>
+        </IconButton>
       </div>
     )
   }
   const PublisherRow = ({publisher = {}, index}) => {
-console.log('STM components-PublisherInfoDisplay.jsx:109', publisher); // todo remove dev item
+
     return (
       <div className="w-full border-b flex border-gray-300 h-20">
         <div className="w-[33%] h-full flex items-center justify-center ">
@@ -143,6 +158,42 @@ console.log('STM components-PublisherInfoDisplay.jsx:109', publisher); // todo r
             onchange={handleChange(index)}
           ></TextField>
         </div>
+        {showRemovePublisher && (<>
+          <IconButton
+            onClick={() => {
+              removePublisher(publisher)
+              setShowRemovePublisher(false)
+            }}
+            size="small"
+            sx={{
+              borderColor: "gray",
+              color: "black",
+              "&:hover": {
+                borderColor: "#F1EFEF",
+                backgroundColor: "#F5F7F8",
+              },
+            }}
+          >
+            <DeleteIcon fontSize="small"/>
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              setShowRemovePublisher(false)
+            }}
+            size="small"
+            sx={{
+              borderColor: "gray",
+              color: "black",
+              "&:hover": {
+                borderColor: "#F1EFEF",
+                backgroundColor: "#F5F7F8",
+              },
+            }}
+          >
+            <CloseIcon fontSize="small"/>
+          </IconButton>
+        </>)}
+
       </div>
     )
   }
@@ -174,6 +225,22 @@ console.log('STM components-PublisherInfoDisplay.jsx:109', publisher); // todo r
           }}
         >
           Add Publisher
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => {setShowRemovePublisher(true)}}
+          sx={{
+            marginRight: "15px",
+            borderColor: "#00b00e",
+            backgroundColor: "#00b00e",
+            color: "white",
+            "&:hover": {
+              borderColor: "#F1EFEF",
+              backgroundColor: "#86A789",
+            },
+          }}
+        >
+          Remove Publisher
         </Button>
       </div>
       <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
