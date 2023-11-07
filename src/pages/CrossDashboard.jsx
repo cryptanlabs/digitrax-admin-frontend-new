@@ -43,9 +43,10 @@ const CrossDashboard = () => {
   };
 
   const handleRowClick = (params) => {
-    const rowData = params.row;
+    const rowData = params.row.SongCatalog;
+    const crossData = params.row
     addToRecentSongs(params.row.SongNumber)
-    navigate("/songdata", { state: { rowData } });
+    navigate("/songdata", { state: { crossData, rowData, SongNumber: params.row.songNumber } });
   };
 
   console.log("STM pages-Dashboard.jsx:58", crossClearDataSet);
@@ -54,7 +55,7 @@ const CrossDashboard = () => {
     <div>
       <div className="w-full mt-4 flex items-center justify-between">
         <h1 className="text-4xl ml-10 font-medium">
-          Catalogue Management Dashboard
+          All CrossClear Reported Information
         </h1>
         <div className="flex items-center px-2 w-1/6 justify-between mr-3">
           <SearchIcon

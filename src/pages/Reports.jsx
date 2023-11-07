@@ -1,9 +1,8 @@
 import {Button, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
-
+import {axiosBase, base_url} from '../helpers/requests.js';
 
 export default function Reports() {
-
 
   return (
     <>
@@ -13,12 +12,16 @@ export default function Reports() {
           Reports
         </h1>
           <ReportButton
-          label="Cleared By CrossClear"
+          label="Removed From CrossClear"
           buttonText="Retreive"
+          link={`${base_url}/removedFromCrossClear?format=csv`}
+          linkButton
           />
           <ReportButton
-            label="Cleared By CrossClear"
+            label="Publisher Shares with Totals"
             buttonText="Retreive"
+            link={`${base_url}/getPublishersSharesSummed?format=csv`}
+            linkButton
           />
           <ReportButton
             label="Cleared By CrossClear"

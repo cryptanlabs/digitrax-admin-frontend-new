@@ -11,6 +11,16 @@ import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
 import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
 import {BasicSongInfoDisplay} from '../components/BasicSongInfoDisplay.jsx';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
+import {
+  getBasicInfoFromSongData,
+  getLicensingInfoFromSongData,
+  getStatusInfoFromSongData, reduceCrossInfoForSong
+} from '../helpers/utils.js';
+import {
+  basicInformationDefault,
+  licensingInformationDefault,
+  statusInformationDefault
+} from '../helpers/constants.js';
 
 const publishingHeaders = [
   "ISRC",
@@ -63,7 +73,7 @@ const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const {generatedSets, addPublisher, removePublisher, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
+  const {generatedSets, addPublisher, removePublisher, getCrossClearForSong, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [filesForUpload, setFilesForUpload] = useState({});
   const [newComment, setNewComment] = useState('');
@@ -76,51 +86,15 @@ const SongDetails = () => {
 
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
 
-  const [statusInformation, setStatusInformation] = useState({
-    ClearedforKaraoke: false,
-    ClearedForTV: false,
-    Kod: false,
-    Vevo: false,
-    VirtualDj: false,
-    KaraokeCloudApi: false,
-    Status: ''
+  const [statusInformation, setStatusInformation] = useState(statusInformationDefault);
 
-  });
+  const [licensingInformation, setLicensingInformation] = useState(licensingInformationDefault);
 
-  const [licensingInformation, setLicensingInformation] = useState({
-    ISRCCAMixVocal: "",
-    HFASongCode: "",
-    MechanicalRegistrationNumberA: "",
-    MechanicalRegistrationNumberD: "",
-    Writer: ""
-  });
+  const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
 
-  const [basicInformation, setBasicInformation] = useState({
-    Title: "",
-    Artist: "",
-    Genre: "",
-    SongNumber: "",
-    SubGenre: "",
-    BarIntro: "",
-    SongKey: "",
-    Duration: "",
-    Mixes: "",
-    MixRendered: "",
-    SongReleaseYear: "",
-    Description: "",
-  });
+  const [crossClearEntries, setCrossClearEntries] = useState([]);
 
-  const getStatusInfoFromSongData = (rowData) => {
-    return {
-      ClearedforKaraoke: rowData.ClearedforKaraoke,
-      ClearedForTV: rowData.ClearedForTV,
-      Kod: rowData.Kod,
-      VirtualDj: rowData.VirtualDj,
-      KaraokeCloudApi: rowData.KaraokeCloudApi,
-      Status: rowData.Status,
-    }
-  }
-  const setup = (rowData) => {
+  const setup = async (rowData) => {
     setGeneratedMedia(rowData.GeneratedMedia)
 
     setStatusInformation((prev) => ({
@@ -131,32 +105,18 @@ const SongDetails = () => {
 
     setLicensingInformation((prev) => ({
       ...prev,
-      ISRCCAMixVocal: rowData.ISRCCAMixVocal,
-      HFASongCode: rowData.HFASongCode,
-      MechanicalRegistrationNumberA: rowData.MechanicalRegistrationNumberA,
-      MechanicalRegistrationNumberD: rowData.MechanicalRegistrationNumberD,
-      Writer: rowData.Writer,
+      ...getLicensingInfoFromSongData(rowData)
     }));
 
     setBasicInformation((prev) => ({
       ...prev,
-      Title: rowData.Title,
-      Artist: rowData.Artist,
-      Genre: rowData.Genre,
-      SongNumber: rowData.SongNumber,
-      SubGenre: rowData.SubGenre,
-      BarIntro: rowData.BarIntro,
-      SongKey: rowData.SongKey,
-      Duration: rowData.Duration,
-      Mixes: rowData.Mixes,
-      MixRendered: rowData.MixRendered,
-      SongReleaseYear: rowData.SongReleaseYear,
-      Description: rowData.Description,
+      ...getBasicInfoFromSongData(rowData)
     }));
 
     // localStorage.setItem('items', JSON.stringify(items));
 
-    setSongPublishers(rowData.SongPublisher)
+
+    setSongPublishers(rowData.SongPublisher ?? [])
     getCommentsForSong()
   }
 
@@ -164,7 +124,12 @@ const SongDetails = () => {
     if (location.state.rowData) {
       console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
       setup(location.state.rowData)
+      getCrossClearForSong(location.state.rowData.SongNumber)
+        .then(crossRecords => {
 
+          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)))
+        })
+        .catch(console.error)
 
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
@@ -177,6 +142,7 @@ const SongDetails = () => {
           setup(songDetails)
           location.state.rowData = songDetails
         })
+
 
     }
   }, []);
@@ -401,7 +367,14 @@ const SongDetails = () => {
             Save Changes
           </Button>
       </div>
-      {/*handleStatusEdit*/}
+      {/* CROSS CLEAR */}
+      <InfoDisplayRow
+        title="Cross Clear Information"
+        subTitle="Information recieved from crossClear"
+        infoToDisplay={crossClearEntries}
+        multiRow
+      />
+      {/* STATUSES */}
       <InfoDisplayRow
         title="Status Information"
         subTitle="Update the status information here"
@@ -453,6 +426,7 @@ const SongDetails = () => {
            Save Changes
           </Button>
       </div>
+      {/* PUBLISHER INFORMATION*/}
       <PublisherInfoDisplay
         songNumber={basicInformation.SongNumber}
         setSongPublishers={setSongPublishers}
@@ -480,6 +454,7 @@ const SongDetails = () => {
       <CommentDisplay
         comments={comments}
       />
+      {/* MEDIA */}
       <div className="w-full mt-10 flex">
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>

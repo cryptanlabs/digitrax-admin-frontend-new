@@ -118,6 +118,22 @@ const SongDetailsProvider = ({children}) => {
     return result.data;
   };
 
+  const getCrossClearForSong = async (SongNumber) => {
+    const result = await axiosBase({
+      method: 'get',
+      url: '/getCrossClearForSong',
+      params: {
+        SongNumber
+      }
+    })
+      .catch(error => {
+        console.log(error);
+      });
+
+    return result.data.result;
+  };
+
+  // getCrossClearForSong
   // removePublisher
 
   // addPublisher
@@ -138,7 +154,8 @@ const SongDetailsProvider = ({children}) => {
       uploadMediaFile,
       updateSong,
       createComment,
-      getCommentsForSong
+      getCommentsForSong,
+      getCrossClearForSong
     }}>
       {children}
     </SongDetailsContext.Provider>

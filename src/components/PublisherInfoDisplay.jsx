@@ -160,8 +160,8 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
         </div>
         {showRemovePublisher && (<>
           <IconButton
-            onClick={() => {
-              removePublisher(publisher)
+            onClick={async () => {
+              await removePublisher(publisher)
               setShowRemovePublisher(false)
             }}
             size="small"
