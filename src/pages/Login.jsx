@@ -1,28 +1,28 @@
 import {Button, TextField, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {isWhiteSpace} from '../helpers/utils.js';
+import {UserContext} from '../context/UserContext.jsx';
+import {useNavigate} from 'react-router-dom';
 
 export default function Login () {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const {loginUser} = useContext(UserContext);
+  const navigate = useNavigate();
 
 
-
-  const handleRegisterUser = async () => {
+  const handleLoginUser = async () => {
     if (isWhiteSpace(userName) || isWhiteSpace(password)) {
       return;
     }
-    // const result = await axiosBase({
-    //   method: 'post',
-    //   url: '/createUser',
-    //   data: newApiUser
-    // })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+
+    const loginResult = await loginUser(userName, password)
+    if(loginResult){
+      navigate('/')
+    }
 
   };
 
@@ -35,6 +35,17 @@ export default function Login () {
 
           </h1>
         </div>
+        <div className="flex flex-row w-[40%]">
+          <div className="flex flex-col w-[20%]">
+          <Typography sx={{fontWeight: 'bold'}}>Test Username:</Typography>
+          <Typography sx={{fontWeight: 'bold'}}>Test Password:</Typography>
+          </div>
+          <div className="flex flex-col w-[40%]">
+            <Typography sx={{fontWeight: 'bold'}}>Digitrax</Typography>
+            <Typography sx={{fontWeight: 'bold'}}>digitrax</Typography>
+          </div>
+        </div>
+
         <div className="w-full flex flex-col mt-40 items-center">
           <div className="flex flex-col w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>UserName</Typography>
@@ -62,6 +73,7 @@ export default function Login () {
             <Button
               variant="outlined"
               onClick={() => {
+                handleLoginUser()
               }}
               sx={{
                 marginRight: '15px',

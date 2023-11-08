@@ -1,4 +1,4 @@
-import {Button, TextField, Typography} from '@mui/material';
+import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
 import {useEffect, useState} from 'react';
@@ -10,7 +10,8 @@ const newApiUserDefault = {
   Email: '',
   Name: '',
   UserName: '',
-  Password: ''
+  Password: '',
+  UserType: 'external'
 };
 
 const columns = [
@@ -28,8 +29,15 @@ const columns = [
     field: 'UserName',
     headerName: 'UserName',
     width: 150
+  },
+  {
+    field: 'UserType',
+    headerName: 'UserType',
+    width: 150
   }
 ];
+
+const userTypes = ['internal','external']
 export default function Users () {
   const [registeredApiUsers, setRegisteredApiUsers] = useState([]);
   const [showRegisterApiUser, setShowRegisterApiUser] = useState(false);
@@ -69,7 +77,6 @@ export default function Users () {
     if (isWhiteSpace(newApiUser.UserName) || isWhiteSpace(newApiUser.Password)) {
       return;
     }
-    console.log('STM pages-Users.jsx:72', newApiUser); // todo remove dev item
     const result = await axiosBase({
       method: 'post',
       url: '/createUser',
@@ -79,6 +86,7 @@ export default function Users () {
         console.log(error);
       });
 
+    setNewApiUser(newApiUserDefault)
     setCreatedApiUser(result.data);
     setShowRegisteredApiUser(true);
     setShowRegisterApiUser(false);
@@ -91,7 +99,7 @@ export default function Users () {
       <div className="w-full mt-4 flex flex-col items-center justify-between">
         <div className="w-full flex flex-col mt-2 flex">
           <h1 className="text-4xl ml-10 font-medium justify-start">
-            Api Users
+            Dashboard Users
           </h1>
         </div>
         <div className="w-full flex flex-col mt-2 flex">
@@ -162,6 +170,22 @@ export default function Users () {
                   value={newApiUser.Email}
                   variant="outlined"
                 />
+              </div>
+
+            </div>
+            <div className="w-full flex flex-row mt-10 flex">
+              <div className="flex flex-col ml-20 w-[40%]">
+                <Typography sx={{fontWeight: 'bold'}}>UserType</Typography>
+                <Select
+                  sx={{marginTop: 1}}
+                  name="UserType"
+                  value={newApiUser.UserType}
+                  onChange={handleChange}
+                >
+                  {userTypes.map((value, index) => (
+                    <MenuItem key={index} value={value}>{value}</MenuItem>
+                  ))}
+                </Select>
               </div>
             </div>
             <div className="w-[90%] flex mt-10 items-center justify-end">
