@@ -134,7 +134,7 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             hiddenLabel
             variant="outlined"
             value={publisher?.PublisherAdmin}
-            onchange={handleChange(index)}
+            onChange={handleChange(index)}
           ></TextField>
         </div>
         <div className="w-[33%] h-full flex items-center justify-center">
@@ -145,7 +145,7 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             hiddenLabel
             variant="outlined"
             value={publisher?.SubPublisherDetails}
-            onchange={handleChange(index)}
+            onChange={handleChange(index)}
           ></TextField>
         </div>
         <div className="w-[33%] h-full flex items-center justify-center">
@@ -155,7 +155,7 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             hiddenLabel
             variant="outlined"
             value={publisher?.Share}
-            onchange={handleChange(index)}
+            onChange={handleChange(index)}
           ></TextField>
         </div>
         {showRemovePublisher && (<>

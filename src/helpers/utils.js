@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
+import * as csv from 'postcss';
 
 
-
-const getStatusInfoFromSongData = (rowData) => {
+const getDistributionInfoFromSongData = (rowData) => {
   return {
     ClearedforKaraoke: rowData.ClearedforKaraoke,
     ClearedForTV: rowData.ClearedForTV,
@@ -9,6 +10,17 @@ const getStatusInfoFromSongData = (rowData) => {
     VirtualDj: rowData.VirtualDj,
     KaraokeCloudApi: rowData.KaraokeCloudApi,
     Status: rowData.Status,
+  }
+}
+
+const getStatusInfoFromSongData = (rowData) => {
+    return {
+    SongNumber: rowData.SongNumber,
+    Status: rowData.Status,
+    Title: rowData.Title,
+    Artist: rowData.Artist,
+    ReleaseScheduledFor: dayjs(rowData.ReleaseScheduledFor),
+    StatusUpdatedAt: dayjs(rowData.StatusUpdatedAt)
   }
 }
 
@@ -53,6 +65,14 @@ const reduceCrossInfoForSong = (crossData) => {
   }
 }
 
+
+function addIdForDataTable(data){
+  return data.map((item, index) => {
+    item.id = index
+    return item
+  })
+}
+
 function isWhiteSpace(value) {
   return /^\s*$/gm.test(value)
 }
@@ -61,11 +81,33 @@ function upperCaseKey(field) {
   return field.slice(0, 1).toUpperCase() + field.slice(1)
 }
 
+function convertToJsonArray(filePath) {
+
+// @ts-ignore
+  return new Promise((resolve) => {
+    const records = [];
+
+    csv.parse(filePath.data, {columns: true, bom: true})
+      // Use the readable stream api
+      .on('readable', function () {
+        let record;
+        while ((record = this.read()) !== null) {
+          records.push(record);
+        }
+      })
+      .on('end', function () {
+        resolve(records)
+      })
+  });
+}
+
 export {
+  getDistributionInfoFromSongData,
   getStatusInfoFromSongData,
   getBasicInfoFromSongData,
   getLicensingInfoFromSongData,
   reduceCrossInfoForSong,
   isWhiteSpace,
-  upperCaseKey
+  upperCaseKey,
+  addIdForDataTable
 }

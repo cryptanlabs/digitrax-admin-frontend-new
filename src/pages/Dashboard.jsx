@@ -31,6 +31,9 @@ const Dashboard = () => {
   useEffect(() => {
     if(currentDataSet?.length > 0) setIsLoading(false)
     setFilteredResults(currentDataSet);
+    if(currentDataSet?.length > 0){
+      console.log('STM pages-Dashboard.jsx:35', currentDataSet[0]); // todo remove dev item
+    }
   }, [currentDataSet]);
 
   const columns = columnDetails;

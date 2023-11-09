@@ -1,6 +1,7 @@
 import {Button, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
+import {useRef, useState} from 'react';
 
 export default function Reports() {
 

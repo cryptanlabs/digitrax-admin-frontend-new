@@ -1,7 +1,8 @@
 import {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {base_url} from '../helpers/requests.js';
-import {ColumnHeadersMap} from '../helpers/constants.js';
+import {ColumnHeadersMap, ColumnWidthMap, statusOptionsText} from '../helpers/constants.js';
+import {isWhiteSpace} from '../helpers/utils.js';
 
 export const DataTableData = createContext(undefined);
 
@@ -77,7 +78,7 @@ const DataTableContext = ({children}) => {
 
       return {id: item.Id, ...item};
     });
-    console.log('STM context-DataTableContext.jsx:79', lowercaseId); // todo remove dev item
+    // console.log('STM context-DataTableContext.jsx:79', lowercaseId); // todo remove dev item
     setCrossClearDataSet(lowercaseId);
 
     console.log('Result getCrossData:', res);
@@ -85,11 +86,11 @@ const DataTableContext = ({children}) => {
 
   };
 
-  useEffect(() => {
-    console.log('Total Results:', totalResults);
-    console.log('Total pages:', totalPages);
-    console.log('Column Details:', columnDetails);
-  }, [totalResults, totalPages, columnDetails]);
+  // useEffect(() => {
+  //   console.log('Total Results:', totalResults);
+  //   console.log('Total pages:', totalPages);
+  //   console.log('Column Details:', columnDetails);
+  // }, [totalResults, totalPages, columnDetails]);
 
   const getColumnNamesAndHeaderDetails = (tableName, datamodel = dataModels, { width } = {width: 150}) => {
 
@@ -110,11 +111,25 @@ const DataTableContext = ({children}) => {
           width: 75,
         };
       }
+      if(items.name === 'Status'){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          width: width ?? 250,
+          valueGetter: (params) => {
+            if(isWhiteSpace(params.value)){
+              return params.value
+            } else {
+              return statusOptionsText[params.value]
+            }
+          }
+        }
+      }
       if(ColumnHeadersMap[items.name]){
         return {
           field: items.name,
           headerName: ColumnHeadersMap[items.name],
-          width: width ?? 150
+          width: ColumnWidthMap[items.name] ?? 150
         };
       }
       return {
@@ -124,7 +139,7 @@ const DataTableContext = ({children}) => {
       };
     });
 
-    console.log('STM context-DataTableContext.jsx:111', computedColumnDetails, computedColumnNames); // todo remove dev item
+    // console.log('STM context-DataTableContext.jsx:111', computedColumnDetails, computedColumnNames); // todo remove dev item
     return [computedColumnDetails, computedColumnNames]
   }
 

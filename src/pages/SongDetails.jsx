@@ -14,13 +14,17 @@ import {CommentDisplay} from '../components/CommentDisplay.jsx';
 import {
   getBasicInfoFromSongData,
   getLicensingInfoFromSongData,
-  getStatusInfoFromSongData, reduceCrossInfoForSong
+  getDistributionInfoFromSongData,
+  reduceCrossInfoForSong,
+  getStatusInfoFromSongData
 } from '../helpers/utils.js';
 import {
   basicInformationDefault,
   licensingInformationDefault,
   statusInformationDefault
 } from '../helpers/constants.js';
+import dayjs from 'dayjs';
+import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -60,23 +64,22 @@ const songPublisherHeaders = [
 
 const democomment = {
   UserName: "Tory Flenniken",
-  date: "9/6/2023 2:20pm",
+  CreatedAt: "9/6/2023 2:20pm",
   Content: `I've uploaded all of the files and they are ready for Quality Assurance`,
 };
 
 const democomment2 = {
   UserName: "Tory Flenniken",
-  date: "9/6/2023 2:20pm",
+  CreatedAt: "9/6/2023 2:20pm",
   Content: `I've uploaded all of the files and they are ready for Quality Assurance`,
 };
 const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const {generatedSets, addPublisher, removePublisher, getCrossClearForSong, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong} = useContext(SongDetailsContext);
+  const {generatedSets, addPublisher, removePublisher, getCrossClearForSong, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong, markCommentRemoved} = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [filesForUpload, setFilesForUpload] = useState({});
-  const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState(demoComments)
   const [showFileUpload, setShowFileUpload] = useState(false);
   const fileInputRef = useRef(null);
@@ -84,9 +87,10 @@ const SongDetails = () => {
 
  const [songPublishers, setSongPublishers] = useState([])
 
+  const [statusData, setStatusData] = useState({});
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
 
-  const [statusInformation, setStatusInformation] = useState(statusInformationDefault);
+  const [distributionInformation, setDistributionInformation] = useState(statusInformationDefault);
 
   const [licensingInformation, setLicensingInformation] = useState(licensingInformationDefault);
 
@@ -97,11 +101,15 @@ const SongDetails = () => {
   const setup = async (rowData) => {
     setGeneratedMedia(rowData.GeneratedMedia)
 
-    setStatusInformation((prev) => ({
+    setDistributionInformation((prev) => ({
+      ...prev,
+      ...getDistributionInfoFromSongData(rowData)
+    }));
+
+    setStatusData((prev) => ({
       ...prev,
       ...getStatusInfoFromSongData(rowData)
     }));
-
 
     setLicensingInformation((prev) => ({
       ...prev,
@@ -159,7 +167,6 @@ const SongDetails = () => {
           console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
           setComments((prev) => ([
             ...results,
-            ...prev,
           ]))
         }
       }
@@ -201,9 +208,17 @@ const SongDetails = () => {
     }));
   };
 
+  const handleDistributionChange = (e) => {
+    const { name, value } = e.target;
+    setDistributionInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleStatusChange = (e) => {
     const { name, value } = e.target;
-    setStatusInformation((prev) => ({
+    setStatusData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -217,6 +232,7 @@ const SongDetails = () => {
   }
 
  // Top Section Upload Handlers
+
 
   const handleSongEdit = async () => {
    const updatedDetails =  await updateSong(basicInformation)
@@ -232,11 +248,22 @@ const SongDetails = () => {
     console.log(basicInformation)
   }
 
-  const handleStatusEdit = async () => {
-    const withSongNumber = {...statusInformation, SongNumber: basicInformation.SongNumber}
+  const handleDistributionEdit = async () => {
+    const withSongNumber = {...distributionInformation, SongNumber: basicInformation.SongNumber}
 
     const updatedDetails =  await updateSong(withSongNumber)
-    setStatusInformation((prev) => ({
+    setDistributionInformation((prev) => ({
+      ...prev,
+      ...getDistributionInfoFromSongData(updatedDetails)
+    }));
+    console.log(updatedDetails)
+  }
+
+  const handleStatusEdit = async () => {
+    const withSongNumber = {...statusData}
+
+    const updatedDetails =  await updateSong(withSongNumber)
+    setStatusData((prev) => ({
       ...prev,
       ...getStatusInfoFromSongData(updatedDetails)
     }));
@@ -268,22 +295,26 @@ const SongDetails = () => {
     console.log(basicInformation)
   }
 
-  const handleCommentChange = (e) => {
-    const { value } = e.target;
-    setNewComment(value);
-  };
-  const handleCreateComment = async () => {
+  const handleCreateComment = async (newComment) => {
     const copyComment = {
       SongNumber: basicInformation.SongNumber,
       Content: newComment,
-      UserName: 'DTE'
     }
-    await createComment(copyComment)
+    const createdComment = await createComment(copyComment)
+    console.log('STM pages-SongDetails.jsx:281', createdComment); // todo remove dev item
     setComments((prev) => ([
-      copyComment,
+      createdComment,
       ...prev,
     ]))
-    setNewComment('')
+  }
+
+  const handleRemoveComment = async (CommentId) => {
+    markCommentRemoved(CommentId)
+    setComments((prev) => {
+      const idx = prev?.findIndex(item => item.CommentId === CommentId)
+      prev.splice(idx, 1)
+      return prev
+    })
   }
 
 
@@ -382,14 +413,14 @@ const SongDetails = () => {
       <InfoDisplayRow
         title="Status Information"
         subTitle="Update the status information here"
-        infoToDisplay={statusInformation}
-        handleChange={handleStatusChange}
+        infoToDisplay={distributionInformation}
+        handleChange={handleDistributionChange}
         useDropDown
       />
       <div className="w-[90%] mt-5 flex items-center justify-end">
         <Button
           variant="outlined"
-          onClick={handleStatusEdit}
+          onClick={handleDistributionEdit}
           sx={{
             marginRight: "15px",
             borderColor: "#00b00e",
@@ -455,8 +486,15 @@ const SongDetails = () => {
             Save Changes
           </Button>
       </div>
+      <SongStatusDisplayEdit
+      statusData={statusData}
+      handleChange={handleStatusChange}
+      handleSave={handleStatusEdit}
+      />
       <CommentDisplay
         comments={comments}
+        handleCreateComment={handleCreateComment}
+        handleRemoveComment={handleRemoveComment}
       />
       {/* MEDIA */}
       <div className="w-full mt-10 flex">

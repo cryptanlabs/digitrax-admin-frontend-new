@@ -13,13 +13,18 @@ import UserProvider from './context/UserContext.jsx';
 import AccessGuard from './components/AccessGuard.jsx';
 import InternalOnly from './pages/InternalOnly.jsx';
 import UsersDashBoard from './pages/UsersDashboad.jsx';
+import StatusDashboard from './pages/StatusDashboard.jsx';
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import Upload from './pages/Upload.jsx';
 
 const App = () => {
   return (
     <>
       <UserProvider>
         {/*<AccessGuard>*/}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DataTableContext>
             <SideNav/>
             <SongDetailsProvider>
@@ -36,6 +41,8 @@ const App = () => {
                       <Route path="/reports" element={<Reports/>}/>
                       <Route path="/queryBuilder" element={<QueryBuilder/>}/>
                       <Route path="/users" element={<UsersDashBoard/>}/>
+                      <Route path="/statusDashboard" element={<StatusDashboard/>}/>
+                      <Route path="/batchUpload" element={<Upload/>}/>
                     </Route>
                   </Route>
                 </Routes>
@@ -43,6 +50,7 @@ const App = () => {
             </SongDetailsProvider>
 
           </DataTableContext>
+        </LocalizationProvider>
         {/*</AccessGuard>*/}
 
       </UserProvider>

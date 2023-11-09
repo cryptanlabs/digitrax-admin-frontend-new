@@ -1,7 +1,8 @@
 import {MenuItem, Select, TextField, Typography} from '@mui/material';
 import {
   dropDownColumns,
-  dropDownOptionMap, dropDownOptionSets,
+  dropDownOptionMap,
+  dropDownOptionSets, statusOptionsText,
 } from '../helpers/constants.js';
 
 
@@ -40,7 +41,7 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
           onChange={onChange}
         >
           {options.map((value, index) => (
-            <MenuItem key={index} value={value}>{value}</MenuItem>
+            <MenuItem key={index} value={value}>{statusOptionsText[value] ?? value}</MenuItem>
           ))}
         </Select>
       </div>

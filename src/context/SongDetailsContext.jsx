@@ -2,6 +2,7 @@ import {createContext, useContext, useEffect, useState} from 'react';
 import {axiosBase, base_url} from '../helpers/requests.js';
 import axios from 'axios';
 import {DataTableData} from './DataTableContext.jsx';
+import {UserContext} from './UserContext.jsx';
 
 export const SongDetailsContext = createContext(undefined);
 
@@ -9,6 +10,7 @@ export const SongDetailsContext = createContext(undefined);
 const SongDetailsProvider = ({children}) => {
   const [generatedSets, setGeneratedSets] = useState([]);
   const {getData} = useContext(DataTableData);
+  const {user} = useContext(UserContext);
 
   useEffect(() => {
     axiosBase({
@@ -38,7 +40,8 @@ const SongDetailsProvider = ({children}) => {
 
 
   const createComment = async (data) => {
-    data.UserId = '051c927a-d980-40fa-aeca-2d599b466aa2';
+    data.UserId = user.UserId
+    data.UserName = user.UserName
     const result = await axiosBase({
       method: 'post',
       url: '/createComment',
@@ -57,6 +60,21 @@ const SongDetailsProvider = ({children}) => {
       url: '/getCommentsForSongNumber',
       params: {
         SongNumber
+      }
+    })
+      .catch(error => {
+        console.log(error);
+      });
+
+    return result.data;
+  };
+
+  const markCommentRemoved = async (CommentId) => {
+    const result = await axiosBase({
+      method: 'delete',
+      url: '/removeComment',
+      params: {
+        CommentId
       }
     })
       .catch(error => {
@@ -155,7 +173,8 @@ const SongDetailsProvider = ({children}) => {
       updateSong,
       createComment,
       getCommentsForSong,
-      getCrossClearForSong
+      getCrossClearForSong,
+      markCommentRemoved
     }}>
       {children}
     </SongDetailsContext.Provider>

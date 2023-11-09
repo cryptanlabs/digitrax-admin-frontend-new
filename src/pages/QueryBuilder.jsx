@@ -2,7 +2,7 @@ import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
 import {useEffect, useState} from 'react';
-import {isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
+import {addIdForDataTable, isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {ColumnHeadersMap} from '../helpers/constants.js';
 
@@ -159,10 +159,7 @@ export default function QueryBuilder () {
       setResultColumns(columnSet)
     }
 
-    setResults(data.map((item, index) => {
-      item.id = index
-      return item
-    }))
+    setResults(addIdForDataTable(data))
 console.log('STM pages-QueryBuilder.jsx:114', result); // todo remove dev item
   }
 
