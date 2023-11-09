@@ -1,6 +1,6 @@
 import {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {base_url} from '../helpers/requests.js';
+import {base_url, returnLimit} from '../helpers/requests.js';
 import {ColumnHeadersMap, ColumnWidthMap, statusOptionsText} from '../helpers/constants.js';
 import {isWhiteSpace} from '../helpers/utils.js';
 
@@ -53,9 +53,9 @@ const DataTableContext = ({children}) => {
   const [crossClearDataSet, setCrossClearDataSet] = useState([]);
 
   const getData = async () => {
-    const limit = 1000; //-1 // -1
+    // const limit = 1000; //-1 // -1
     // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
-    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${limit}&orderDir=desc`);
+    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${returnLimit}&orderDir=desc`);
     const lowercaseId = res?.data?.data?.map(item => {
 
       return {id: item.Id, ...item};
