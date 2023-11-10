@@ -128,6 +128,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
               </div>
             </div>
           </div>
+          Note: 'id' is added just for display.  It does not get included on submission.
           <SimpleDataGrid
             rows={rowData}
             columns={columns}
