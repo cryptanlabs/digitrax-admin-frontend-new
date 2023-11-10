@@ -20,6 +20,7 @@ import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
 import {axiosBase} from '../helpers/requests.js';
 import {addIdForDataTable} from '../helpers/utils.js';
 import {statusDash} from '../helpers/strings.js';
+import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
@@ -40,8 +41,13 @@ const StatusDashboard = () => {
     updateSong,
     getCommentsForSong,
     createComment,
-    markCommentRemoved
+    markCommentRemoved,
+    getDetailsForSong,
+    uploadMediaFile,
+    generatedSets,
+    updateMediaMetadata
   } = useContext(SongDetailsContext);
+
   const [comments, setComments] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +61,7 @@ const StatusDashboard = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [processing, setProcessing] = useState(false);
+  const [generatedMedia, setGeneratedMedia] = useState([]);
 
   const navigate = useNavigate();
 
@@ -98,6 +105,7 @@ const StatusDashboard = () => {
   };
 
   const handleRowClick = async (params) => {
+    console.log('STM pages-StatusDashboard.jsx:106', params); // todo remove dev item
     delete params.row.id;
     setRowData({
       SongNumber: params.row.SongNumber,
@@ -107,6 +115,10 @@ const StatusDashboard = () => {
       ReleaseScheduledFor: dayjs(params.row.ReleaseScheduledFor),
       StatusUpdatedAt: dayjs(params.row.StatusUpdatedAt)
     });
+
+    console.log('STM pages-StatusDashboard.jsx:116', params); // todo remove dev item
+    console.log('STM pages-StatusDashboard.jsx:116', params.row.GeneratedMedia); // todo remove dev item
+    setGeneratedMedia(params.row.GeneratedMedia)
     await getComments(params.row.SongNumber);
     setShowStatusDetails(true);
   };
@@ -240,6 +252,20 @@ const StatusDashboard = () => {
     resetState()
   };
 
+  const uploadMediaFileAndRefresh = async (data) => {
+    await uploadMediaFile(data)
+    const songData = await getDetailsForSong(rowData.SongNumber)
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+    //
+  }
+
+  const uploadMediaMetadataAndRefresh = async (data) => {
+    await updateMediaMetadata(data)
+    const songData = await getDetailsForSong(rowData.SongNumber)
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+    //
+  }
+
   const SongStatusEdit = () => {
     console.log('STM pages-StatusDashboard.jsx:243', rowData); // todo remove dev item
     return (
@@ -253,6 +279,15 @@ const StatusDashboard = () => {
             comments={comments}
             handleCreateComment={handleCreateComment}
             handleRemoveComment={handleRemoveComment}
+          />
+        </div>
+        <div className="w-full flex flex-col ml-20">
+          <DisplayMediaListing
+            updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
+            uploadMediaFileAndRefresh={uploadMediaFileAndRefresh}
+            SongNumber={rowData.SongNumber}
+            generatedSets={generatedSets}
+            generatedMedia={generatedMedia}
           />
         </div>
       </div>

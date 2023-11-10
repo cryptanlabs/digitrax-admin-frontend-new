@@ -8,20 +8,8 @@ export const SongDetailsContext = createContext(undefined);
 
 
 const SongDetailsProvider = ({children}) => {
-  const [generatedSets, setGeneratedSets] = useState([]);
-  const {getData} = useContext(DataTableData);
+  const {getData, generatedSets, getExistingBuckets} = useContext(DataTableData);
   const {user} = useContext(UserContext);
-
-  useEffect(() => {
-    axiosBase({
-      method: 'get',
-      url: '/getExistingBuckets',
-    })
-      .then(response => {
-        const buckets = response.data?.map(item => item.bucket);
-        setGeneratedSets(buckets);
-      });
-  }, []);
 
 
   const updateSong = async (data) => {
@@ -29,6 +17,20 @@ const SongDetailsProvider = ({children}) => {
     const result = await axiosBase({
       method: 'put',
       url: '/updateSong',
+      data: data
+    })
+      .catch(error => {
+        console.log(error?.response?.data?.message);
+      });
+    getData();
+    return result.data;
+  };
+
+  const updateMediaMetadata = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:23', data); // todo remove dev item
+    const result = await axiosBase({
+      method: 'put',
+      url: '/updateGeneratedMediaMetaData',
       data: data
     })
       .catch(error => {
@@ -93,7 +95,8 @@ const SongDetailsProvider = ({children}) => {
       .catch(error => {
         console.log(error);
       });
-
+    getData();
+    getExistingBuckets()
     return result.data;
   };
 
@@ -174,7 +177,8 @@ const SongDetailsProvider = ({children}) => {
       createComment,
       getCommentsForSong,
       getCrossClearForSong,
-      markCommentRemoved
+      markCommentRemoved,
+      updateMediaMetadata
     }}>
       {children}
     </SongDetailsContext.Provider>

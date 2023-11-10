@@ -1,7 +1,18 @@
-import {TextField, Typography} from '@mui/material';
+import {Button, TextField, Typography} from '@mui/material';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha.js';
+import {useEffect, useState} from 'react';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+
+export function BasicSongInfoDisplay({handleChange, basicInformation, nextCatNumberToSuggest}) {
+
+  const [showNextSuggestion, setShowNextSuggestion] = useState(true);
+  const SetNextCat = () => {
+    handleChange({target: {name: 'SongNumber', value: nextCatNumberToSuggest?.toString()?.padStart(5, '0')}})
+    setShowNextSuggestion(false)
+  }
 
 
-export function BasicSongInfoDisplay({handleChange, basicInformation}) {
 
   return (
     <>
@@ -25,7 +36,27 @@ export function BasicSongInfoDisplay({handleChange, basicInformation}) {
             value={basicInformation.SongNumber}
             variant="outlined"
           />
+          <div>
+            {showNextSuggestion && <VisibilityIcon onClick={() => {setShowNextSuggestion(!showNextSuggestion)}}/>}
+            {!showNextSuggestion && <VisibilityOffIcon onClick={() => {setShowNextSuggestion(!showNextSuggestion)}}/>}
+            {showNextSuggestion && <Button
+              variant="outlined"
+              onClick={SetNextCat}
+              sx={{
+                borderColor: 'gray',
+                color: 'black',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#F5F7F8',
+                },
+              }} >
+              {`Suggested next Cat.#: ${nextCatNumberToSuggest}`}
+            </Button>}
+          </div>
+
+
         </div>
+
       </div>
       <div className="w-full flex flex-row mt-10 flex">
         <div className="flex flex-col ml-20 w-[40%]">

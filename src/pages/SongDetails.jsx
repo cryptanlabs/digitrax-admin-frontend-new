@@ -1,11 +1,11 @@
 import {useEffect, useState, useRef, useContext} from 'react';
-import { useLocation } from "react-router-dom";
-import { Button, Typography, TextField } from "@mui/material";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import {useLocation} from 'react-router-dom';
+import {Button, Typography, TextField} from '@mui/material';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {SongDetailsContext} from '../context/SongDetailsContext';
-import {  TextFields40Pct, TextFields15Pct} from '../components/textFields'
-import { FileUpload } from '../components/fileUpload'
+import {TextFields40Pct, TextFields15Pct} from '../components/textFields';
+import {FileUpload} from '../components/fileUpload';
 import {FileAdd} from '../components/fileAdd.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
 import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
@@ -25,67 +25,80 @@ import {
 } from '../helpers/constants.js';
 import dayjs from 'dayjs';
 import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
+import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 
 const publishingHeaders = [
-  "ISRC",
-  "HFA Song Code",
-  "HFA-Mechanical-A Mix",
-  "HFA-Mechanical-D Mix",
-  "Territories",
-  "Writer",
+  'ISRC',
+  'HFA Song Code',
+  'HFA-Mechanical-A Mix',
+  'HFA-Mechanical-D Mix',
+  'Territories',
+  'Writer',
 ];
 
 const publishingHeadersMappedToColumn = {
-  "ISRC": "ISRCCAMixVocal",
-  "HFA Song Code": "HFASongCode",
-  "HFA-Mechanical-A Mix": "MechanicalRegistrationNumberA",
-  "HFA-Mechanical-D Mix": "MechanicalRegistrationNumberD",
-  "Territories": "Territories",
-  "Writer": "Writer"
-}
+  'ISRC': 'ISRCCAMixVocal',
+  'HFA Song Code': 'HFASongCode',
+  'HFA-Mechanical-A Mix': 'MechanicalRegistrationNumberA',
+  'HFA-Mechanical-D Mix': 'MechanicalRegistrationNumberD',
+  'Territories': 'Territories',
+  'Writer': 'Writer'
+};
 
 const publishingColumnMappedToHeaders = {
-  "ISRCCAMixVocal": "ISRC",
-  "HFASongCode": "HFA Song Code",
-  "MechanicalRegistrationNumberA": "HFA-Mechanical-A Mix",
-  "MechanicalRegistrationNumberD": "HFA-Mechanical-D Mix",
-  "Territories": "Territories",
-  "Writer": "Writer"
-}
+  'ISRCCAMixVocal': 'ISRC',
+  'HFASongCode': 'HFA Song Code',
+  'MechanicalRegistrationNumberA': 'HFA-Mechanical-A Mix',
+  'MechanicalRegistrationNumberD': 'HFA-Mechanical-D Mix',
+  'Territories': 'Territories',
+  'Writer': 'Writer'
+};
 
 const songPublisherHeaders = [
   // "Id",
-  "PublisherAdmin",
+  'PublisherAdmin',
   // "PublisherDatabaseId",
   // "SongNumber",
-  "SubPublisherDetails",
-  "Share",
+  'SubPublisherDetails',
+  'Share',
 ];
 
 const democomment = {
-  UserName: "Tory Flenniken",
-  CreatedAt: "9/6/2023 2:20pm",
+  UserName: 'Tory Flenniken',
+  CreatedAt: '9/6/2023 2:20pm',
   Content: `I've uploaded all of the files and they are ready for Quality Assurance`,
 };
 
 const democomment2 = {
-  UserName: "Tory Flenniken",
-  CreatedAt: "9/6/2023 2:20pm",
+  UserName: 'Tory Flenniken',
+  CreatedAt: '9/6/2023 2:20pm',
   Content: `I've uploaded all of the files and they are ready for Quality Assurance`,
 };
 const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
-  const {generatedSets, addPublisher, removePublisher, getCrossClearForSong, getDetailsForSong, uploadMediaFile, updateSong, createComment, getCommentsForSong, markCommentRemoved} = useContext(SongDetailsContext);
+  const {
+    generatedSets,
+    addPublisher,
+    removePublisher,
+    getCrossClearForSong,
+    getDetailsForSong,
+    uploadMediaFile,
+    updateSong,
+    createComment,
+    getCommentsForSong,
+    markCommentRemoved,
+    updateMediaMetadata
+  } = useContext(SongDetailsContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [filesForUpload, setFilesForUpload] = useState({});
-  const [comments, setComments] = useState(demoComments)
+  const [comments, setComments] = useState(demoComments);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const fileInputRef = useRef(null);
-  const [generatedMedia, setGeneratedMedia] = useState([])
+  const [generatedMedia, setGeneratedMedia] = useState([]);
 
- const [songPublishers, setSongPublishers] = useState([])
+  const [songPublishers, setSongPublishers] = useState([]);
 
   const [statusData, setStatusData] = useState({});
   const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
@@ -99,7 +112,8 @@ const SongDetails = () => {
   const [crossClearEntries, setCrossClearEntries] = useState([]);
 
   const setup = async (rowData) => {
-    setGeneratedMedia(rowData.GeneratedMedia)
+    console.log('STM pages-SongDetails.jsx:115', rowData.GeneratedMedia); // todo remove dev item
+    setGeneratedMedia(rowData.GeneratedMedia);
 
     setDistributionInformation((prev) => ({
       ...prev,
@@ -124,36 +138,36 @@ const SongDetails = () => {
     // localStorage.setItem('items', JSON.stringify(items));
 
 
-    setSongPublishers(rowData.SongPublisher ?? [])
-    getCommentsForSong()
-  }
+    setSongPublishers(rowData.SongPublisher ?? []);
+    getCommentsForSong();
+  };
 
   useEffect(() => {
     if (location.state.rowData) {
       console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
-      setup(location.state.rowData)
+      setup(location.state.rowData);
       getCrossClearForSong(location.state.rowData.SongNumber)
         .then(crossRecords => {
-          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)))
+          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)));
         })
-        .catch(console.error)
+        .catch(console.error);
 
       console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
-    if(location.state.SongNumber){
+    if (location.state.SongNumber) {
       getDetailsForSong(location.state.SongNumber)
         .then(songDetails => {
-          setup(songDetails)
-          location.state.rowData = songDetails
-        })
+          setup(songDetails);
+          location.state.rowData = songDetails;
+        });
       getCrossClearForSong(location.state.SongNumber)
         .then(crossRecords => {
-          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)))
+          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)));
         })
-        .catch(console.error)
+        .catch(console.error);
 
 
     }
@@ -161,39 +175,42 @@ const SongDetails = () => {
 
 
   useEffect(() => {
-      const getComments = async () => {
-        if (location.state.rowData && location.state?.rowData?.SongNumber) {
-          const results = await getCommentsForSong(location.state?.rowData?.SongNumber)
-          console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
-          setComments((prev) => ([
-            ...results,
-          ]))
-        }
+    const getComments = async () => {
+      if (location.state.rowData && location.state?.rowData?.SongNumber) {
+        const results = await getCommentsForSong(location.state?.rowData?.SongNumber);
+        console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
+        setComments((prev) => ([
+          ...results,
+        ]));
       }
+    };
 
-    getComments()
+    getComments();
 
-  }, [setBasicInformation])
+  }, [setBasicInformation]);
 
   useEffect(() => {
     return () => {
       const detailsInOrder = publishingHeaders.map(val => {
-        return {key: publishingHeadersMappedToColumn[val], value:licensingInformation[publishingHeadersMappedToColumn[val]]}
-      })
+        return {
+          key: publishingHeadersMappedToColumn[val],
+          value: licensingInformation[publishingHeadersMappedToColumn[val]]
+        };
+      });
 
       console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
-      setLicensingInfoDisplay(detailsInOrder)
+      setLicensingInfoDisplay(detailsInOrder);
     };
 
   }, [licensingInformation]);
 
   const checkButton = async () => {
-    const songData = await getDetailsForSong(basicInformation.SongNumber)
+    const songData = await getDetailsForSong(basicInformation.SongNumber);
     console.log('STM pages-SongDetails.jsx:180', songData); // todo remove dev item
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setBasicInformation((prev) => ({
       ...prev,
       [name]: value,
@@ -201,7 +218,7 @@ const SongDetails = () => {
   };
 
   const handleLicensingChange = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setLicensingInformation((prev) => ({
       ...prev,
       [name]: value,
@@ -209,7 +226,7 @@ const SongDetails = () => {
   };
 
   const handleDistributionChange = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setDistributionInformation((prev) => ({
       ...prev,
       [name]: value,
@@ -217,7 +234,7 @@ const SongDetails = () => {
   };
 
   const handleStatusChange = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setStatusData((prev) => ({
       ...prev,
       [name]: value,
@@ -225,110 +242,110 @@ const SongDetails = () => {
   };
 
   const uploadMediaFileAndRefresh = async (data) => {
-    await uploadMediaFile(data)
-    const songData = await getDetailsForSong(basicInformation.SongNumber)
-    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+    await uploadMediaFile(data);
+    const songData = await getDetailsForSong(basicInformation.SongNumber);
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
     //
-  }
+  };
 
- // Top Section Upload Handlers
+  // Top Section Upload Handlers
 
 
   const handleSongEdit = async () => {
-   const updatedDetails =  await updateSong(basicInformation)
-    setBasicInformation(updatedDetails)
-    console.log(basicInformation)
-  }
+    const updatedDetails = await updateSong(basicInformation);
+    setBasicInformation(updatedDetails);
+    console.log(basicInformation);
+  };
 
   const handleLicensingEdit = async () => {
-    const withSongNumber = {...licensingInformation, SongNumber: basicInformation.SongNumber}
+    const withSongNumber = {...licensingInformation, SongNumber: basicInformation.SongNumber};
 
-    const updatedDetails =  await updateSong(withSongNumber)
-    setLicensingInformation(updatedDetails)
-    console.log(basicInformation)
-  }
+    const updatedDetails = await updateSong(withSongNumber);
+    setLicensingInformation(updatedDetails);
+    console.log(basicInformation);
+  };
 
   const handleDistributionEdit = async () => {
-    const withSongNumber = {...distributionInformation, SongNumber: basicInformation.SongNumber}
+    const withSongNumber = {...distributionInformation, SongNumber: basicInformation.SongNumber};
 
-    const updatedDetails =  await updateSong(withSongNumber)
+    const updatedDetails = await updateSong(withSongNumber);
     setDistributionInformation((prev) => ({
       ...prev,
       ...getDistributionInfoFromSongData(updatedDetails)
     }));
-    console.log(updatedDetails)
-  }
+    console.log(updatedDetails);
+  };
 
   const handleStatusEdit = async () => {
-    const withSongNumber = {...statusData}
+    const withSongNumber = {...statusData};
 
-    const updatedDetails =  await updateSong(withSongNumber)
+    const updatedDetails = await updateSong(withSongNumber);
     setStatusData((prev) => ({
       ...prev,
       ...getStatusInfoFromSongData(updatedDetails)
     }));
-    console.log(updatedDetails)
-  }
+    console.log(updatedDetails);
+  };
 
   const handleSaveNewPublisher = async (data) => {
     console.log('STM pages-SongDetails.jsx:279', data); // todo remove dev item
-    const newPublisher = await addPublisher(data)
+    const newPublisher = await addPublisher(data);
     setSongPublishers((prev) => ([
       ...prev,
       newPublisher
-    ]))
-  }
+    ]));
+  };
 
   const handleRemovePublisher = async (data) => {
     console.log('STM pages-SongDetails.jsx:279', data); // todo remove dev item
-    const removed = await removePublisher(data)
+    const removed = await removePublisher(data);
     console.log('STM pages-SongDetails.jsx:286', removed); // todo remove dev item
     setSongPublishers((prev) => {
-      const idx = prev.findIndex(item => item.PublisherDatabaseId === data.PublisherDatabaseId)
-      prev.splice(idx, 1)
-      return prev
-    })
-  }
+      const idx = prev.findIndex(item => item.PublisherDatabaseId === data.PublisherDatabaseId);
+      prev.splice(idx, 1);
+      return prev;
+    });
+  };
 
 
   const handleSongUpload = async () => {
-    console.log(basicInformation)
-  }
+    console.log(basicInformation);
+  };
 
   const handleCreateComment = async (newComment) => {
     const copyComment = {
       SongNumber: basicInformation.SongNumber,
       Content: newComment,
-    }
-    const createdComment = await createComment(copyComment)
+    };
+    const createdComment = await createComment(copyComment);
     console.log('STM pages-SongDetails.jsx:281', createdComment); // todo remove dev item
     setComments((prev) => ([
       createdComment,
       ...prev,
-    ]))
-  }
+    ]));
+  };
 
   const handleRemoveComment = async (CommentId) => {
-    markCommentRemoved(CommentId)
+    markCommentRemoved(CommentId);
     setComments((prev) => {
-      const idx = prev?.findIndex(item => item.CommentId === CommentId)
-      prev.splice(idx, 1)
-      return prev
-    })
-  }
+      const idx = prev?.findIndex(item => item.CommentId === CommentId);
+      prev.splice(idx, 1);
+      return prev;
+    });
+  };
 
 
   // File Upload Handlers
 
   const returnUploadFile = (fileDataToAdd) => {
     console.log('STM pages-SongDetails.jsx:209', fileDataToAdd); // todo remove dev item
-    if(Object.keys(filesForUpload).includes(fileDataToAdd.generatedSet)){
+    if (Object.keys(filesForUpload).includes(fileDataToAdd.generatedSet)) {
 
     }
     setFilesForUpload((prevState) => {
 
-    })
-  }
+    });
+  };
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -341,6 +358,14 @@ const SongDetails = () => {
   };
 
 
+  const uploadMediaMetadataAndRefresh = async (data) => {
+    await updateMediaMetadata(data);
+    const songData = await getDetailsForSong(basicInformation.SongNumber);
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
+    //
+  };
+
+
   return (
     <div className="w-full mt-4 flex flex-col items-center justify-between">
       <div className="w-full mt-4 flex items-center justify-between">
@@ -350,11 +375,11 @@ const SongDetails = () => {
             variant="outlined"
             // onClick={checkButton}
             sx={{
-              borderColor: "gray",
-              color: "black",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#F5F7F8",
+              borderColor: 'gray',
+              color: 'black',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#F5F7F8',
               },
             }}
           >
@@ -363,15 +388,15 @@ const SongDetails = () => {
 
           <Button
             variant="outlined"
-            startIcon={<StarBorderIcon />}
+            startIcon={<StarBorderIcon/>}
             sx={{
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              marginLeft: "15px",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              marginLeft: '15px',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
               },
             }}
           >
@@ -385,30 +410,137 @@ const SongDetails = () => {
       />
 
       <div className="w-full mt-10 flex items-center justify-center">
-          <Button
-            variant="outlined"
-            onClick={handleSongEdit}
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            Save Changes
-          </Button>
+        <Button
+          variant="outlined"
+          onClick={handleSongEdit}
+          sx={{
+            marginRight: '15px',
+            borderColor: '#00b00e',
+            backgroundColor: '#00b00e',
+            color: 'white',
+            '&:hover': {
+              borderColor: '#F1EFEF',
+              backgroundColor: '#86A789',
+            },
+          }}
+        >
+          Save Changes
+        </Button>
       </div>
       {/* CROSS CLEAR */}
-      <InfoDisplayRow
-        title="Cross Clear Information"
-        subTitle="Information recieved from crossClear"
-        infoToDisplay={crossClearEntries}
-        multiRow
+      {crossClearEntries?.length === 0 && (
+        <div className="w-full mt-20 flex">
+          <div className="w-full flex flex-col ml-20">
+            <Typography sx={{ fontWeight: "bold" }}>
+              Cross Clear Information
+            </Typography>
+            <Typography>Information received from crossClear</Typography>
+            <div className="w-full items-center ml-80">
+              <Typography>No Cross Clear Information Found</Typography>
+            </div>
+          </div>
+
+        </div>
+      )}
+      {crossClearEntries?.length > 0 && (
+        <InfoDisplayRow
+          title="Cross Clear Information"
+          subTitle="Information received from crossClear"
+          infoToDisplay={crossClearEntries}
+          multiRow
+        />
+      )}
+
+      {/* LICENSING INFORMATION VIEW/EDIT */}
+      {/*<InfoDisplayRow*/}
+      {/*  title="Publishing Information"*/}
+      {/*  subTitle="Update the publishing information here"*/}
+      {/*  infoToDisplay={licensingInformation}*/}
+      {/*  headerMap={publishingColumnMappedToHeaders}*/}
+      {/*  handleChange={handleLicensingChange}*/}
+      {/*/>*/}
+      {/* LICENSING INFORMATION VIEW/EDIT */}
+      <div className="w-full mt-20 flex">
+        <div className="flex flex-col ml-20">
+          <Typography sx={{ fontWeight: "bold" }}>
+            Publishing Information
+          </Typography>
+          <Typography>Update the publishing information here</Typography>
+        </div>
+      </div>
+      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
+        <div className="w-full h-10 border-b flex border-gray-300">
+          {publishingHeaders.map((header, index) => (
+            <div
+              key={index}
+              className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
+            >
+              <Typography sx={{ fontSize: 14 }}>{header}</Typography>
+            </div>
+          ))}
+        </div>
+        <div className="w-full h-20 flex">
+          {licensingInfoDisplay.map((header, index) => (
+            <div
+              key={index}
+              className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 "
+            >
+              <TextField
+                sx={{ marginTop: 1, width: "90%" }}
+                size="small"
+                hiddenLabel
+                name={header.key}
+                onChange={handleLicensingChange}
+                value={licensingInformation[header.key]}
+                variant="outlined"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="w-[90%] mt-5 flex items-center justify-end">
+        <Button
+          variant="outlined"
+          onClick={handleLicensingEdit}
+          sx={{
+            marginRight: '15px',
+            borderColor: '#00b00e',
+            backgroundColor: '#00b00e',
+            color: 'white',
+            '&:hover': {
+              borderColor: '#F1EFEF',
+              backgroundColor: '#86A789',
+            },
+          }}
+        >
+          Save Changes
+        </Button>
+      </div>
+      {/* PUBLISHER INFORMATION*/}
+      <PublisherInfoDisplay
+        songNumber={basicInformation.SongNumber}
+        setSongPublishers={setSongPublishers}
+        songPublishers={songPublishers}
+        saveNewPublisher={handleSaveNewPublisher}
+        removePublisher={handleRemovePublisher}
       />
+      <div className="w-[90%] mt-5 flex items-center justify-end">
+        <Button
+          variant="outlined"
+          sx={{
+            marginRight: '15px',
+            borderColor: '#00b00e',
+            backgroundColor: '#00b00e',
+            color: 'white',
+            '&:hover': {
+              borderColor: '#F1EFEF',
+              backgroundColor: '#86A789',
+            },
+          }}
+        >
+          Save Changes
+        </Button>
+      </div>
       {/* STATUSES */}
       <InfoDisplayRow
         title="Status Information"
@@ -422,74 +554,24 @@ const SongDetails = () => {
           variant="outlined"
           onClick={handleDistributionEdit}
           sx={{
-            marginRight: "15px",
-            borderColor: "#00b00e",
-            backgroundColor: "#00b00e",
-            color: "white",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#86A789",
+            marginRight: '15px',
+            borderColor: '#00b00e',
+            backgroundColor: '#00b00e',
+            color: 'white',
+            '&:hover': {
+              borderColor: '#F1EFEF',
+              backgroundColor: '#86A789',
             },
           }}
         >
           Save Changes
         </Button>
       </div>
-      {/* LICENSING INFORMATION VIEW/EDIT */}
-      <InfoDisplayRow
-        title="Publishing Information"
-        subTitle="Update the publishing information here"
-        infoToDisplay={licensingInformation}
-        headerMap={publishingColumnMappedToHeaders}
-        handleChange={handleLicensingChange}
-      />
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-          <Button
-            variant="outlined"
-            onClick={handleLicensingEdit}
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-           Save Changes
-          </Button>
-      </div>
-      {/* PUBLISHER INFORMATION*/}
-      <PublisherInfoDisplay
-        songNumber={basicInformation.SongNumber}
-        setSongPublishers={setSongPublishers}
-        songPublishers={songPublishers}
-        saveNewPublisher={handleSaveNewPublisher}
-        removePublisher={handleRemovePublisher}
-      />
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-          <Button
-            variant="outlined"
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            Save Changes
-          </Button>
-      </div>
+
       <SongStatusDisplayEdit
-      statusData={statusData}
-      handleChange={handleStatusChange}
-      handleSave={handleStatusEdit}
+        statusData={statusData}
+        handleChange={handleStatusChange}
+        handleSave={handleStatusEdit}
       />
       <CommentDisplay
         comments={comments}
@@ -499,22 +581,24 @@ const SongDetails = () => {
       {/* MEDIA */}
       <div className="w-full mt-10 flex">
         <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>
+          <Typography sx={{fontWeight: 'bold', fontSize: '30px'}}>Media</Typography>
         </div>
       </div>
       {!showFileUpload ? (
         <div className="w-[90%] mt-5 flex items-center justify-start">
           <Button
             variant="outlined"
-            onClick={() => {setShowFileUpload(true)}}
+            onClick={() => {
+              setShowFileUpload(true);
+            }}
             sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
+              marginRight: '15px',
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
               },
             }}
           >
@@ -526,92 +610,20 @@ const SongDetails = () => {
           songNumber={basicInformation.SongNumber}
           submit={uploadMediaFileAndRefresh}
           buckets={generatedSets}
-          hideHandler = {() => {setShowFileUpload(false)}}
+          hideHandler={() => {
+            setShowFileUpload(false);
+          }}
         ></FileAdd>
       )}
 
-
-
-      {generatedMedia?.length > 0 ? (generatedMedia.map((entry, index) => (
-                <FileUpload
-                  mediaObject={entry}
-                  returnUploadFile={returnUploadFile}
-                />
-            ))) : (
-        <>
-          <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
-            <Typography sx={{ fontWeight: "bold" }}>720-blk-background</Typography>
-          </div>
-          <div className="w-[90%] mt-10 flex flex-row justify-between">
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/svg+xml,image/png,image/jpeg"
-            />
-            <div
-              className="w-[33%] h-60 border border-green-600 border-2 rounded-lg flex flex-col justify-center items-center cursor-pointer"
-              onClick={handleFileUploadClick}
-            >
-              <CloudUploadIcon sx={{ height: 40, width: 40 }} />
-              <Typography sx={{ marginTop: 1 }}>Click to Replace</Typography>
-
-            </div>
-            <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
-              {selectedFile && (
-                <img
-                  src={selectedFile}
-                  alt="Selected"
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              )}
-              {!selectedFile && (
-                <Typography
-                  sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
-                >
-                  Song title no background
-                </Typography>
-              )}
-            </div>
-            <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg"></div>
-          </div>
-        </>
-      )}
-
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-        <Button
-          variant="outlined"
-          sx={{
-            marginRight: "15px",
-            borderColor: "#FF6969",
-            backgroundColor: "#FF6969",
-            color: "white",
-            "&:hover": {
-              borderColor: "#FF6969",
-              backgroundColor: "#white",
-              color: "#FF6969",
-            },
-          }}
-          onClick={() => setSelectedFile(null)}
-        >
-          Reset
-        </Button>
-        <Button
-          variant="outlined"
-          sx={{
-            marginRight: "15px",
-            borderColor: "#00b00e",
-            backgroundColor: "#00b00e",
-            color: "white",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#86A789",
-            },
-          }}
-        >
-          Save
-        </Button>
+      <div className="w-full mt-10 ml-40 mb-20">
+      <DisplayMediaListing
+        updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
+        uploadMediaFileAndRefresh={uploadMediaFileAndRefresh}
+        SongNumber={basicInformation.SongNumber}
+        generatedSets={generatedSets}
+        generatedMedia={generatedMedia}
+      />
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
-import {Button, Typography} from '@mui/material';
+import {Button, TextField, Typography} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload.js';
 import {useEffect, useRef, useState} from 'react';
 import {base_url} from '../helpers/requests.js';
 
 
-export function FileUpload({mediaObject, returnUploadFile}){
+export function FileUpload({mediaObject = {}, returnUploadFile = () => {}, handleMetadataChange = () => {}}){
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [generatedMedia, setGeneratedMedia] = useState({});
@@ -36,62 +36,71 @@ export function FileUpload({mediaObject, returnUploadFile}){
 
   return (
     <>
-      <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
+      <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-t-lg border-gray-300 p-5">
         <Typography sx={{ fontWeight: "bold" }}>{generatedMedia.generatedSet || '720-blk-background'}</Typography>
       </div>
-      <div className="w-[90%] mt-10 flex flex-row justify-between">
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-          accept="video/mp4,audio/mpeg"
-        />
-        <div
-          className="w-[33%] h-60 border border-green-600 border-2 rounded-lg flex flex-col justify-center items-center cursor-pointer"
-          onClick={handleFileUploadClick}
-        >
-          <CloudUploadIcon sx={{ height: 40, width: 40 }} />
-          <Typography sx={{ marginTop: 1 }}>Click to Upload</Typography>
-
+      <div className="w-[90%] flex flex-row  justify-between items-center border-b-2 border-x-2 rounded-b-lg border-gray-300 p-5">
+        <div className="flex-none ml-8">
+          <div className="flex flex-col  w-52">
+            <Typography sx={{ fontWeight: "bold" }}>Digitrax Id</Typography>
+            <TextField
+              sx={{ marginTop: 1 }}
+              hiddenLabel
+              name='add'
+              value={generatedMedia.digitraxId}
+              onChange={handleMetadataChange}
+              variant="outlined"
+            />
+          </div>
         </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
-          {selectedFile && (
-            <Typography
-              sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
-            >
-              Song Added
-            </Typography>
-          )}
-          {!selectedFile && (
-            <Typography
-              sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
-            >
-              Song title no background
-            </Typography>
-          )}
+        <div className="flex-none ml-8">
+          <div className="flex flex-col  w-52">
+            <Typography sx={{ fontWeight: "bold" }}>Filename</Typography>
+            <TextField
+              sx={{ marginTop: 1 }}
+              hiddenLabel
+              name='add'
+              value={generatedMedia.fullFilename}
+              onChange={handleMetadataChange}
+              variant="outlined"
+            />
+          </div>
         </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
+        <div className="flex-none ml-8">
+          <div className="flex flex-col  w-52">
+            <Typography sx={{ fontWeight: "bold" }}>videoDimension</Typography>
+            <TextField
+              sx={{ marginTop: 1 }}
+              hiddenLabel
+              name='add'
+              value={generatedMedia.videoDimension}
+              onChange={handleMetadataChange}
+              variant="outlined"
+            />
+          </div>
+        </div>
+        <div className="flex-none ml-8">
           <a href={`${base_url}/fileGetInternal/${generatedMedia.requestString}`} target="_blank" download>
-          <Button
-            variant="outlined"
-            onClick={() => {setShowFileUpload(true)}}
-            sx={{
-              marginRight: "15px",
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            Download File:  {generatedMedia.fullFilename}
-          </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {setShowFileUpload(true)}}
+              sx={{
+                marginRight: "15px",
+                borderColor: "#00b00e",
+                backgroundColor: "#00b00e",
+                color: "white",
+                "&:hover": {
+                  borderColor: "#F1EFEF",
+                  backgroundColor: "#86A789",
+                },
+              }}
+            >
+              Download File:  {generatedMedia.fullFilename}
+            </Button>
           </a>
         </div>
       </div>
+
     </>
   )
 }

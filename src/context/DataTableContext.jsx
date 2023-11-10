@@ -1,6 +1,6 @@
 import {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {base_url, returnLimit} from '../helpers/requests.js';
+import {axiosBase, base_url, returnLimit} from '../helpers/requests.js';
 import {ColumnHeadersMap, ColumnWidthMap, statusOptionsText} from '../helpers/constants.js';
 import {isWhiteSpace} from '../helpers/utils.js';
 
@@ -40,6 +40,7 @@ const excludeFields = [
 ];
 
 const DataTableContext = ({children}) => {
+  const [generatedSets, setGeneratedSets] = useState([]);
   const [currentDataSet, setCurrentDataSet] = useState([]);
   const [nextPage, setNextPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -51,6 +52,7 @@ const DataTableContext = ({children}) => {
   const [crossColumnDetails, setCrossColumnDetails] = useState([]);
   const [recentSongs, setRecentSongs] = useState([]);
   const [crossClearDataSet, setCrossClearDataSet] = useState([]);
+  const [nextTwentyCatalogNumbers, setNextTwentyCatalogNumbers] = useState([]);
 
   const getData = async () => {
     // const limit = 1000; //-1 // -1
@@ -69,6 +71,17 @@ const DataTableContext = ({children}) => {
 
 
   };
+
+  const getExistingBuckets = () => {
+    axiosBase({
+      method: 'get',
+      url: '/getExistingBuckets',
+    })
+      .then(response => {
+        const buckets = response.data?.map(item => item.bucket);
+        setGeneratedSets(buckets);
+      });
+  }
 
   const getCrossData = async () => {
     const limit = 1000; //-1 // -1
@@ -157,17 +170,30 @@ const DataTableContext = ({children}) => {
     setCrossColumnDetails(columns2CrossClear)
   };
 
+  const getSongNumbersWithoutRecords = async () => {
+    const res = await axios.get(`${base_url}/getAvailableSongNumbers`);
+    console.log('STM context-DataTableContext.jsx:175', res); // todo remove dev item
+    setNextTwentyCatalogNumbers(res.data.slice(0,20))
+    return res.data.slice(0,20)
+    // getAvailableSongNumbers
+  }
+
   useEffect(() => {
+
     getColumnNames()
       .then(getData)
       .then(getCrossData)
+    getExistingBuckets()
+    getSongNumbersWithoutRecords()
+
   }, []);
 
-  // useEffect(() => {
-  //   getColumnNames();
-  //   getData();
-  //   getCrossData();
-  // }, []);
+
+  const allDataRefresh = () => {
+    getData()
+    getExistingBuckets()
+    getSongNumbersWithoutRecords()
+  }
 
   const addToRecentSongs = (song) => {
     setRecentSongs((prev) => {
@@ -181,8 +207,10 @@ const DataTableContext = ({children}) => {
 
   return (
     <DataTableData.Provider value={{
+      allDataRefresh,
       getData,
       getCrossData,
+      getExistingBuckets,
       crossClearDataSet,
       crossColumnNames,
       crossColumnDetails,
@@ -193,7 +221,10 @@ const DataTableContext = ({children}) => {
       totalPages,
       totalResults,
       columnNames,
-      columnDetails
+      columnDetails,
+      generatedSets,
+      nextTwentyCatalogNumbers,
+      getSongNumbersWithoutRecords
     }}>
       {children}
     </DataTableData.Provider>

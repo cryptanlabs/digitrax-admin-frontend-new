@@ -9,7 +9,6 @@ const getDistributionInfoFromSongData = (rowData) => {
     Kod: rowData.Kod,
     VirtualDj: rowData.VirtualDj,
     KaraokeCloudApi: rowData.KaraokeCloudApi,
-    Status: rowData.Status,
   }
 }
 

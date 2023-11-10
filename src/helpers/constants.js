@@ -77,8 +77,6 @@ export const statusInformationDefault = {
   Vevo: false,
   VirtualDj: false,
   KaraokeCloudApi: false,
-  Status: ''
-
 }
 
 export const licensingInformationDefault = {

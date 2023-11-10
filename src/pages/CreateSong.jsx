@@ -9,6 +9,8 @@ import {BasicSongInfoDisplay} from '../components/BasicSongInfoDisplay.jsx';
 import {LicensingInfoDisplay} from '../components/LicensingInfoDisplay.jsx';
 import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
 import {DataTableData} from '../context/DataTableContext.jsx';
+import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
+import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -28,6 +30,14 @@ const publishingHeadersMappedToColumn = {
   Writer: "Writer",
 };
 
+const publishingColumnMappedToHeaders = {
+  'ISRCCAMixVocal': 'ISRC',
+  'HFASongCode': 'HFA Song Code',
+  'MechanicalRegistrationNumberA': 'HFA-Mechanical-A Mix',
+  'MechanicalRegistrationNumberD': 'HFA-Mechanical-D Mix',
+  'Territories': 'Territories',
+  'Writer': 'Writer'
+};
 
 
 const defaultLicensingInformationState = {
@@ -59,359 +69,410 @@ const defaultBasicInfoState = {
 }
 
 const CreateSong = () => {
-  const location = useLocation();
-  const { generatedSets, addSong, addPublisher, uploadMediaFile, getDetailsForSong, createComment, getCommentsForSong } =
-    useContext(SongDetailsContext);
-  const { addToRecentSongs } = useContext(DataTableData);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [newComment, setNewComment] = useState("");
 
-  const fileInputRef = useRef(null);
-  const [showFileUpload, setShowFileUpload] = useState(false);
-  const [generatedMedia, setGeneratedMedia] = useState([])
-  const [generatedMediaForUpload, setGeneratedMediaForUpload] = useState([]);
-  const [publishersForUpload, setPublishersForUpload] = useState([]);
+  try {
+    const location = useLocation();
+    const {
+      generatedSets,
+      addSong,
+      addPublisher,
+      uploadMediaFile,
+      getDetailsForSong,
+      createComment,
+      getCommentsForSong
+    } =
+      useContext(SongDetailsContext);
+    const {addToRecentSongs, getData, nextTwentyCatalogNumbers, getSongNumbersWithoutRecords} = useContext(DataTableData);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [newComment, setNewComment] = useState('');
 
-  const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
-  const [licensingInformation, setLicensingInformation] = useState(defaultLicensingInformationState);
+    const fileInputRef = useRef(null);
+    const [showFileUpload, setShowFileUpload] = useState(false);
+    const [generatedMedia, setGeneratedMedia] = useState([]);
+    const [generatedMediaForUpload, setGeneratedMediaForUpload] = useState([]);
 
-  const [basicInformation, setBasicInformation] = useState(defaultBasicInfoState);
+    const [publishersForUpload, setPublishersForUpload] = useState([]);
 
-  useEffect(() => {
-    return () => {
-      const detailsInOrder = publishingHeaders.map((val) => {
-        return {
-          key: publishingHeadersMappedToColumn[val],
-          value: licensingInformation[publishingHeadersMappedToColumn[val]],
-        };
-      });
+    const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
+    const [licensingInformation, setLicensingInformation] = useState(defaultLicensingInformationState);
 
-      console.log("STM pages-SongDetails.jsx:118", detailsInOrder); // todo remove dev item
-      setLicensingInfoDisplay(detailsInOrder);
+    const [basicInformation, setBasicInformation] = useState(defaultBasicInfoState);
+
+    const [filesStagedForUpload, setFilesStagedForUpload] = useState({});
+    const [comments, setComments] = useState([]);
+    const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
+    const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
+
+    useEffect(() => {
+      setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
+      getSongNumbersWithoutRecords()
+        .then(res => {
+          const nextNum = res?.shift()?.toString()?.padStart(5, '0')
+          setNextCatNumbersToSuggest(res)
+          setNextCatSuggest(nextNum)
+        })
+
+    }, []);
+
+    useEffect(() => {
+      return () => {
+        const detailsInOrder = publishingHeaders.map((val) => {
+          return {
+            key: publishingHeadersMappedToColumn[val],
+            value: licensingInformation[publishingHeadersMappedToColumn[val]],
+          };
+        });
+
+        console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
+        setLicensingInfoDisplay(detailsInOrder);
+      };
+    }, [licensingInformation]);
+
+    const handleChange = (e) => {
+      const {name, value} = e.target;
+      setBasicInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     };
-  }, [licensingInformation]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setBasicInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleLicensingChange = (e) => {
-    const { name, value } = e.target;
-    setLicensingInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const uploadMediaFileAndForCreateSong = async (data) => {
-    for(const thing of data.entries()){
-      if(thing[0] === 'bucketName'){
-
-      }
-      console.log('STM components-fileAdd.jsx:23', thing); // todo remove dev item
-    }
-    setGeneratedMediaForUpload([...generatedMediaForUpload, data])
-    // await uploadMediaFile(data)
-    // const songData = await getDetailsForSong(basicInformation.SongNumber)
-    // setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
-    //
-  }
-
-
-  const savePublisher = (data) => {
-    setPublishersForUpload([...publishersForUpload, data])
-  }
-  // Top Section Upload Handlers
-
-  const handleSongUpload = async () => {
-    const SongNumber = basicInformation.SongNumber
-
-    if(!SongNumber){
-      return;
-    }
-    const newSongData = {
-      ...basicInformation,
-      ...licensingInformation
-    }
-    await addSong(newSongData)
-
-    addToRecentSongs(SongNumber)
-    for(let i=0; i< generatedMediaForUpload.length; i++){
-      for(const thing of generatedMediaForUpload[i].entries()){
-      }
-      try {
-        await uploadMediaFile(generatedMediaForUpload[i]);
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    for(let i=0; i< publishersForUpload.length; i++){
-
-      try {
-        publishersForUpload[i].SongNumber = SongNumber
-        await addPublisher(publishersForUpload[i]);
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    setLicensingInformation(defaultLicensingInformationState)
-    setBasicInformation(defaultBasicInfoState)
-    console.log(basicInformation);
-  };
-
-  const handleCommentChange = (e) => {
-    const { value } = e.target;
-    setNewComment(value);
-  };
-  const handleCreateComment = async () => {
-    const copyComment = {
-      SongNumber: basicInformation.SongNumber,
-      Content: newComment,
-      UserName: "DTE",
+    const handleLicensingChange = (e) => {
+      const {name, value} = e.target;
+      console.log('STM pages-CreateSong.jsx:124', name, value); // todo remove dev item
+      setLicensingInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     };
-    await createComment(copyComment);
-    setComments((prev) => [copyComment, ...prev]);
-    setNewComment("");
-  };
 
-  // File Upload Handlers
-
-  const handleFileUploadClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(URL.createObjectURL(file));
+    const incrementNextCatalogNumberSuggestion = () => {
+      setNextCatNumbersToSuggest(prev => {
+        setNextCatSuggest(prev.shift())
+        return [...prev]
+      })
     }
-  };
 
-  useEffect(() => {
-    console.log(basicInformation);
-  }, [basicInformation]);
+    const uploadMediaFileAndForCreateSong = async (data) => {
 
-  return (
-    <div className="w-full mt-4 flex flex-col items-center justify-between">
-      <div className="w-full mt-4 flex items-center justify-between">
-        <h1 className="text-4xl ml-20 font-medium">Create Song Entry</h1>
-        <div className="flex w-1/3  mr-3 justify-center">
-          <Button
-            variant="outlined"
-            sx={{
-              borderColor: "gray",
-              color: "black",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#F5F7F8",
-              },
-            }}
-          >
-            Upload Another Song
-          </Button>
+      setGeneratedMediaForUpload([...generatedMediaForUpload, data]);
+      let bucketName = ''
+      let fileName = ''
+      for (const thing of data.entries()) {
+        if (thing[0] === 'bucketName') {
+          bucketName = thing[1]
+        }
+        if(typeof thing[1] === 'object'){
+          fileName = thing[1]?.name
+          console.log('STM pages-CreateSong.jsx:150', thing[1]?.name); // todo remove dev item
+        }
+        console.log('STM components-fileAdd.jsx:23', typeof thing[1]); // todo remove dev item
+      }
 
-          <Button
-            variant="outlined"
-            startIcon={<StarBorderIcon />}
-            sx={{
-              borderColor: "#00b00e",
-              backgroundColor: "#00b00e",
-              marginLeft: "15px",
-              color: "white",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#86A789",
-              },
-            }}
-          >
-            Export
-          </Button>
-        </div>
-      </div>
-      <BasicSongInfoDisplay
-        handleChange={handleChange}
-        basicInformation={basicInformation}
-      />
-      {/* LICENSING INFORMATION VIEW/EDIT */}
-      <LicensingInfoDisplay
-        publishingHeaders={publishingHeaders}
-        licensingInfoDisplay={licensingInfoDisplay}
-        handleChange={handleLicensingChange}
-        basicInformation={basicInformation}
-      />
+      setFilesStagedForUpload((prev) => {
+        if(prev[bucketName]){
+          const tempSet = new Set(prev[bucketName])
+          tempSet.add(fileName)
+          prev[bucketName] = Array.from(tempSet)
+        } else {
+          prev[bucketName] = [fileName]
+        }
+        return prev
+      })
+      console.log('STM pages-CreateSong.jsx:163', filesStagedForUpload); // todo remove dev item
+      console.log('STM pages-CreateSong.jsx:165', generatedMediaForUpload); // todo remove dev item
+    };
 
-      <PublisherInfoDisplay
-        songNumber={basicInformation.SongNumber}
-        saveNewPublisher={savePublisher}
-        songPublishers={publishersForUpload}
-        setSongPublishers={setPublishersForUpload}
-      />
-      <div className="w-full mt-10 flex items-center justify-center">
-        <Button
-          variant="outlined"
-          onClick={handleSongUpload}
-          sx={{
-            marginRight: "15px",
-            borderColor: "#00b00e",
-            backgroundColor: "#00b00e",
-            color: "white",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#86A789",
-            },
-          }}
-        >
-          UPLOAD
-        </Button>
-      </div>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col w-[90%] ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Add a Comment</Typography>
-          {location.state ? (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              multiline
-              rows={4}
-              value={newComment}
-              onChange={handleCommentChange}
+    const savePublisher = (data) => {
+      setPublishersForUpload([...publishersForUpload, data]);
+    };
+    // Top Section Upload Handlers
+
+    const handleSongUpload = async () => {
+      const SongNumber = basicInformation.SongNumber;
+
+      if (!SongNumber) {
+        return;
+      }
+
+      // Add basic song data
+      const newSongData = {
+        ...basicInformation,
+        ...licensingInformation,
+        Status: 'Status1'
+      };
+      await addSong(newSongData);
+
+      addToRecentSongs(SongNumber);
+
+      // Add Media
+      for (let i = 0; i < generatedMediaForUpload.length; i++) {
+        for (const thing of generatedMediaForUpload[i].entries()) {
+        }
+        try {
+          await uploadMediaFile(generatedMediaForUpload[i]);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Add Publishers
+      for (let i = 0; i < publishersForUpload.length; i++) {
+
+        try {
+          publishersForUpload[i].SongNumber = SongNumber;
+          await addPublisher(publishersForUpload[i]);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Add Comments
+      for (let i = 0; i < comments.length; i++) {
+
+        try {
+          await createComment(comments[i]);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      setLicensingInformation(defaultLicensingInformationState);
+      setBasicInformation(defaultBasicInfoState);
+      setFilesStagedForUpload({})
+      incrementNextCatalogNumberSuggestion()
+      console.log(basicInformation);
+      getData()
+    };
+
+    const handleCommentChange = (e) => {
+      const {value} = e.target;
+      setNewComment(value);
+    };
+    const handleCreateComment = async () => {
+      const copyComment = {
+        SongNumber: basicInformation.SongNumber,
+        Content: newComment,
+        UserName: 'Added on Save',
+      };
+      setComments((prev) => [copyComment, ...prev]);
+      setNewComment('');
+    };
+
+    useEffect(() => {
+      console.log(basicInformation);
+    }, [basicInformation]);
+
+    return (
+      <div className="w-full mt-4 flex flex-col items-center justify-between">
+        <div className="w-full mt-4 flex items-center justify-between">
+          <h1 className="text-4xl ml-20 font-medium">Create Song Entry</h1>
+          <div className="flex w-1/3  mr-3 justify-center">
+            <Button
               variant="outlined"
-            />
-          ) : (
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              multiline
-              rows={4}
-              variant="outlined"
-            />
-          )}
-        </div>
-      </div>
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-        <Button
-          variant="outlined"
-          onClick={handleCreateComment}
-          sx={{
-            marginRight: "15px",
-            borderColor: "#00b00e",
-            backgroundColor: "#00b00e",
-            color: "white",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#86A789",
-            },
-          }}
-        >
-          Save Comment
-        </Button>
-      </div>
-
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold", fontSize: '30px' }}>Media</Typography>
-        </div>
-      </div>
-
-      <FileAdd
-        songNumber={basicInformation.SongNumber}
-        submit={uploadMediaFileAndForCreateSong}
-        buckets={generatedSets}
-        hideHandler = {() => {setShowFileUpload(false)}}
-      ></FileAdd>
-
-      {generatedSets.map((generatedSet, index) => (
-          <>
-            <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
-              <Typography sx={{ fontWeight: "bold" }}>{generatedSet}</Typography>
-            </div>
-            <FileAdd
-              songNumber={basicInformation.SongNumber}
-              submit={uploadMediaFileAndForCreateSong}
-              preSetBucketTo={generatedSet}
-              hideHandler = {() => {setShowFileUpload(false)}}
-            ></FileAdd>
-          </>
-      ))}
-      <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-lg border-gray-300 p-5">
-        <Typography sx={{ fontWeight: "bold" }}>720-blk-background</Typography>
-      </div>
-      <div className="w-[90%] mt-10 flex flex-row justify-between">
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-          accept="image/svg+xml,image/png,image/jpeg"
-        />
-        <div
-          className="w-[33%] h-60 border border-green-600 border-2 rounded-lg flex flex-col justify-center items-center cursor-pointer"
-          onClick={handleFileUploadClick}
-        >
-          <CloudUploadIcon sx={{ height: 40, width: 40 }} />
-          <Typography sx={{ marginTop: 1 }}>Click to Upload</Typography>
-        </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg">
-          {selectedFile && (
-            <img
-              src={selectedFile}
-              alt="Selected"
-              className="w-full h-full object-cover rounded-lg"
-            />
-          )}
-          {!selectedFile && (
-            <Typography
-              sx={{ fontWeight: "bold", padding: 2, color: "dark-gray" }}
+              sx={{
+                borderColor: 'gray',
+                color: 'black',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#F5F7F8',
+                },
+              }}
             >
-              Song title no background
-            </Typography>
-          )}
+              Upload Another Song
+            </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<StarBorderIcon/>}
+              sx={{
+                borderColor: '#00b00e',
+                backgroundColor: '#00b00e',
+                marginLeft: '15px',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#86A789',
+                },
+              }}
+            >
+              Export
+            </Button>
+          </div>
         </div>
-        <div className="w-[33%] h-60 border border-gray-300 border-2 rounded-lg"></div>
+        <BasicSongInfoDisplay
+          handleChange={handleChange}
+          basicInformation={basicInformation}
+          nextCatNumberToSuggest={nextCatSuggest}
+        />
+        {/* LICENSING INFORMATION VIEW/EDIT */}
+        <div className="w-full mt-20 flex">
+          <div className="flex flex-col ml-20">
+            <Typography sx={{ fontWeight: "bold" }}>
+              Publishing Information
+            </Typography>
+            <Typography>Update the publishing information here</Typography>
+          </div>
+        </div>
+        <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
+          <div className="w-full h-10 border-b flex border-gray-300">
+            {publishingHeaders.map((header, index) => (
+              <div
+                key={index}
+                className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
+              >
+                <Typography sx={{ fontSize: 14 }}>{header}</Typography>
+              </div>
+            ))}
+          </div>
+          <div className="w-full h-20 flex">
+            {/* publishingHeadersMappedToColumn */}
+            {licensingInfoDisplay.map((header, index) => (
+              <div
+                key={index}
+                className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 "
+              >
+                <TextField
+                  sx={{ marginTop: 1, width: "90%" }}
+                  size="small"
+                  hiddenLabel
+                  name={header.key}
+                  onChange={handleLicensingChange}
+                  value={licensingInformation[header.key]}
+                  variant="outlined"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <PublisherInfoDisplay
+          songNumber={basicInformation.SongNumber}
+          saveNewPublisher={savePublisher}
+          songPublishers={publishersForUpload}
+          setSongPublishers={setPublishersForUpload}
+        />
+
+        <div className="w-full mt-10 flex">
+          <div className="flex flex-col w-[90%] ml-20">
+            <Typography sx={{fontWeight: 'bold'}}>Add a Comment</Typography>
+            {location.state ? (
+              <TextField
+                sx={{marginTop: 1}}
+                hiddenLabel
+                multiline
+                rows={4}
+                value={newComment}
+                onChange={handleCommentChange}
+                variant="outlined"
+              />
+            ) : (
+              <TextField
+                sx={{marginTop: 1}}
+                hiddenLabel
+                multiline
+                rows={4}
+                variant="outlined"
+              />
+            )}
+          </div>
+        </div>
+        <div className="w-[90%] mt-5 flex items-center justify-end">
+          <Button
+            variant="outlined"
+            onClick={handleCreateComment}
+            sx={{
+              marginRight: '15px',
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
+              },
+            }}
+          >
+            Add Comment
+          </Button>
+        </div>
+
+        <div className="w-full mt-10 flex">
+          <div className="flex flex-col ml-20">
+            <Typography sx={{fontWeight: 'bold', fontSize: '30px'}}>Media</Typography>
+          </div>
+        </div>
+        <div className="w-full flex flex-row flex-wrap grow ml-40 ">
+          {Object.keys(filesStagedForUpload).map((item, index) => (
+            <div className="w-64 flex-col" key={index}>
+              <Typography sx={{fontWeight: 'bold'}}>{item}</Typography>
+              {filesStagedForUpload[item].map((fileItem, idx) => (
+                <Typography key={idx}>{fileItem}</Typography>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="w-full ml-40 ">
+          <FileAdd
+            newSong
+            buttonOnly
+            songNumber={basicInformation.SongNumber}
+            submit={uploadMediaFileAndForCreateSong}
+            buckets={generatedSets}
+            hideHandler={() => {
+              setShowFileUpload(false);
+            }}
+          ></FileAdd>
+          <DisplayMediaListing
+            newSong
+            songNumber={basicInformation.SongNumber}
+            submit={uploadMediaFileAndForCreateSong}
+            generatedSets={generatedSets}
+          />
+        </div>
+
+        <div className="w-[90%] mt-5 flex items-center justify-end">
+          <Button
+            variant="outlined"
+            sx={{
+              marginRight: '15px',
+              borderColor: '#FF6969',
+              backgroundColor: '#FF6969',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#FF6969',
+                backgroundColor: '#white',
+                color: '#FF6969',
+              },
+            }}
+            onClick={() => setSelectedFile(null)}
+          >
+            Reset
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleSongUpload}
+            sx={{
+              marginRight: '15px',
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
+              },
+            }}
+          >
+            Save
+          </Button>
+        </div>
       </div>
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-        <Button
-          variant="outlined"
-          sx={{
-            marginRight: "15px",
-            borderColor: "#FF6969",
-            backgroundColor: "#FF6969",
-            color: "white",
-            "&:hover": {
-              borderColor: "#FF6969",
-              backgroundColor: "#white",
-              color: "#FF6969",
-            },
-          }}
-          onClick={() => setSelectedFile(null)}
-        >
-          Reset
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={handleSongUpload}
-          sx={{
-            marginRight: "15px",
-            borderColor: "#00b00e",
-            backgroundColor: "#00b00e",
-            color: "white",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#86A789",
-            },
-          }}
-        >
-          Save
-        </Button>
-      </div>
-    </div>
-  );
+    );
+  } catch (e) {
+    console.error(e)
+    return (
+      <h1 style={{color: 'red', fontWeight: 'bold'}}>Error in 'CreateSong' Page Component</h1>
+    )
+  }
 };
 
 export default CreateSong;
