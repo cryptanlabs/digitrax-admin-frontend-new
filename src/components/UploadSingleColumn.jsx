@@ -48,7 +48,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
           return item;
         });
 
-        if (Object.keys(result.data[0])?.length > 2) {
+        if (Object.keys(result.data[0])?.length > 3) {
           setInvalidUpload(true);
         } else {
           setColumnHeaders(Object.keys(result.data[0]));
