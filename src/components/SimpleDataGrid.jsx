@@ -52,6 +52,12 @@ export function SimpleDataGrid ({
       <GridToolbarContainer>
         <Button
           {...buttonBaseProps}
+          onClick={() => handleExport()}
+        >
+          All
+        </Button>
+        <Button
+          {...buttonBaseProps}
           onClick={() => handleExport({getRowsToExport: getRowsFromCurrentPage})}
         >
           Current page rows

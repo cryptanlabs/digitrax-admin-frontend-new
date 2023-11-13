@@ -35,6 +35,7 @@ export function FileAdd ({
   // File name
   const [changeFilename, setChangeFilename] = useState(false);
   const [differentFilename, setDifferentFilename] = useState(false);
+  const [fileNameChanged, setFileNameChanged] = useState(false);
   const [currentFileName, setCurrentFileName] = useState('');
 
   // Proceed Permissions
@@ -74,10 +75,20 @@ export function FileAdd ({
   const submitFile = async () => {
     if(!songNumber) return
     addNewBucketToList(bucketName)
-    formData.append(
-      bucketName,
-      selectedFile
-    );
+
+    if (fileNameChanged) {
+      formData.append(
+        bucketName,
+        selectedFile,
+        currentFileName
+      );
+    } else {
+      formData.append(
+        bucketName,
+        selectedFile
+      );
+    }
+
     formData.append(
       'bucketName',
       bucketName
@@ -88,7 +99,7 @@ export function FileAdd ({
         'force',
         true
       );
-    } else if(newSong && !buckets.includes(bucketName)){
+    } else if(newSong && !preSetBucketTo){
       formData.append(
         'force',
         true
@@ -127,7 +138,7 @@ export function FileAdd ({
     const file = event.target.files[0];
     if (file) {
       try {
-        console.log('STM components-fileAdd.jsx:105', selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString(), songNumber); // todo remove dev item
+        console.log('STM components-fileAdd.jsx:130', selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString(), songNumber); // todo remove dev item
         setDifferentFilename(file.name.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
       } catch (e) {
         console.error(e);
@@ -149,8 +160,9 @@ export function FileAdd ({
   const handleFileNameChange = (e) => {
     const {name, value} = e.target;
     setCurrentFileName(value);
+    setFileNameChanged(true);
     try {
-      console.log('STM components-fileAdd.jsx:105', selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString(), songNumber); // todo remove dev item
+      console.log('STM components-fileAdd.jsx:153', selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString(), songNumber); // todo remove dev item
       setDifferentFilename(value.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
     } catch (e) {
       console.error(e);

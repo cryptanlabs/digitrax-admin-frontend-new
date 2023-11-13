@@ -5,6 +5,7 @@ import {useEffect, useState} from 'react';
 import {addIdForDataTable, isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {ColumnHeadersMap} from '../helpers/constants.js';
+import WithFilters from '../components/WithFilter.jsx';
 
 export default function QueryBuilder () {
   try {
@@ -15,6 +16,7 @@ export default function QueryBuilder () {
     const [selectedTable, setSelectedTable] = useState('');
     const [availableFields, setAvailableFields] = useState([]);
     const [queryFields, setQueryFields] = useState({});
+    const [queryFieldModifiers, setQueryFieldModifiers] = useState({});
     const [collectQueryParams, setCollectQueryParams] = useState({});
     const [results, setResults] = useState([]);
     const [resultColumns, setResultColumns] = useState([]);
@@ -35,14 +37,17 @@ export default function QueryBuilder () {
 
       for (const model of models) {
         // console.log('STM pages-QueryBuilder.jsx:23', model); // todo remove dev item
-        if (model.name === 'SongCatalog') {
-          continue;
-        }
+        // if (model.name === 'SongCatalog') {
+        //   continue;
+        // }
         modelDetailsLocal[model.name] = {};
         modelDetailsLocalClean[model.name] = {};
 
         for (const field of model.fields) {
-          // console.log('STM pages-QueryBuilder.jsx:23', model); // todo remove dev item
+          if(field.relationFromFields){
+            continue
+          }
+          // console.log('STM pages-QueryBuilder.jsx:23', field); // todo remove dev item
           modelDetailsLocal[model.name][field.name] = field.type;
           modelDetailsLocalClean[model.name][field.name] = '';
         }
@@ -59,66 +64,102 @@ export default function QueryBuilder () {
         ...prev,
         [name]: value,
       }));
-
-      console.log('STM pages-QueryBuilder.jsx:49', queryFields); // todo remove dev item
     };
     const handleTableSelect = (e) => {
       const {name, value} = e.target;
 
       if (modelDetails[value]) {
         const available = Object.keys(modelDetails[value]);
-        setAvailableFields(available);
+        setAvailableFields(modelDetails[value]);
         setQueryFields(modelDetailsClean[value]);
-
+        console.log('STM pages-QueryBuilder.jsx:72', queryFields); // todo remove dev item
       }
+
       setSelectedTable(value);
     };
 
 
     const handleSaveParams = () => {
-      const forTable = {};
-      const currentDetails = modelDetails[selectedTable];
-      const params = Object.keys(queryFields);
-      for (const key of params) {
-        if (!isWhiteSpace(queryFields[key])) {
+      console.log('STM pages-QueryBuilder.jsx:80', availableFields); // todo remove dev item
+      // setCollectQueryParams({});
+      return new Promise((resolve) => {
+            const forTable = {};
+            const currentDetails = modelDetails[selectedTable];
+            const params = Object.keys(queryFields);
 
-          let convertedValue = '';
-          if (currentDetails[key] === 'Int') {
-            convertedValue = parseInt(queryFields[key]);
-          } else if (currentDetails[key] === 'Boolean') {
-            convertedValue = /[t|T]rue/.test(queryFields[key]);
-          } else {
-            convertedValue = queryFields[key];
-          }
-          forTable[key] = convertedValue;
-        }
-      }
+            const parseNumbers = (key) =>{
+              if (currentDetails[key] === 'Int') {
+                return parseInt(queryFields[key]);
+              } else if (currentDetails[key] === 'Decimal') {
+                return parseFloat(queryFields[key])
+              } else {
+                return queryFields[key]
+              }
+            }
 
-      setCollectQueryParams((prev) => ({
-        ...prev,
-        [selectedTable]: forTable,
-      }));
+            for (const key of params) {
+              if (!isWhiteSpace(queryFields[key])) {
+                let convertedValue = '';
+                if(queryFieldModifiers[key]){
+
+                  switch (queryFieldModifiers[key]){
+                    case '=':
+                      convertedValue = {equals: parseNumbers(key)}
+                      break;
+                    case '>':
+                      convertedValue = {gt: parseNumbers(key)}
+                      break;
+                    case '>=':
+                      convertedValue = {gte: parseNumbers(key)}
+                      break;
+                    case '<':
+                      convertedValue = {lt: parseNumbers(key)}
+                      break;
+                    case '<=':
+                      convertedValue = {lte: parseNumbers(key)}
+                      break;
+                  }
+                } else {
+                  if (currentDetails[key] === 'Int') {
+                    convertedValue = parseInt(queryFields[key]);
+                  } else if (currentDetails[key] === 'Boolean') {
+                    convertedValue = /[t|T]rue/.test(queryFields[key]);
+                  } else {
+                    convertedValue = {contains: queryFields[key]};
+                  }
+                }
+
+
+                forTable[key] = convertedValue;
+              }
+            }
+
+            resolve({[selectedTable]: forTable})
+      });
     };
 
     const runQuery = async () => {
-      setCollectQueryParams(() => ({}));
-      handleSaveParams();
+
+      let localCollectQueryParams = await handleSaveParams();
+
       let tableName = '';
       const queryNested = {};
-      const params = Object.keys(collectQueryParams);
-      for (const key of params) {
-        console.log('STM pages-QueryBuilder.jsx:93', key); // todo remove dev item
+      const params = Object.keys(localCollectQueryParams);
+      for (const key of params) { // key is tableName
         tableName = key;
         const capitalizedKey = upperCaseKey(key);
-        queryNested.where = collectQueryParams[key];
+        queryNested.where = localCollectQueryParams[key];
+      }
+      const query = {...queryNested};
+
+      if(tableName !== 'SongCatalog'){
+        query.include = {SongCatalog: true}
       }
 
-      const query = {...queryNested, include: {SongCatalog: true}};
       // {
       //   include: queryNested
       // }
-
-      console.log('STM pages-QueryBuilder.jsx:104', query); // todo remove dev item
+      console.log('STM pages-QueryBuilder.jsx:138', query); // todo remove dev item
       const result = await axiosBase({
         method: 'post',
         timeout: 10000,
@@ -171,6 +212,15 @@ export default function QueryBuilder () {
       getTablesAndColumns();
     }, []);
 
+    const handleQueryFieldModifiers = (e) =>{
+      const {name, value} = e.target;
+      setQueryFieldModifiers((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+
+
     return (
       <>
         <div className="w-full mt-4 flex items-center justify-between">
@@ -191,19 +241,28 @@ export default function QueryBuilder () {
                 </Select>
                 <div className="w-full flex flex-row flex-wrap mt-10 flex">
                   {Object.keys(queryFields).map((entry, index) => (
-                    <>
-                      <div className="flex flex-col ml-20 mt-2 w-[15%]">
-                        <Typography sx={{fontWeight: 'bold'}}>{entry}</Typography>
-                        <TextField
-                          sx={{marginTop: 1}}
-                          hiddenLabel
-                          name={entry}
-                          value={queryFields[entry]}
-                          onChange={handleChange}
-                          variant="outlined"
-                        />
-                      </div>
-                    </>
+                      <WithFilters
+                        key={index}
+                      field={entry}
+                      fieldType={availableFields[entry]}
+                      queryFields={queryFields}
+                      setQueryFields={handleChange}
+                      queryFieldModifiers={queryFieldModifiers}
+                      setQueryFieldModifiers={handleQueryFieldModifiers}
+                      />
+                    // <>
+                    //   <div className="flex flex-col ml-20 mt-2 w-[15%]">
+                    //     <Typography sx={{fontWeight: 'bold'}}>{entry}</Typography>
+                    //     <TextField
+                    //       sx={{marginTop: 1}}
+                    //       hiddenLabel
+                    //       name={entry}
+                    //       value={queryFields[entry]}
+                    //       onChange={handleChange}
+                    //       variant="outlined"
+                    //     />
+                    //   </div>
+                    // </>
                   ))}
                 </div>
               </div>
@@ -230,10 +289,7 @@ export default function QueryBuilder () {
               <div className="w-[90%] flex mt-10 items-center justify-end">
                 <Button
                   variant="outlined"
-                  onClick={() => {
-                    console.log('STM pages-QueryBuilder.jsx:85', collectQueryParams);
-                    runQuery();
-                  }}
+                  onClick={runQuery}
                   sx={{
                     marginRight: '15px',
                     borderColor: '#00b00e',
