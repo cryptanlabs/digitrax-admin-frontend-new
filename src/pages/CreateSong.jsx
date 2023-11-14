@@ -13,6 +13,12 @@ import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
 import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
 import {getStatusInfoFromSongData} from '../helpers/utils.js';
+import {
+  basicInformationDefault,
+  licensingInformationDefault,
+  statusInformationDefault
+} from '../helpers/constants.js';
+import {CommentDisplay} from '../components/CommentDisplay.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -96,15 +102,15 @@ const CreateSong = () => {
     const [publishersForUpload, setPublishersForUpload] = useState([]);
 
     const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
-    const [licensingInformation, setLicensingInformation] = useState(defaultLicensingInformationState);
+    const [licensingInformation, setLicensingInformation] = useState(licensingInformationDefault);
 
-    const [basicInformation, setBasicInformation] = useState(defaultBasicInfoState);
+    const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
 
     const [filesStagedForUpload, setFilesStagedForUpload] = useState({});
     const [comments, setComments] = useState([]);
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
-    const [statusData, setStatusData] = useState();
+    const [statusData, setStatusData] = useState(statusInformationDefault);
 
     useEffect(() => {
       setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
@@ -247,18 +253,19 @@ const CreateSong = () => {
       getData()
     };
 
-    const handleCommentChange = (e) => {
-      const {value} = e.target;
-      setNewComment(value);
-    };
-    const handleCreateComment = async () => {
+    // const handleCommentChange = (e) => {
+    //   const {value} = e.target;
+    //   console.log('STM pages-CreateSong.jsx:258', value); // todo remove dev item
+    //   setNewComment(value);
+    // };
+    const handleCreateComment = async (commentContent) => {
       const copyComment = {
         SongNumber: basicInformation.SongNumber,
-        Content: newComment,
+        Content: commentContent,
         UserName: 'Added on Save',
       };
       setComments((prev) => [copyComment, ...prev]);
-      setNewComment('');
+      // setNewComment('');
     };
 
     const handleStatusChange = (e) => {
@@ -316,7 +323,7 @@ const CreateSong = () => {
           nextCatNumberToSuggest={nextCatSuggest}
         />
         {/* LICENSING INFORMATION VIEW/EDIT */}
-        <div className="w-full mt-20 flex">
+        <div className="w-full mt-10 flex">
           <div className="flex flex-col ml-20">
             <Typography sx={{ fontWeight: "bold" }}>
               Publishing Information
@@ -324,36 +331,20 @@ const CreateSong = () => {
             <Typography>Update the publishing information here</Typography>
           </div>
         </div>
-        <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-          <div className="w-full h-10 border-b flex border-gray-300">
-            {publishingHeaders.map((header, index) => (
-              <div
-                key={index}
-                className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
-              >
-                <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-              </div>
-            ))}
-          </div>
-          <div className="w-full h-20 flex">
-            {/* publishingHeadersMappedToColumn */}
-            {licensingInfoDisplay.map((header, index) => (
-              <div
-                key={index}
-                className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 "
-              >
-                <TextField
-                  sx={{ marginTop: 1, width: "90%" }}
-                  size="small"
-                  hiddenLabel
-                  name={header.key}
-                  onChange={handleLicensingChange}
-                  value={licensingInformation[header.key]}
-                  variant="outlined"
-                />
-              </div>
-            ))}
-          </div>
+        <div className="w-[90%] mt-10 flex flex-row flex-wrap">
+          {Object.keys(licensingInformation).map((header, index) => (
+            <div key={index} className="flex flex-col ml-10 w-[20%]">
+              <Typography sx={{ fontWeight: "bold" }}>{header}</Typography>
+              <TextField
+                size="small"
+                hiddenLabel
+                name={header.key}
+                onChange={handleLicensingChange}
+                value={licensingInformation[header.key]}
+                variant="outlined"
+              />
+            </div>
+          ))}
         </div>
 
         <SongStatusDisplayEdit
@@ -369,48 +360,10 @@ const CreateSong = () => {
           setSongPublishers={setPublishersForUpload}
         />
 
-        <div className="w-full mt-10 flex">
-          <div className="flex flex-col w-[90%] ml-20">
-            <Typography sx={{fontWeight: 'bold'}}>Add a Comment</Typography>
-            {location.state ? (
-              <TextField
-                sx={{marginTop: 1}}
-                hiddenLabel
-                multiline
-                rows={4}
-                value={newComment}
-                onChange={handleCommentChange}
-                variant="outlined"
-              />
-            ) : (
-              <TextField
-                sx={{marginTop: 1}}
-                hiddenLabel
-                multiline
-                rows={4}
-                variant="outlined"
-              />
-            )}
-          </div>
-        </div>
-        <div className="w-[90%] mt-5 flex items-center justify-end">
-          <Button
-            variant="outlined"
-            onClick={handleCreateComment}
-            sx={{
-              marginRight: '15px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Add Comment
-          </Button>
-        </div>
+        <CommentDisplay
+          comments={comments}
+          handleCreateComment={handleCreateComment}
+        />
 
         <div className="w-full mt-10 flex">
           <div className="flex flex-col ml-20">
