@@ -34,6 +34,15 @@ const publishingHeaders = [
   'HFA-Mechanical-D Mix',
   'Territories',
   'Writer',
+  "ISRC CA Mix Vocal",
+  "ISRC CC Mix Karaoke",
+  "ISRC CD MixInstrumental",
+  "ISRC AA MixVocal",
+  "ISRC AC MixKaraoke",
+  "ISRC AD MixInstrumental",
+  "HFA License Number",
+  "ISWC",
+  "Mechanical Registration Number C",
 ];
 
 const publishingHeadersMappedToColumn = {
@@ -42,7 +51,16 @@ const publishingHeadersMappedToColumn = {
   'HFA-Mechanical-A Mix': 'MechanicalRegistrationNumberA',
   'HFA-Mechanical-D Mix': 'MechanicalRegistrationNumberD',
   'Territories': 'Territories',
-  'Writer': 'Writer'
+  'Writer': 'Writer',
+  "ISRC CA Mix Vocal": "ISRCCAMixVocalISRCCAMixVocal",
+  "ISRC CC Mix Karaoke": "ISRCCCMixKaraoke",
+  "ISRC CD MixInstrumental": "ISRCCDMixInstrumental",
+  "ISRC AA MixVocal": "ISRCAAMixVocal",
+  "ISRC AC MixKaraoke": "ISRCACMixKaraoke",
+  "ISRC AD MixInstrumental": "ISRCADMixInstrumental",
+  "HFA License Number": "HFALicenseNumber",
+  "ISWC": "ISWC",
+  "Mechanical Registration Number C": "MechanicalRegistrationNumberC",
 };
 
 const publishingColumnMappedToHeaders = {
@@ -427,40 +445,9 @@ const SongDetails = () => {
           Save Changes
         </Button>
       </div>
-      {/* CROSS CLEAR */}
-      {crossClearEntries?.length === 0 && (
-        <div className="w-full mt-20 flex">
-          <div className="w-full flex flex-col ml-20">
-            <Typography sx={{ fontWeight: "bold" }}>
-              Cross Clear Information
-            </Typography>
-            <Typography>Information received from crossClear</Typography>
-            <div className="w-full items-center ml-80">
-              <Typography>No Cross Clear Information Found</Typography>
-            </div>
-          </div>
-
-        </div>
-      )}
-      {crossClearEntries?.length > 0 && (
-        <InfoDisplayRow
-          title="Cross Clear Information"
-          subTitle="Information received from crossClear"
-          infoToDisplay={crossClearEntries}
-          multiRow
-        />
-      )}
 
       {/* LICENSING INFORMATION VIEW/EDIT */}
-      {/*<InfoDisplayRow*/}
-      {/*  title="Publishing Information"*/}
-      {/*  subTitle="Update the publishing information here"*/}
-      {/*  infoToDisplay={licensingInformation}*/}
-      {/*  headerMap={publishingColumnMappedToHeaders}*/}
-      {/*  handleChange={handleLicensingChange}*/}
-      {/*/>*/}
-      {/* LICENSING INFORMATION VIEW/EDIT */}
-      <div className="w-full mt-20 flex">
+      <div className="w-full mt-10 flex">
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold" }}>
             Publishing Information
@@ -468,35 +455,20 @@ const SongDetails = () => {
           <Typography>Update the publishing information here</Typography>
         </div>
       </div>
-      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-        <div className="w-full h-10 border-b flex border-gray-300">
-          {publishingHeaders.map((header, index) => (
-            <div
-              key={index}
-              className="w-[20%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
-            >
-              <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-            </div>
-          ))}
-        </div>
-        <div className="w-full h-20 flex">
-          {licensingInfoDisplay.map((header, index) => (
-            <div
-              key={index}
-              className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 "
-            >
-              <TextField
-                sx={{ marginTop: 1, width: "90%" }}
-                size="small"
-                hiddenLabel
-                name={header.key}
-                onChange={handleLicensingChange}
-                value={licensingInformation[header.key]}
-                variant="outlined"
-              />
-            </div>
-          ))}
-        </div>
+      <div className="w-[90%] mt-10 flex flex-row flex-wrap">
+        {Object.keys(licensingInformation).map((header, index) => (
+          <div key={index} className="flex flex-col ml-10 w-[20%]">
+            <Typography sx={{ fontWeight: "bold" }}>{header}</Typography>
+            <TextField
+              size="small"
+              hiddenLabel
+              name={header.key}
+              onChange={handleLicensingChange}
+              value={licensingInformation[header.key]}
+              variant="outlined"
+            />
+          </div>
+        ))}
       </div>
       <div className="w-[90%] mt-5 flex items-center justify-end">
         <Button
@@ -541,6 +513,30 @@ const SongDetails = () => {
           Save Changes
         </Button>
       </div>
+
+      {/* CROSS CLEAR */}
+      {crossClearEntries?.length === 0 && (
+        <div className="w-full mt-20 flex">
+          <div className="w-full flex flex-col ml-20">
+            <Typography sx={{ fontWeight: "bold" }}>
+              Cross Clear Information
+            </Typography>
+            <Typography>Information received from crossClear</Typography>
+            <div className="w-full items-center ml-80">
+              <Typography>No Cross Clear Information Found</Typography>
+            </div>
+          </div>
+
+        </div>
+      )}
+      {crossClearEntries?.length > 0 && (
+        <InfoDisplayRow
+          title="Cross Clear Information"
+          subTitle="Information received from crossClear"
+          infoToDisplay={crossClearEntries}
+          multiRow
+        />
+      )}
       {/* STATUSES */}
       <InfoDisplayRow
         title="Status Information"

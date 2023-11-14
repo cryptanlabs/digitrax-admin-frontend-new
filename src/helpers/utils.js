@@ -44,9 +44,17 @@ const getBasicInfoFromSongData = (rowData) => {
 const getLicensingInfoFromSongData = (rowData) => {
   return {
     ISRCCAMixVocal: rowData.ISRCCAMixVocal,
+    ISRCCCMixKaraoke: rowData.ISRCCCMixKaraoke,
+    ISRCCDMixInstrumental: rowData.ISRCCDMixInstrumental,
+    ISRCAAMixVocal: rowData.ISRCAAMixVocal,
+    ISRCACMixKaraoke: rowData.ISRCACMixKaraoke,
+    ISRCADMixInstrumental: rowData.ISRCADMixInstrumental,
+    HFALicenseNumber: rowData.HFALicenseNumber,
     HFASongCode: rowData.HFASongCode,
+    ISWC: rowData.ISWC,
     MechanicalRegistrationNumberA: rowData.MechanicalRegistrationNumberA,
     MechanicalRegistrationNumberD: rowData.MechanicalRegistrationNumberD,
+    MechanicalRegistrationNumberC: rowData.MechanicalRegistrationNumberC,
     Writer: rowData.Writer,
   }
 }

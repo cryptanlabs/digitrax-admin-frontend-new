@@ -11,6 +11,8 @@ import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
 import {DataTableData} from '../context/DataTableContext.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
+import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
+import {getStatusInfoFromSongData} from '../helpers/utils.js';
 
 const publishingHeaders = [
   "ISRC",
@@ -102,6 +104,7 @@ const CreateSong = () => {
     const [comments, setComments] = useState([]);
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
+    const [statusData, setStatusData] = useState();
 
     useEffect(() => {
       setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
@@ -258,6 +261,14 @@ const CreateSong = () => {
       setNewComment('');
     };
 
+    const handleStatusChange = (e) => {
+      const {name, value} = e.target;
+      setStatusData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
     useEffect(() => {
       console.log(basicInformation);
     }, [basicInformation]);
@@ -344,6 +355,12 @@ const CreateSong = () => {
             ))}
           </div>
         </div>
+
+        <SongStatusDisplayEdit
+          newSong
+          statusData={statusData}
+          handleChange={handleStatusChange}
+        />
 
         <PublisherInfoDisplay
           songNumber={basicInformation.SongNumber}

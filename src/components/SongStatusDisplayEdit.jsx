@@ -2,7 +2,7 @@ import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {statusOptions, statusOptionsText} from '../helpers/constants.js';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
-export default function SongStatusDisplayEdit({handleChange = () => {}, statusData = {}, handleSave = () => {}}) {
+export default function SongStatusDisplayEdit({newSong, handleChange = () => {}, statusData = {}, handleSave = () => {}}) {
 
   try {
     return (
@@ -21,7 +21,7 @@ export default function SongStatusDisplayEdit({handleChange = () => {}, statusDa
               ))}
             </Select>
           </div>
-          <div className="flex flex-col ml-20 w-[40%]">
+          {!newSong && ( <div className="flex flex-col ml-20 w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Catalog #</Typography>
             <TextField
               name="Artist"
@@ -31,9 +31,9 @@ export default function SongStatusDisplayEdit({handleChange = () => {}, statusDa
               value={statusData.SongNumber}
               variant="outlined"
             />
-          </div>
+          </div>)}
         </div>
-        <div className="w-full flex flex-row mt-10 flex">
+        {!newSong && (<div className="w-full flex flex-row mt-10 flex">
           <div className="flex flex-col ml-20 w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Song Title</Typography>
             <TextField
@@ -56,7 +56,7 @@ export default function SongStatusDisplayEdit({handleChange = () => {}, statusDa
               variant="outlined"
             />
           </div>
-        </div>
+        </div> )}
         <div className="w-full flex flex-row mt-10 flex">
           <div className="flex flex-col ml-20 w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Release Scheduled For</Typography>
@@ -76,26 +76,28 @@ export default function SongStatusDisplayEdit({handleChange = () => {}, statusDa
             />
           </div>
         </div>
-        <div className="w-[90%] mt-5 flex items-center justify-end">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              handleSave();
-            }}
-            sx={{
-              marginRight: '15px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Save Changes
-          </Button>
-        </div>
+        {!newSong && (
+          <div className="w-[90%] mt-5 flex items-center justify-end">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                handleSave();
+              }}
+              sx={{
+                marginRight: '15px',
+                borderColor: '#00b00e',
+                backgroundColor: '#00b00e',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#86A789',
+                },
+              }}
+            >
+              Save Changes
+            </Button>
+          </div>
+        )}
       </div>
     );
   } catch (e) {

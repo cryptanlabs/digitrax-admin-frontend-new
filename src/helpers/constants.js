@@ -84,7 +84,15 @@ export const licensingInformationDefault = {
   HFASongCode: "",
   MechanicalRegistrationNumberA: "",
   MechanicalRegistrationNumberD: "",
-  Writer: ""
+  Writer: "",
+  ISRCCCMixKaraoke: "",
+  ISRCCDMixInstrumental: "",
+  ISRCAAMixVocal: "",
+  ISRCACMixKaraoke: "",
+  ISRCADMixInstrumental: "",
+  HFALicenseNumber: "",
+  ISWC: "",
+  MechanicalRegistrationNumberC: "",
 }
 
 export const basicInformationDefault = {

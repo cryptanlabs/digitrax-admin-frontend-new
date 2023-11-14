@@ -79,6 +79,7 @@ const DataTableContext = ({children}) => {
     })
       .then(response => {
         const buckets = response.data?.map(item => item.bucket);
+        console.log('STM context-DataTableContext.jsx:82', buckets); // todo remove dev item
         setGeneratedSets(buckets);
       });
   }
