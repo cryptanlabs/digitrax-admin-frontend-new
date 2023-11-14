@@ -35,7 +35,7 @@ export default function Upload () {
               },
             }}
           >
-            Show Batch Upload
+            Add multiple songs
           </Button>
           <Button
             variant="outlined"
@@ -51,7 +51,7 @@ export default function Upload () {
               },
             }}
           >
-            Show Column Upload or Update
+            Upload or Update a Column
           </Button>
         </div>
       </div>
