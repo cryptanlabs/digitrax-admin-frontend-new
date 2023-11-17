@@ -11,7 +11,7 @@ const newApiUserDefault = {
   Name: '',
   UserName: '',
   Password: '',
-  UserType: 'external'
+  UserType: 'internal'
 };
 
 const columns = [
@@ -37,7 +37,7 @@ const columns = [
   }
 ];
 
-const userTypes = ['internal','external']
+const userTypes = ['external', 'internal']
 export default function Users () {
   try {
     const [registeredApiUsers, setRegisteredApiUsers] = useState([]);

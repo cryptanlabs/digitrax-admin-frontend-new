@@ -1,13 +1,14 @@
-import {Button, Checkbox, TextField, Typography, Select, MenuItem} from '@mui/material';
+import {Button, Checkbox, TextField, Typography, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload.js';
 import CloseIcon from '@mui/icons-material/Close';
 import {useEffect, useRef, useState} from 'react';
 import {FileUpload} from './fileUpload.jsx';
 import {TextFields15Pct} from './textFields.jsx';
-import {base_url} from '../helpers/requests.js';
+import {axiosBase, base_url} from '../helpers/requests.js';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {isWhiteSpace} from '../helpers/utils.js';
 
 export function FileAdd ({
@@ -22,7 +23,8 @@ export function FileAdd ({
                            handleMetadataChange = () => {
                            },
                            mediaObjects = [],
-                           filesStagedForUpload = []
+                           filesStagedForUpload = [],
+                           handleRequestDeleteMediaEntry = () => {}
                          }) {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -283,6 +285,7 @@ export function FileAdd ({
 
   const ShowFile = ({mediaItem = {}}) => {
     const [editExisting, setEditExisting] = useState(false);
+    const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
     const [mediaMetaData, setMediaMetaData] = useState({
       digitraxId: '',
       fileType: '',
@@ -321,6 +324,21 @@ export function FileAdd ({
         description: mediaMetaData.description,
       })
       setEditExisting(false)
+    }
+
+    const handleDelete = () => {
+      setOpenConfirmDeleteDialog(true)
+    }
+
+    const handleCancel = () => {
+      setOpenConfirmDeleteDialog(false)
+    }
+
+    const handleOkToDelete = async () => {
+      setOpenConfirmDeleteDialog(false)
+      handleRequestDeleteMediaEntry(mediaItem.requestString)
+      console.log('STM components-fileAdd.jsx:338', 'confirm delete'); // todo remove dev item
+
     }
 
     const handleEdit = () => {
@@ -413,11 +431,13 @@ export function FileAdd ({
           </a>
         </div>
         <div className="shrink content-start">
+          <div className="flex flex-row">
           <div className="flex flex-col">
             {!editExisting && (
               <Button
                 onClick={handleEdit}
                 sx={{
+                  margin: 0,
                   borderColor: 'gray',
                   color: 'black',
                   '&:hover': {
@@ -461,7 +481,53 @@ export function FileAdd ({
 
             )}
           </div>
+            <Button
+              onClick={handleDelete}
+              sx={{
+                borderColor: 'gray',
+                color: 'black',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#F5F7F8',
+                },
+              }}
+            >
+              <DeleteIcon></DeleteIcon>
+            </Button>
+          </div>
         </div>
+        <Dialog
+          open={openConfirmDeleteDialog}
+        >
+          <DialogTitle>
+            Confirm Delete Media File.
+          </DialogTitle>
+          <DialogContent>
+
+            Note That This Cannot Be Undone
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button
+              sx={{
+                borderColor: 'gray',
+                backgroundColor: 'red',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#7e2121',
+                },
+              }}
+              onClick={handleOkToDelete}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </>
 
     );
@@ -474,7 +540,7 @@ export function FileAdd ({
     return (
       <>
         {generatedMediaItems.map((mediaEntry, index) => (
-          <div key={index} className={`w-[90%] flex flex-row justify-between items-center border-b-2 border-x-2 ${index === (count-1) ? 'rounded-b-lg' : ''} border-gray-300 p-5`}>
+          <div key={index} className={`w-full flex flex-row justify-between items-center border-b-2 border-x-2 ${index === (count-1) ? 'rounded-b-lg' : ''} border-gray-300 p-5`}>
             <ShowFile
               mediaItem={mediaEntry}
             />
@@ -518,9 +584,9 @@ export function FileAdd ({
 
 
     return (
-      <div>
+      <div className="w-[90%]">
         <div
-          className={`w-[90%] mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
+          className={`w-full mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
           <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
           <Button
             variant="outlined"

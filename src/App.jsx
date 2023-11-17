@@ -18,6 +18,7 @@ import StatusDashboard from './pages/StatusDashboard.jsx';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Upload from './pages/Upload.jsx';
+import ViewSongDetails from './pages/ViewSongDetails.jsx';
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
                     <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/songdata" element={<SongDetails/>}/>
                     <Route element={<InternalOnly/>}>
+                      <Route path="/viewSongDetails" element={<ViewSongDetails />} />
                       <Route path="/crossDashboard" element={<CrossDashboard/>}/>
                       <Route path="/createsong" element={<CreateSong/>}/>
                       <Route path="/reports" element={<Reports/>}/>

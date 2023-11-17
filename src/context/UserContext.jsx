@@ -36,7 +36,7 @@ const UserProvider = ({children}) => {
         logInData = {token: hasToken}
       }
     }
-
+console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev item
     const result = await axiosBase({
       method: 'post',
       url: '/loginUser',

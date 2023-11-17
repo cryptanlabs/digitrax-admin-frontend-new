@@ -3,8 +3,9 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha.js';
 import {useEffect, useState} from 'react';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
-export function BasicSongInfoDisplay({handleChange, basicInformation, nextCatNumberToSuggest}) {
+export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, nextCatNumberToSuggest}) {
 
   const [showNextSuggestion, setShowNextSuggestion] = useState(true);
   const SetNextCat = () => {
@@ -24,7 +25,7 @@ export function BasicSongInfoDisplay({handleChange, basicInformation, nextCatNum
           <Typography>Fill out available song Metadata below</Typography>
         </div>
       </div>
-      <div className="w-full mt-10 flex">
+      <div className="w-full flex-row justify-between mt-10 flex">
         <div className="flex flex-col ml-20">
           <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
           <TextField
@@ -37,26 +38,39 @@ export function BasicSongInfoDisplay({handleChange, basicInformation, nextCatNum
             variant="outlined"
           />
           <div>
-            {showNextSuggestion && <VisibilityIcon onClick={() => {setShowNextSuggestion(!showNextSuggestion)}}/>}
-            {!showNextSuggestion && <VisibilityOffIcon onClick={() => {setShowNextSuggestion(!showNextSuggestion)}}/>}
-            {showNextSuggestion && <Button
-              variant="outlined"
-              onClick={SetNextCat}
-              sx={{
-                borderColor: 'gray',
-                color: 'black',
-                '&:hover': {
-                  borderColor: '#F1EFEF',
-                  backgroundColor: '#F5F7F8',
-                },
-              }} >
-              {`Suggested next Cat.#: ${nextCatNumberToSuggest}`}
-            </Button>}
+            {newSong && (<div>
+              {showNextSuggestion && <VisibilityIcon onClick={() => {setShowNextSuggestion(!showNextSuggestion)}}/>}
+              {!showNextSuggestion && <VisibilityOffIcon onClick={() => {setShowNextSuggestion(!showNextSuggestion)}}/>}
+              {showNextSuggestion && <Button
+                variant="outlined"
+                onClick={SetNextCat}
+                sx={{
+                  borderColor: 'gray',
+                  color: 'black',
+                  '&:hover': {
+                    borderColor: '#F1EFEF',
+                    backgroundColor: '#F5F7F8',
+                  },
+                }} >
+                {`Suggested next Cat.#: ${nextCatNumberToSuggest}`}
+              </Button>}
+            </div>)}
+
           </div>
 
 
         </div>
-
+        <div className="flex flex-col w-[40%] mr-44">
+          <Typography sx={{fontWeight: 'bold'}}>Release Scheduled For</Typography>
+          <DatePicker
+            sx={{ marginTop: 1 }}
+            name="ReleaseScheduledFor"
+            value={basicInformation.ReleaseScheduledFor}
+            onChange={(val) => {
+              handleChange({target: {value: val, name: 'ReleaseScheduledFor'}});
+            }}
+          />
+        </div>
       </div>
       <div className="w-full flex flex-row mt-10 flex">
         <div className="flex flex-col ml-20 w-[40%]">

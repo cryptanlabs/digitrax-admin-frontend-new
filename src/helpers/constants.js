@@ -108,6 +108,7 @@ export const basicInformationDefault = {
   MixRendered: "",
   SongReleaseYear: "",
   Description: "",
+  ReleaseScheduledFor: ""
 }
 
 // Fields hidden on Status Management Dashboard

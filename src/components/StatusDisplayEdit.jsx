@@ -2,7 +2,7 @@ import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {statusOptions, statusOptionsText} from '../helpers/constants.js';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
-export default function SongStatusDisplayEdit({newSong, handleChange = () => {}, statusData = {}, handleSave = () => {}}) {
+export default function StatusDisplayEdit({newSong, handleChange = () => {}, statusData = {}, handleSave = () => {}}) {
 
   try {
     return (

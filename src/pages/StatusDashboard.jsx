@@ -16,7 +16,7 @@ import {
 } from '../helpers/constants.js';
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
-import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
+import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import {axiosBase} from '../helpers/requests.js';
 import {addIdForDataTable} from '../helpers/utils.js';
 import {statusDash} from '../helpers/strings.js';
@@ -270,7 +270,7 @@ const StatusDashboard = () => {
     console.log('STM pages-StatusDashboard.jsx:243', rowData); // todo remove dev item
     return (
       <div className="w-full flex flex-col mt-10  mb-20">
-        <SongStatusDisplayEdit
+        <StatusDisplayEdit
           statusData={rowData}
           handleChange={handleChange}
           handleSave={handleSave}/>

@@ -154,6 +154,20 @@ const SongDetailsProvider = ({children}) => {
     return result.data.result;
   };
 
+  const removeGeneratedMediaEntry = async (requestString) => {
+    const result = await axiosBase({
+      method: 'post',
+      timeout: 30000,
+      url: '/removeGeneratedMediaEntry',
+      data: {
+        requestString: requestString
+      }
+    })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   // getCrossClearForSong
   // removePublisher
 
@@ -178,7 +192,8 @@ const SongDetailsProvider = ({children}) => {
       getCommentsForSong,
       getCrossClearForSong,
       markCommentRemoved,
-      updateMediaMetadata
+      updateMediaMetadata,
+      removeGeneratedMediaEntry
     }}>
       {children}
     </SongDetailsContext.Provider>

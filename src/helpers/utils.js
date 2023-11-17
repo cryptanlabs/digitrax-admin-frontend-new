@@ -38,6 +38,7 @@ const getBasicInfoFromSongData = (rowData) => {
     MixRendered: rowData.MixRendered,
     SongReleaseYear: rowData.SongReleaseYear,
     Description: rowData.Description,
+    ReleaseScheduledFor: dayjs(rowData.ReleaseScheduledFor),
   }
 }
 

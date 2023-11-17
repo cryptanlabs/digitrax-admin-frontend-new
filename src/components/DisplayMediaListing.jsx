@@ -5,7 +5,18 @@ import {useEffect, useRef, useState} from 'react';
 import {FileAdd} from './fileAdd.jsx';
 
 
-export default function DisplayMediaListing({newSong, SongNumber, generatedSets = [], generatedMedia = [], updateGeneratedMediaMetadata = () => {}, uploadMediaFileAndRefresh = () => {}}){
+export default function DisplayMediaListing ({
+                                               newSong,
+                                               songNumber,
+                                               generatedSets = [],
+                                               generatedMedia = [],
+                                               updateGeneratedMediaMetadata = () => {
+                                               },
+                                               uploadMediaFileAndRefresh = () => {
+                                               },
+                                               handleRequestDeleteMediaEntry = () => {
+                                               }
+                                             }) {
   try {
     const [generatedGroups, setGeneratedGroups] = useState({});
     const [generatedCount, setGeneratedCount] = useState(0);
@@ -19,22 +30,22 @@ export default function DisplayMediaListing({newSong, SongNumber, generatedSets 
       const generatedGroupsLocal = generatedMedia.reduce((acc, cur) => {
         if (bucketGroups[cur?.bucket]) {
           bucketGroups[cur?.bucket].push(cur);
-          setGeneratedCount(1 + generatedCount)
+          setGeneratedCount(1 + generatedCount);
         }
         return bucketGroups;
       }, bucketGroups);
       setGeneratedGroups(generatedGroupsLocal);
-    }
+    };
 
-    if(!newSong){
+    if (!newSong) {
       useEffect(() => {
         console.log('STM components-DisplayMediaListing.jsx:30', generatedMedia); // todo remove dev item
-        regenerateMediaMap(generatedMedia)
+        regenerateMediaMap(generatedMedia);
       }, [generatedMedia]);
     } else {
       useEffect(() => {
         console.log('STM components-DisplayMediaListing.jsx:30', generatedMedia); // todo remove dev item
-        regenerateMediaMap(generatedMedia)
+        regenerateMediaMap(generatedMedia);
       }, []);
     }
 
@@ -47,20 +58,21 @@ export default function DisplayMediaListing({newSong, SongNumber, generatedSets 
               newSong
               key={index}
               handleMetadataChange={updateGeneratedMediaMetadata}
-              songNumber={SongNumber}
+              songNumber={songNumber}
               submit={uploadMediaFileAndRefresh}
               preSetBucketTo={generatedSet}
               header={generatedSet}
               mediaObjects={generatedGroups[generatedSet]}
+              handleRequestDeleteMediaEntry={handleRequestDeleteMediaEntry}
             />
           </>
         ))}
       </div>
     );
   } catch (e) {
-    console.error(e)
+    console.error(e);
     return (
       <h1 style={{color: 'red', fontWeight: 'bold'}}>Error in 'DisplayMediaListing' Component</h1>
-    )
+    );
   }
 }

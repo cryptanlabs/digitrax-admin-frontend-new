@@ -24,7 +24,7 @@ import {
   statusInformationDefault
 } from '../helpers/constants.js';
 import dayjs from 'dayjs';
-import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
+import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 
 const publishingHeaders = [
@@ -107,13 +107,11 @@ const SongDetails = () => {
     createComment,
     getCommentsForSong,
     markCommentRemoved,
-    updateMediaMetadata
+    updateMediaMetadata,
+    removeGeneratedMediaEntry
   } = useContext(SongDetailsContext);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [filesForUpload, setFilesForUpload] = useState({});
   const [comments, setComments] = useState(demoComments);
   const [showFileUpload, setShowFileUpload] = useState(false);
-  const fileInputRef = useRef(null);
   const [generatedMedia, setGeneratedMedia] = useState([]);
 
   const [songPublishers, setSongPublishers] = useState([]);
@@ -128,6 +126,9 @@ const SongDetails = () => {
   const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
 
   const [crossClearEntries, setCrossClearEntries] = useState([]);
+  const [songNumberLookup, setSongNumberLookup] = useState(true);
+  const [disableLookupRequestButton, setDisableLookupRequestButton] = useState(true);
+  const [noSongFoundForCatalogNumber, setNoSongFoundForCatalogNumber] = useState(false);
 
   const setup = async (rowData) => {
     console.log('STM pages-SongDetails.jsx:115', rowData.GeneratedMedia); // todo remove dev item
@@ -160,6 +161,22 @@ const SongDetails = () => {
     getCommentsForSong();
   };
 
+  const setupBySongNumber = (songNumber) => {
+    getDetailsForSong(songNumber)
+      .then(songDetails => {
+        if(!songDetails){
+          setNoSongFoundForCatalogNumber(true)
+        }
+        setup(songDetails);
+        location.state.rowData = songDetails;
+      });
+    getCrossClearForSong(songNumber)
+      .then(crossRecords => {
+        setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)));
+      })
+      .catch(console.error);
+  }
+
   useEffect(() => {
     if (location.state.rowData) {
       console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
@@ -176,16 +193,7 @@ const SongDetails = () => {
       console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
     if (location.state.SongNumber) {
-      getDetailsForSong(location.state.SongNumber)
-        .then(songDetails => {
-          setup(songDetails);
-          location.state.rowData = songDetails;
-        });
-      getCrossClearForSong(location.state.SongNumber)
-        .then(crossRecords => {
-          setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)));
-        })
-        .catch(console.error);
+      setupBySongNumber(location.state.SongNumber)
 
 
     }
@@ -196,7 +204,6 @@ const SongDetails = () => {
     const getComments = async () => {
       if (location.state.rowData && location.state?.rowData?.SongNumber) {
         const results = await getCommentsForSong(location.state?.rowData?.SongNumber);
-        console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
         setComments((prev) => ([
           ...results,
         ]));
@@ -221,11 +228,6 @@ const SongDetails = () => {
     };
 
   }, [licensingInformation]);
-
-  const checkButton = async () => {
-    const songData = await getDetailsForSong(basicInformation.SongNumber);
-    console.log('STM pages-SongDetails.jsx:180', songData); // todo remove dev item
-  };
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -258,6 +260,17 @@ const SongDetails = () => {
       [name]: value,
     }));
   };
+
+  const handleSongLookupChange = (e) => {
+    const {value} = e.target
+    setSongNumberLookup(value)
+    setDisableLookupRequestButton(value?.length !== 5)
+    setNoSongFoundForCatalogNumber(false)
+  }
+
+  const handleSongLookup = () => {
+    setupBySongNumber(songNumberLookup)
+  }
 
   const uploadMediaFileAndRefresh = async (data) => {
     await uploadMediaFile(data);
@@ -325,11 +338,6 @@ const SongDetails = () => {
     });
   };
 
-
-  const handleSongUpload = async () => {
-    console.log(basicInformation);
-  };
-
   const handleCreateComment = async (newComment) => {
     const copyComment = {
       SongNumber: basicInformation.SongNumber,
@@ -355,27 +363,6 @@ const SongDetails = () => {
 
   // File Upload Handlers
 
-  const returnUploadFile = (fileDataToAdd) => {
-    console.log('STM pages-SongDetails.jsx:209', fileDataToAdd); // todo remove dev item
-    if (Object.keys(filesForUpload).includes(fileDataToAdd.generatedSet)) {
-
-    }
-    setFilesForUpload((prevState) => {
-
-    });
-  };
-  const handleFileUploadClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(URL.createObjectURL(file));
-    }
-  };
-
-
   const uploadMediaMetadataAndRefresh = async (data) => {
     await updateMediaMetadata(data);
     const songData = await getDetailsForSong(basicInformation.SongNumber);
@@ -383,43 +370,56 @@ const SongDetails = () => {
     //
   };
 
+  const deleteMediaFileAndRefresh = async (requestString) => {
+    await removeGeneratedMediaEntry(requestString)
+    const songData = await getDetailsForSong(basicInformation.SongNumber);
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
+  }
+
+  // handleSongLookupChange
 
   return (
     <div className="w-full mt-4 flex flex-col items-center justify-between">
       <div className="w-full mt-4 flex items-center justify-between">
         <h1 className="text-4xl ml-20 font-medium">Song Data</h1>
         <div className="flex w-1/3  mr-3 justify-center">
-          <Button
-            variant="outlined"
-            // onClick={checkButton}
-            sx={{
-              borderColor: 'gray',
-              color: 'black',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#F5F7F8',
-              },
-            }}
-          >
-            Upload Another Song
-          </Button>
+          <div className="flex flex-col ml-20">
+            <Typography sx={{ fontWeight: "bold" }}>Lookup Catalogue ID #</Typography>
+            <div className="flex flex-row justify-betweenml-20">
+              <TextField
+                name="SongNumber"
+                type="number"
+                onChange={handleSongLookupChange}
+                sx={{ marginTop: 1 }}
+                hiddenLabel
+                value={songNumberLookup}
+                variant="outlined"
+              />
+              <Button
+                disabled={disableLookupRequestButton}
+                variant="outlined"
+                startIcon={<StarBorderIcon/>}
+                onClick={handleSongLookup}
+                sx={{
+                  marginTop: 1,
+                  borderColor: '#00b00e',
+                  backgroundColor: '#00b00e',
+                  marginLeft: '15px',
+                  color: 'white',
+                  '&:hover': {
+                    borderColor: '#F1EFEF',
+                    backgroundColor: '#86A789',
+                  },
+                }}
+              >
+              Lookup
+              </Button>
+            </div>
+            {noSongFoundForCatalogNumber && <span>{`No Song Found For Catalog #${songNumberLookup}`}</span>}
 
-          <Button
-            variant="outlined"
-            startIcon={<StarBorderIcon/>}
-            sx={{
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              marginLeft: '15px',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Export
-          </Button>
+          </div>
+
+
         </div>
       </div>
       <BasicSongInfoDisplay
@@ -564,7 +564,7 @@ const SongDetails = () => {
         </Button>
       </div>
 
-      <SongStatusDisplayEdit
+      <StatusDisplayEdit
         statusData={statusData}
         handleChange={handleStatusChange}
         handleSave={handleStatusEdit}
@@ -619,6 +619,7 @@ const SongDetails = () => {
         SongNumber={basicInformation.SongNumber}
         generatedSets={generatedSets}
         generatedMedia={generatedMedia}
+        handleRequestDeleteMediaEntry={deleteMediaFileAndRefresh}
       />
       </div>
     </div>

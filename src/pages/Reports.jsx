@@ -1,9 +1,28 @@
 import {Button, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 export default function Reports() {
+  const [savedQueries, setSavedQueries] = useState([]);
+
+  const getSavedQueries = async () => {
+    const result = await axiosBase({
+      method: 'get',
+      timeout: 30000,
+      url: '/getBuiltQueries',
+    })
+      .catch(error => {
+        console.log(error);
+      });
+    setSavedQueries(result.data)
+    console.log('STM pages-Reports.jsx:17', result); // todo remove dev item
+  };
+
+  useEffect(() => {
+    getSavedQueries()
+  }, []);
+
 
   return (
     <>

@@ -20,6 +20,24 @@ export default function QueryBuilder () {
     const [collectQueryParams, setCollectQueryParams] = useState({});
     const [results, setResults] = useState([]);
     const [resultColumns, setResultColumns] = useState([]);
+    const [lastQuery, setLastQuery] = useState({});
+    const [querySaveLabel, setQuerySaveLabel] = useState('');
+    const [showQuerySaveComplete, setShowQuerySaveComplete] = useState(false);
+    const [savedQueries, setSavedQueries] = useState([]);
+    const [loadedSavedQuery, setLoadedSavedQuery] = useState({});
+
+    const getSavedQueries = async () => {
+      const result = await axiosBase({
+        method: 'get',
+        timeout: 30000,
+        url: '/getBuiltQueries',
+      })
+        .catch(error => {
+          console.log(error);
+        });
+      setSavedQueries(result.data)
+      console.log('STM pages-Reports.jsx:17', result); // todo remove dev item
+    };
 
     const getTablesAndColumns = async () => {
       const result = await axiosBase({
@@ -56,6 +74,11 @@ export default function QueryBuilder () {
       setModelDetails(modelDetailsLocal);
       setModelDetailsClean(modelDetailsLocalClean);
     };
+
+    useEffect(() => {
+      getTablesAndColumns();
+      getSavedQueries()
+    }, []);
 
     const handleChange = (e) => {
       const {name, value} = e.target;
@@ -139,7 +162,7 @@ export default function QueryBuilder () {
     };
 
     const runQuery = async () => {
-
+      setShowQuerySaveComplete(false)
       let localCollectQueryParams = await handleSaveParams();
 
       let tableName = '';
@@ -160,9 +183,17 @@ export default function QueryBuilder () {
       //   include: queryNested
       // }
       console.log('STM pages-QueryBuilder.jsx:138', query); // todo remove dev item
+      setLastQuery({
+        tableName,
+        query
+      })
+      await sendQueryAndParseResponse(tableName, query)
+    };
+
+    const sendQueryAndParseResponse = async (tableName, query) => {
       const result = await axiosBase({
         method: 'post',
-        timeout: 10000,
+        timeout: 30000,
         url: '/rawQuery',
         data: {
           tableName,
@@ -202,15 +233,13 @@ export default function QueryBuilder () {
 
       setResults(addIdForDataTable(data));
       console.log('STM pages-QueryBuilder.jsx:114', result); // todo remove dev item
-    };
+    }
 
     const getTableNames = () => {
       return Object.keys(modelDetails);
     };
 
-    useEffect(() => {
-      getTablesAndColumns();
-    }, []);
+
 
     const handleQueryFieldModifiers = (e) =>{
       const {name, value} = e.target;
@@ -219,6 +248,53 @@ export default function QueryBuilder () {
         [name]: value,
       }));
     }
+
+    const handleLoadSavedQuery = async (e) => {
+      try {
+        const {name, value} = e.target
+        console.log('STM pages-QueryBuilder.jsx:255', value); // todo remove dev item
+        const savedQueryEntry = savedQueries.find(item => item.Label === value.Label);
+        if(savedQueryEntry){
+          setLoadedSavedQuery(value)
+          await sendQueryAndParseResponse(savedQueryEntry.TableName, savedQueryEntry.Query);
+        }
+
+      } catch (e) {
+        console.error(e)
+      }
+
+    }
+
+    const SaveLastQuery = async () => {
+      let saveLabel = querySaveLabel
+      if(saveLabel === ''){
+        saveLabel = new Date(Date.now()).toString()
+      }
+
+      if(lastQuery.tableName && lastQuery.query){
+        const result = await axiosBase({
+          method: 'post',
+          timeout: 30000,
+          url: '/saveBuiltQuery',
+          data: {
+            tableName: lastQuery.tableName,
+            query: lastQuery.query,
+            label: saveLabel
+          }
+        })
+          .catch(error => {
+            console.log(error);
+          });
+
+        if(result){
+
+          setShowQuerySaveComplete(true)
+          getSavedQueries()
+        }
+      }
+
+    };
+
 
 
     return (
@@ -230,6 +306,18 @@ export default function QueryBuilder () {
                 Expanded Search/Report Generator
               </h1>
               <div className="w-[90%] flex flex-col  mt-10">
+                <Typography sx={{ fontWeight: "bold" }}>Load Saved</Typography>
+                <Select
+                  sx={{marginTop: 1}}
+                  value={loadedSavedQuery}
+                  onChange={handleLoadSavedQuery}
+                >
+                  {savedQueries.map((value, index) => (
+                    <MenuItem key={index} value={value}>{value.Label}</MenuItem>
+                  ))}
+                </Select>
+                <Typography sx={{ fontWeight: "bold", marginTop: '20px' }}>New Search</Typography>
+                <Typography sx={{ fontWeight: "bold", fontSize: '15px', marginTop: '10px' }}>Select Table</Typography>
                 <Select
                   sx={{marginTop: 1}}
                   value={selectedTable}
@@ -250,80 +338,55 @@ export default function QueryBuilder () {
                       queryFieldModifiers={queryFieldModifiers}
                       setQueryFieldModifiers={handleQueryFieldModifiers}
                       />
-                    // <>
-                    //   <div className="flex flex-col ml-20 mt-2 w-[15%]">
-                    //     <Typography sx={{fontWeight: 'bold'}}>{entry}</Typography>
-                    //     <TextField
-                    //       sx={{marginTop: 1}}
-                    //       hiddenLabel
-                    //       name={entry}
-                    //       value={queryFields[entry]}
-                    //       onChange={handleChange}
-                    //       variant="outlined"
-                    //     />
-                    //   </div>
-                    // </>
                   ))}
                 </div>
               </div>
-              {/*<div className="w-[90%] flex mt-10 items-center justify-end">*/}
-              {/*  <Button*/}
-              {/*    variant="outlined"*/}
-              {/*    onClick={() => {*/}
-              {/*      handleSaveParams()*/}
-              {/*    }}*/}
-              {/*    sx={{*/}
-              {/*      marginRight: '15px',*/}
-              {/*      borderColor: '#00b00e',*/}
-              {/*      backgroundColor: '#00b00e',*/}
-              {/*      color: 'white',*/}
-              {/*      '&:hover': {*/}
-              {/*        borderColor: '#F1EFEF',*/}
-              {/*        backgroundColor: '#86A789',*/}
-              {/*      },*/}
-              {/*    }}*/}
-              {/*  >*/}
-              {/*    Add To Search*/}
-              {/*  </Button>*/}
-              {/*</div>*/}
-              <div className="w-[90%] flex mt-10 items-center justify-end">
-                <Button
-                  variant="outlined"
-                  onClick={runQuery}
-                  sx={{
-                    marginRight: '15px',
-                    borderColor: '#00b00e',
-                    backgroundColor: '#00b00e',
-                    color: 'white',
-                    '&:hover': {
-                      borderColor: '#F1EFEF',
-                      backgroundColor: '#86A789',
-                    },
-                  }}
-                >
-                  Run Query
-                </Button>
-              </div>
-              <div className="w-[90%] flex mt-10 items-center justify-end">
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    console.log('STM pages-QueryBuilder.jsx:85', collectQueryParams);
-                    setCollectQueryParams({});
-                  }}
-                  sx={{
-                    marginRight: '15px',
-                    borderColor: '#00b00e',
-                    backgroundColor: '#00b00e',
-                    color: 'white',
-                    '&:hover': {
-                      borderColor: '#F1EFEF',
-                      backgroundColor: '#86A789',
-                    },
-                  }}
-                >
-                  Clear Search
-                </Button>
+              <div className="w-[90%] flex flex-row mt-10 items-center justify-end">
+
+                <div className="w-[90%] flex flex-col  items-center justify-end">
+                  <div className="w-[90%] flex  items-center justify-end">
+                    <Button
+                      variant="outlined"
+                      onClick={runQuery}
+                      sx={{
+                        marginRight: '15px',
+                        borderColor: '#00b00e',
+                        backgroundColor: '#00b00e',
+                        color: 'white',
+                        '&:hover': {
+                          borderColor: '#F1EFEF',
+                          backgroundColor: '#86A789',
+                        },
+                      }}
+                    >
+                      Run Query
+                    </Button>
+                  </div>
+                  <div className="w-[90%] flex mt-10 items-center justify-end">
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        console.log('STM pages-QueryBuilder.jsx:85', collectQueryParams);
+                        setCollectQueryParams({});
+                        setSelectedTable('')
+                        setQueryFieldModifiers({})
+                        setQueryFields({})
+                      }}
+                      sx={{
+                        marginRight: '15px',
+                        borderColor: '#00b00e',
+                        backgroundColor: '#00b00e',
+                        color: 'white',
+                        '&:hover': {
+                          borderColor: '#F1EFEF',
+                          backgroundColor: '#86A789',
+                        },
+                      }}
+                    >
+                      Clear Search
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="mt-10">
@@ -331,6 +394,42 @@ export default function QueryBuilder () {
                 columns={resultColumns}
                 rows={results}
               />
+            </div>
+            <div className="w-[90%] flex flex-row mb-20 items-center justify-end">
+              <div className="flex flex-col ml-20 w-[90%]">
+                <Typography sx={{ fontWeight: "bold" }}>Save Label</Typography>
+                <TextField
+                  name="Artist"
+                  onChange={(e) => {setQuerySaveLabel(e.target.value)}}
+                  sx={{ marginTop: 1 }}
+                  hiddenLabel
+                  value={querySaveLabel}
+                  variant="outlined"
+                />
+              </div>
+              <div className="w-[90%] flex mt-10 items-center justify-end">
+                <Button
+                  disabled={showQuerySaveComplete}
+                  variant="outlined"
+                  onClick={() => {
+                    SaveLastQuery()
+                  }}
+                  sx={{
+                    marginRight: '15px',
+                    borderColor: '#00b00e',
+                    backgroundColor: '#00b00e',
+                    color: 'white',
+                    '&:hover': {
+                      borderColor: '#F1EFEF',
+                      backgroundColor: '#86A789',
+                    },
+                  }}
+                >
+
+                  {`${showQuerySaveComplete ? 'Saved' : 'Save Search'}`}
+                </Button>
+
+              </div>
             </div>
 
           </div>

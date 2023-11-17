@@ -11,7 +11,7 @@ import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
 import {DataTableData} from '../context/DataTableContext.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
-import SongStatusDisplayEdit from '../components/SongStatusDisplayEdit.jsx';
+import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import {getStatusInfoFromSongData} from '../helpers/utils.js';
 import {
   basicInformationDefault,
@@ -318,6 +318,7 @@ const CreateSong = () => {
           </div>
         </div>
         <BasicSongInfoDisplay
+          newSong
           handleChange={handleChange}
           basicInformation={basicInformation}
           nextCatNumberToSuggest={nextCatSuggest}
@@ -347,7 +348,7 @@ const CreateSong = () => {
           ))}
         </div>
 
-        <SongStatusDisplayEdit
+        <StatusDisplayEdit
           newSong
           statusData={statusData}
           handleChange={handleStatusChange}

@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { Button } from "@mui/material";
+import {Button, MenuItem, Select, Typography} from '@mui/material';
 import MenuIcon from "@mui/icons-material/Menu";
 import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -19,6 +19,7 @@ import {
 import { DataTableData } from "../context/DataTableContext";
 import { useNavigate } from "react-router-dom";
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
+import {statusOptions, statusOptionsText} from '../helpers/constants.js';
 
 const Dashboard = () => {
   try {
@@ -27,6 +28,7 @@ const Dashboard = () => {
     const [filteredResults, setFilteredResults] = useState([]);
     const [sortInstructions, setSortIntructions] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [statusToFilter, setStatusToFilter] = useState('');
 
     const navigate = useNavigate();
 
@@ -63,6 +65,16 @@ const Dashboard = () => {
       const rowData = params.row;
       addToRecentSongs(params.row.SongNumber);
       navigate('/songdata', {state: {rowData}});
+    };
+
+    const handleFilterByStatus = (e) => {
+      const {value} = e.target
+      setStatusToFilter(value)
+      console.log('STM pages-Dashboard.jsx:72', value); // todo remove dev item
+      const sortedArray = [...currentDataSet].filter((rowEntry) => {
+        return rowEntry.Status === value
+      })
+      setFilteredResults(sortedArray);
     };
 
     return (
@@ -121,14 +133,31 @@ const Dashboard = () => {
                 setFilteredResults={setFilteredResults}
               />
             )}
+
+          </div>
+          <div className="flex flex-col w-[40%] mr-10">
+            <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
+            <Select
+              sx={{marginTop: 1}}
+              name="Status"
+              value={statusToFilter}
+              onChange={handleFilterByStatus}
+            >
+              {statusOptions.map((value, index) => (
+                <MenuItem key={index} value={value}>{statusOptionsText[value]}</MenuItem>
+              ))}
+            </Select>
           </div>
         </div>
-        <SimpleDataGrid
-          columns={columns}
-          rows={filteredResults}
-          onRowClick={handleRowClick}
-          loading={isLoading}
-        />
+        <div className="mt-10">
+          <SimpleDataGrid
+            columns={columns}
+            rows={filteredResults}
+            onRowClick={handleRowClick}
+            loading={isLoading}
+          />
+        </div>
+
       </div>
     );
   } catch (e) {
