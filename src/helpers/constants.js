@@ -1,4 +1,4 @@
-
+import dayjs from 'dayjs';
 
 
 export const booleanOptions = ['true', 'false']
@@ -108,7 +108,7 @@ export const basicInformationDefault = {
   MixRendered: "",
   SongReleaseYear: "",
   Description: "",
-  ReleaseScheduledFor: ""
+  ReleaseScheduledFor: dayjs()
 }
 
 // Fields hidden on Status Management Dashboard

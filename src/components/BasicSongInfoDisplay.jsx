@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, nextCatNumberToSuggest}) {
 
@@ -67,7 +68,7 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
             name="ReleaseScheduledFor"
             value={basicInformation.ReleaseScheduledFor}
             onChange={(val) => {
-              handleChange({target: {value: val, name: 'ReleaseScheduledFor'}});
+              handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
             }}
           />
         </div>
