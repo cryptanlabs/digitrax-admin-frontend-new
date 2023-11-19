@@ -74,6 +74,26 @@ export function FileAdd ({
     }
   }
 
+  const handleClosePanel = () => {
+    // submit(formData);
+    setSelectedFile(null);
+    setUploadEnabled(false);
+    setCreateBucket(false);
+    setCurrentFileName('');
+    setShowFileUpload(false);
+    setDifferentFilename(false);
+    setChangeFilename(false);
+    setShowFileUpload(false);
+    setFileNameChanged(false)
+    setCurrentFileName('')
+    if(preSetBucketTo){
+      setBucketName(preSetBucketTo)
+    } else {
+      setBucketName('');
+    }
+
+  };
+
   const submitFile = async () => {
     if(!songNumber) return
     addNewBucketToList(bucketName)
@@ -185,18 +205,7 @@ export function FileAdd ({
     }
   };
 
-  const handleClosePanel = () => {
-      // submit(formData);
-      setSelectedFile(null);
-      setBucketName('');
-      setUploadEnabled(false);
-      setCreateBucket(false);
-      setCurrentFileName('');
-      setShowFileUpload(false);
-      setDifferentFilename(false);
-      setChangeFilename(false);
-    setShowFileUpload(false);
-  };
+
 
 
   // if(buttonOnly){
