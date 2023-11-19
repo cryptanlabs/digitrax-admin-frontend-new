@@ -68,13 +68,13 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
               }}
             />
           </div>
-          <div className="flex flex-col ml-20 w-[40%]">
+          {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Status Last Updated At</Typography>
             <DatePicker
               value={statusData.StatusUpdatedAt}
               readOnly
             />
-          </div>
+          </div>)}
         </div>
         {!newSong && (
           <div className="w-[90%] mt-5 flex items-center justify-end">

@@ -110,7 +110,10 @@ const CreateSong = () => {
     const [comments, setComments] = useState([]);
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
-    const [statusData, setStatusData] = useState(statusInformationDefault);
+    const [statusData, setStatusData] = useState({...statusInformationDefault, Status: 'Status1'});
+
+    const [SaveProgress, setSaveProgress] = useState([
+    ]);
 
     useEffect(() => {
       setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
@@ -194,7 +197,14 @@ const CreateSong = () => {
     const savePublisher = (data) => {
       setPublishersForUpload([...publishersForUpload, data]);
     };
-    // Top Section Upload Handlers
+
+    const addProgressItem = (item) => {
+      setSaveProgress(prev => [
+        ...prev,
+        item
+      ])
+
+    }
 
     const handleSongUpload = async () => {
       const SongNumber = basicInformation.SongNumber;
@@ -203,6 +213,7 @@ const CreateSong = () => {
         return;
       }
 
+      addProgressItem('Preparing to Create New Song Entry')
       // Add basic song data
       const newSongData = {
         ...basicInformation,
@@ -211,17 +222,28 @@ const CreateSong = () => {
       };
       await addSong(newSongData);
 
+      addProgressItem('Song Metadata Entry Created')
+
       addToRecentSongs(SongNumber);
 
+      addProgressItem('Preparing to Add Media Files')
       // Add Media
       for (let i = 0; i < generatedMediaForUpload.length; i++) {
         for (const thing of generatedMediaForUpload[i].entries()) {
         }
         try {
           await uploadMediaFile(generatedMediaForUpload[i]);
+          addProgressItem(`Added Media File for Bucket: ${generatedMediaForUpload[i].get('bucketName')}`)
         } catch (e) {
           console.error(e);
+          addProgressItem(`Error Adding Media File for Bucket: ${generatedMediaForUpload[i].get('bucketName')}`)
         }
+      }
+
+      addProgressItem('Media Files Uploaded')
+
+      if(publishersForUpload.length > 0){
+        addProgressItem('Preparing to Add Publishers')
       }
 
       // Add Publishers
@@ -230,11 +252,20 @@ const CreateSong = () => {
         try {
           publishersForUpload[i].SongNumber = SongNumber;
           await addPublisher(publishersForUpload[i]);
+          addProgressItem('Publisher Added')
         } catch (e) {
           console.error(e);
+          addProgressItem('Error Adding Publisher')
         }
       }
+      if(publishersForUpload.length > 0){
+        addProgressItem('Publishers Added')
+      }
 
+
+      if(comments.length > 0){
+        addProgressItem('Preparing to Add Comments')
+      }
       // Add Comments
       for (let i = 0; i < comments.length; i++) {
 
@@ -245,12 +276,19 @@ const CreateSong = () => {
         }
       }
 
+      if(comments.length > 0){
+        addProgressItem('Comments Added')
+      }
+
       setLicensingInformation(defaultLicensingInformationState);
       setBasicInformation(defaultBasicInfoState);
       setFilesStagedForUpload({})
       incrementNextCatalogNumberSuggestion()
       console.log(basicInformation);
-      getData()
+      addProgressItem('Refreshing Local Song Data')
+      await getData()
+      addProgressItem('Refreshing Local Song Data Complete')
+      addProgressItem('New Song Creation Complete')
     };
 
     // const handleCommentChange = (e) => {
@@ -435,6 +473,11 @@ const CreateSong = () => {
           >
             Save
           </Button>
+        </div>
+        <div className="w-[90%] mt-5 mb-10 flex flex-col items-center justify-end">
+          {SaveProgress.map((messageEntry, index) => (
+            <Typography key={index}>{messageEntry}</Typography>
+          ))}
         </div>
       </div>
     );
