@@ -87,16 +87,21 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadMediaFile = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:90', data.get('bucketName')); // todo remove dev item
+    console.log('STM context-SongDetailsContext.jsx:91', data.get(data.get('bucketName')).size); // todo remove dev item
+    const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/1000)
+    console.log('STM context-SongDetailsContext.jsx:93', timeToUpload); // todo remove dev item
     const result = await axiosBase({
       method: 'post',
       url: '/upload',
+      timeout: timeToUpload,
       data: data
     })
       .catch(error => {
         console.log(error);
       });
-    getData();
-    getExistingBuckets()
+    // getData();
+    // getExistingBuckets()
     return result.data;
   };
 

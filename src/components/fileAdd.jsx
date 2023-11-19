@@ -186,8 +186,7 @@ export function FileAdd ({
   };
 
   const handleClosePanel = () => {
-    if (!preSetBucketTo) {
-      submit(formData);
+      // submit(formData);
       setSelectedFile(null);
       setBucketName('');
       setUploadEnabled(false);
@@ -196,7 +195,6 @@ export function FileAdd ({
       setShowFileUpload(false);
       setDifferentFilename(false);
       setChangeFilename(false);
-    }
     setShowFileUpload(false);
   };
 

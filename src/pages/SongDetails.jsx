@@ -616,7 +616,7 @@ const SongDetails = () => {
       <DisplayMediaListing
         updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
         uploadMediaFileAndRefresh={uploadMediaFileAndRefresh}
-        SongNumber={basicInformation.SongNumber}
+        songNumber={basicInformation.SongNumber}
         generatedSets={generatedSets}
         generatedMedia={generatedMedia}
         handleRequestDeleteMediaEntry={deleteMediaFileAndRefresh}
