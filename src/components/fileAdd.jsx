@@ -148,13 +148,7 @@ export function FileAdd ({
 
     submit(formData);
     addNewBucketToList(bucketName)
-    setSelectedFile(null);
-    setBucketName('');
-    setUploadEnabled(false);
-    setCreateBucket(false);
-    setCurrentFileName('')
-    setVideoDimension('')
-    setDescription('')
+    handleClosePanel()
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -647,7 +641,7 @@ export function FileAdd ({
                 },
               }}
             >
-              Upload
+              {`${newSong ? 'Add' : 'Upload'}`}
             </Button>
             <input
               type="file"

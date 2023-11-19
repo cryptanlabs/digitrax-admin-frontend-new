@@ -12,7 +12,7 @@ export default function DisplayMediaListing ({
                                                generatedMedia = [],
                                                updateGeneratedMediaMetadata = () => {
                                                },
-                                               uploadMediaFileAndRefresh = () => {
+                                               submit = () => {
                                                },
                                                handleRequestDeleteMediaEntry = () => {
                                                }
@@ -59,7 +59,7 @@ export default function DisplayMediaListing ({
               key={index}
               handleMetadataChange={updateGeneratedMediaMetadata}
               songNumber={songNumber}
-              submit={uploadMediaFileAndRefresh}
+              submit={submit}
               preSetBucketTo={generatedSet}
               header={generatedSet}
               mediaObjects={generatedGroups[generatedSet]}

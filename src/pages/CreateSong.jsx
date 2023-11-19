@@ -164,6 +164,35 @@ const CreateSong = () => {
       })
     }
 
+    const savePublisher = (data) => {
+      setPublishersForUpload([...publishersForUpload, data]);
+    };
+
+    const addProgressItem = (item) => {
+      setSaveProgress(prev => [
+        ...prev,
+        item
+      ])
+    }
+
+    const handleCreateComment = async (commentContent) => {
+      const copyComment = {
+        SongNumber: basicInformation.SongNumber,
+        Content: commentContent,
+        UserName: 'Added on Save',
+      };
+      setComments((prev) => [copyComment, ...prev]);
+      // setNewComment('');
+    };
+
+    const handleStatusChange = (e) => {
+      const {name, value} = e.target;
+      setStatusData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
     const uploadMediaFileAndForCreateSong = async (data) => {
 
       setGeneratedMediaForUpload([...generatedMediaForUpload, data]);
@@ -194,17 +223,7 @@ const CreateSong = () => {
       console.log('STM pages-CreateSong.jsx:165', generatedMediaForUpload); // todo remove dev item
     };
 
-    const savePublisher = (data) => {
-      setPublishersForUpload([...publishersForUpload, data]);
-    };
 
-    const addProgressItem = (item) => {
-      setSaveProgress(prev => [
-        ...prev,
-        item
-      ])
-
-    }
 
     const handleSongUpload = async () => {
       const SongNumber = basicInformation.SongNumber;
@@ -296,23 +315,7 @@ const CreateSong = () => {
     //   console.log('STM pages-CreateSong.jsx:258', value); // todo remove dev item
     //   setNewComment(value);
     // };
-    const handleCreateComment = async (commentContent) => {
-      const copyComment = {
-        SongNumber: basicInformation.SongNumber,
-        Content: commentContent,
-        UserName: 'Added on Save',
-      };
-      setComments((prev) => [copyComment, ...prev]);
-      // setNewComment('');
-    };
 
-    const handleStatusChange = (e) => {
-      const {name, value} = e.target;
-      setStatusData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
 
     useEffect(() => {
       console.log(basicInformation);
