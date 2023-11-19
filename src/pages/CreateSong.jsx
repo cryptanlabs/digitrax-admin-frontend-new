@@ -226,88 +226,96 @@ const CreateSong = () => {
 
 
     const handleSongUpload = async () => {
-      const SongNumber = basicInformation.SongNumber;
+      try {
+        const SongNumber = basicInformation.SongNumber;
 
-      if (!SongNumber) {
-        return;
-      }
-
-      addProgressItem('Preparing to Create New Song Entry')
-      // Add basic song data
-      const newSongData = {
-        ...basicInformation,
-        ...licensingInformation,
-        Status: 'Status1'
-      };
-      await addSong(newSongData);
-
-      addProgressItem('Song Metadata Entry Created')
-
-      addToRecentSongs(SongNumber);
-
-      addProgressItem('Preparing to Add Media Files')
-      // Add Media
-      for (let i = 0; i < generatedMediaForUpload.length; i++) {
-        for (const thing of generatedMediaForUpload[i].entries()) {
+        if (!SongNumber) {
+          return;
         }
-        try {
-          await uploadMediaFile(generatedMediaForUpload[i]);
-          addProgressItem(`Added Media File for Bucket: ${generatedMediaForUpload[i].get('bucketName')}`)
-        } catch (e) {
-          console.error(e);
-          addProgressItem(`Error Adding Media File for Bucket: ${generatedMediaForUpload[i].get('bucketName')}`)
+
+        addProgressItem('Preparing to Create New Song Entry');
+        // Add basic song data
+        const newSongData = {
+          ...basicInformation,
+          ...licensingInformation,
+          Status: 'Status1'
+        };
+        await addSong(newSongData);
+
+        addProgressItem('Create Song Metadata Entry Complete');
+
+        addToRecentSongs(SongNumber);
+
+        addProgressItem('Adding Media Files');
+        // Add Media
+        for (let i = 0; i < generatedMediaForUpload.length; i++) {
+          for (const thing of generatedMediaForUpload[i].entries()) {
+          }
+          try {
+            await uploadMediaFile(generatedMediaForUpload[i]);
+            addProgressItem(`Added Media File for Bucket: ${generatedMediaForUpload[i].get('bucketName')}`);
+          } catch (e) {
+            console.error(e);
+            const erroredEntry = generatedMediaForUpload[i];
+            addProgressItem(`Error Adding Media File ${erroredEntry.get(erroredEntry.get('bucketName'))?.name} for Bucket: ${erroredEntry.get('bucketName')}`);
+          }
         }
-      }
 
-      addProgressItem('Media Files Uploaded')
+        addProgressItem('Media Files Upload Complete');
 
-      if(publishersForUpload.length > 0){
-        addProgressItem('Preparing to Add Publishers')
-      }
-
-      // Add Publishers
-      for (let i = 0; i < publishersForUpload.length; i++) {
-
-        try {
-          publishersForUpload[i].SongNumber = SongNumber;
-          await addPublisher(publishersForUpload[i]);
-          addProgressItem('Publisher Added')
-        } catch (e) {
-          console.error(e);
-          addProgressItem('Error Adding Publisher')
+        if (publishersForUpload.length > 0) {
+          addProgressItem('Preparing to Add Publishers');
         }
-      }
-      if(publishersForUpload.length > 0){
-        addProgressItem('Publishers Added')
-      }
 
+        // Add Publishers
+        for (let i = 0; i < publishersForUpload.length; i++) {
 
-      if(comments.length > 0){
-        addProgressItem('Preparing to Add Comments')
-      }
-      // Add Comments
-      for (let i = 0; i < comments.length; i++) {
-
-        try {
-          await createComment(comments[i]);
-        } catch (e) {
-          console.error(e);
+          try {
+            publishersForUpload[i].SongNumber = SongNumber;
+            await addPublisher(publishersForUpload[i]);
+            addProgressItem('Publisher Added');
+          } catch (e) {
+            console.error(e);
+            addProgressItem('Error Adding Publisher');
+          }
         }
-      }
+        if (publishersForUpload.length > 0) {
+          addProgressItem('Add Publishers Complete');
+        }
 
-      if(comments.length > 0){
-        addProgressItem('Comments Added')
-      }
 
-      setLicensingInformation(defaultLicensingInformationState);
-      setBasicInformation(defaultBasicInfoState);
-      setFilesStagedForUpload({})
-      incrementNextCatalogNumberSuggestion()
-      console.log(basicInformation);
-      addProgressItem('Refreshing Local Song Data')
-      await getData()
-      addProgressItem('Refreshing Local Song Data Complete')
-      addProgressItem('New Song Creation Complete')
+        if (comments.length > 0) {
+          addProgressItem('Preparing to Add Comments');
+        }
+        // Add Comments
+        for (let i = 0; i < comments.length; i++) {
+
+          try {
+            await createComment(comments[i]);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        if (comments.length > 0) {
+          addProgressItem('Add Comments Complete');
+        }
+
+        setLicensingInformation(defaultLicensingInformationState);
+        setBasicInformation(defaultBasicInfoState);
+        setFilesStagedForUpload({});
+        incrementNextCatalogNumberSuggestion();
+        console.log(basicInformation);
+        addProgressItem('Refreshing Local Song Data');
+        await getData();
+        addProgressItem('Refreshing Local Song Data Complete');
+        addProgressItem('New Song Creation Complete');
+      } catch (e) {
+        console.error(e)
+        addProgressItem('New Song Creation Error');
+        addProgressItem('May Have Failed to Create New Song Entry');
+        addProgressItem("Song Creation Steps Above With 'Complete' Succeeded");
+      }
     };
 
     // const handleCommentChange = (e) => {
