@@ -58,7 +58,7 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
           </div>
         </div> )}
         <div className="w-full flex flex-row mt-10 flex">
-          <div className="flex flex-col ml-20 w-[40%]">
+          {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Release Scheduled For</Typography>
             <DatePicker
               name="ReleaseScheduledFor"
@@ -67,7 +67,7 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
                 handleChange({target: {value: val, name: 'ReleaseScheduledFor'}});
               }}
             />
-          </div>
+          </div>)}
           {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Status Last Updated At</Typography>
             <DatePicker
