@@ -32,65 +32,66 @@ export default function SideNav() {
     navigate("/songdata", { state: { SongNumber: song } });
   }
 
-   if(!loggedIn){
-    return (
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            borderRight: "1px solid lightgrey",
-            display: 'flex',
-            justifyContent: 'space-between'
-          },
-        }}
-        variant="permanent"
-        anchor="left"
-      >
-        <Box>
-          <Toolbar>
-            <img src="/digitrax.png" alt="Digitrax" width="500" height="600" />
-          </Toolbar>
-          <List>
-            {["Home"].map((text, index) => (
-              <ListItem key={text}>
-                <Link
-                  to={(() => {
-                    switch (index) {
-                      case 0:
-                        return "/";
-                      default:
-                        return "/";
-                    }
-                  })()}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  <ListItemButton>
-                    <ListItemIcon>
-                      {(() => {
-                        switch (index) {
-                          case 0:
-                            return <BungalowIcon />;
-                          default:
-                            return null;
-                        }
-                      })()}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                </Link>
+  //  if(!loggedIn){
+  //   return (
+  //     <Drawer
+  //       sx={{
+  //         width: drawerWidth,
+  //         flexShrink: 0,
+  //         "& .MuiDrawer-paper": {
+  //           width: drawerWidth,
+  //           boxSizing: "border-box",
+  //           borderRight: "1px solid lightgrey",
+  //           display: 'flex',
+  //           justifyContent: 'space-between'
+  //         },
+  //       }}
+  //       variant="permanent"
+  //       anchor="left"
+  //     >
+  //       <Box>
+  //         <Toolbar>
+  //           <img src="/digitrax.png" alt="Digitrax" width="500" height="600" />
+  //         </Toolbar>
+  //         <List>
+  //           {["Home"].map((text, index) => (
+  //             <ListItem key={text}>
+  //               <Link
+  //                 to={(() => {
+  //                   switch (index) {
+  //                     case 0:
+  //                       return "/";
+  //                     default:
+  //                       return "/";
+  //                   }
+  //                 })()}
+  //                 style={{ textDecoration: "none", color: "inherit" }}
+  //               >
+  //                 <ListItemButton>
+  //                   <ListItemIcon>
+  //                     {(() => {
+  //                       switch (index) {
+  //                         case 0:
+  //                           return <BungalowIcon />;
+  //                         default:
+  //                           return null;
+  //                       }
+  //                     })()}
+  //                   </ListItemIcon>
+  //                   <ListItemText primary={text} />
+  //                 </ListItemButton>
+  //               </Link>
 
-              </ListItem>
-            ))}
-          </List>
+  //             </ListItem>
+  //           ))}
+  //         </List>
 
-        </Box>
-      </Drawer>
-    );
-  }
+  //       </Box>
+  //     </Drawer>
+  //   );
+  // }
 
+  if (loggedIn) {
     return (
       <Drawer
         sx={{
@@ -236,5 +237,5 @@ export default function SideNav() {
         </Box>
       </Drawer>
     );
-
+  }
 }
