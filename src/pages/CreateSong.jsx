@@ -104,6 +104,8 @@ const CreateSong = () => {
     const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
     const [licensingInformation, setLicensingInformation] = useState(licensingInformationDefault);
 
+    const [distributionInformation, setDistributionInformation] = useState(statusInformationDefault);
+
     const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
 
     const [filesStagedForUpload, setFilesStagedForUpload] = useState({});
@@ -156,6 +158,22 @@ const CreateSong = () => {
         [name]: value,
       }));
     };
+
+    const handleDistributionChange = (e) => {
+      const {name, value} = e.target;
+      let useValue
+      if(value === 'true'){
+        useValue = true
+      } else if(value === 'false'){
+        useValue = false
+      } else {
+        useValue = value
+      }
+      setDistributionInformation((prev) => ({
+        ...prev,
+        [name]: useValue,
+      }));
+    }
 
     const incrementNextCatalogNumberSuggestion = () => {
       setNextCatNumbersToSuggest(prev => {
@@ -238,6 +256,8 @@ const CreateSong = () => {
         const newSongData = {
           ...basicInformation,
           ...licensingInformation,
+          ...statusData,
+          ...distributionInformation,
           Status: 'Status1'
         };
         await addSong(newSongData);
@@ -249,8 +269,8 @@ const CreateSong = () => {
         addProgressItem('Adding Media Files');
         // Add Media
         for (let i = 0; i < generatedMediaForUpload.length; i++) {
-          for (const thing of generatedMediaForUpload[i].entries()) {
-          }
+          // for (const thing of generatedMediaForUpload[i].entries()) {
+          // }
           try {
             await uploadMediaFile(generatedMediaForUpload[i]);
             addProgressItem(`Added Media File for Bucket: ${generatedMediaForUpload[i].get('bucketName')}`);
@@ -402,7 +422,14 @@ const CreateSong = () => {
           statusData={statusData}
           handleChange={handleStatusChange}
         />
-
+        {/* STATUSES */}
+        <InfoDisplayRow
+          title="Status Information"
+          subTitle="Update the status information here"
+          infoToDisplay={distributionInformation}
+          handleChange={handleDistributionChange}
+          useDropDown
+        />
         <PublisherInfoDisplay
           songNumber={basicInformation.SongNumber}
           saveNewPublisher={savePublisher}
