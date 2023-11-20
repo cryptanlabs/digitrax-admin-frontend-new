@@ -114,7 +114,8 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadMediaFile = async (data) => {
-    const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/500)
+    console.log('STM context-SongDetailsContext.jsx:117', data); // todo remove dev item
+    const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
     const result = await axiosBase({
       method: 'post',
       url: '/upload',

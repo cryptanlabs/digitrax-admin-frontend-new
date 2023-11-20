@@ -40,6 +40,7 @@ const excludeFields = [
 ];
 
 const DataTableContext = ({children}) => {
+  const [fetchingData, setFetchingData] = useState(false);
   const [generatedSets, setGeneratedSets] = useState([]);
   const [currentDataSet, setCurrentDataSet] = useState([]);
   const [nextPage, setNextPage] = useState(1);
@@ -57,17 +58,25 @@ const DataTableContext = ({children}) => {
   const getData = async () => {
     // const limit = 1000; //-1 // -1
     // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
-    const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${returnLimit}&orderDir=desc`);
-    const lowercaseId = res?.data?.data?.map(item => {
 
-      return {id: item.Id, ...item};
-    });
-    setCurrentDataSet(lowercaseId);
-    setTotalResults(res.data.totalResults);
-    setTotalPages(res.data.totalPages);
-    setNextPage(res.data.nextPage);
+    if(fetchingData) return
+    setFetchingData(true)
+    try {
+      const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${returnLimit}&orderDir=desc`);
+      const lowercaseId = res?.data?.data?.map(item => {
 
-    console.log('Result:', res);
+        return {id: item.Id, ...item};
+      });
+      setCurrentDataSet(lowercaseId);
+      setTotalResults(res.data.totalResults);
+      setTotalPages(res.data.totalPages);
+      setNextPage(res.data.nextPage);
+
+      console.log('Result:', res);
+      setFetchingData(false)
+    } catch (e) {
+      setFetchingData(false)
+    }
 
 
   };

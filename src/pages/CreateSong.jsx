@@ -417,11 +417,6 @@ const CreateSong = () => {
           ))}
         </div>
 
-        <StatusDisplayEdit
-          newSong
-          statusData={statusData}
-          handleChange={handleStatusChange}
-        />
         {/* STATUSES */}
         <InfoDisplayRow
           title="Status Information"
