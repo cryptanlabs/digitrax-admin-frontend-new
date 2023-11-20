@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -19,6 +19,7 @@ import {
   statusInformationDefault
 } from '../helpers/constants.js';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
+import {Thumbnail} from '../components/Thumbnail.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -87,7 +88,8 @@ const CreateSong = () => {
       uploadMediaFile,
       getDetailsForSong,
       createComment,
-      getCommentsForSong
+      getCommentsForSong,
+      uploadThumbnail
     } =
       useContext(SongDetailsContext);
     const {addToRecentSongs, getData, nextTwentyCatalogNumbers, getSongNumbersWithoutRecords} = useContext(DataTableData);
@@ -108,14 +110,30 @@ const CreateSong = () => {
 
     const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
 
+    const [thumbnailInformation, setThumbnailInformation] = useState({});
+    const [thumbnailInformationForUpload, setThumbnailInformationForUpload] = useState(null);
+
     const [filesStagedForUpload, setFilesStagedForUpload] = useState({});
     const [comments, setComments] = useState([]);
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
     const [statusData, setStatusData] = useState({...statusInformationDefault, Status: 'Status1'});
 
-    const [SaveProgress, setSaveProgress] = useState([
-    ]);
+    const [SaveProgress, setSaveProgress] = useState([]);
+
+    const reset = () => {
+      setLicensingInformation(licensingInformationDefault);
+      setBasicInformation(basicInformationDefault);
+      setDistributionInformation(statusInformationDefault)
+      setFilesStagedForUpload({});
+      setGeneratedMediaForUpload([])
+      setPublishersForUpload([])
+      setThumbnailInformationForUpload([])
+      setThumbnailInformation({})
+      setComments([])
+      setStatusData({...statusInformationDefault, Status: 'Status1'})
+      setSaveProgress([])
+    }
 
     useEffect(() => {
       setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
@@ -185,6 +203,12 @@ const CreateSong = () => {
     const savePublisher = (data) => {
       setPublishersForUpload([...publishersForUpload, data]);
     };
+
+    const handleThumbnailChange = (data) => {
+      console.log('STM pages-CreateSong.jsx:195', data); // todo remove dev item
+      console.log('STM pages-CreateSong.jsx:196', data.get('files')); // todo remove dev item
+      setThumbnailInformationForUpload(data)
+    }
 
     const addProgressItem = (item) => {
       setSaveProgress(prev => [
@@ -266,6 +290,18 @@ const CreateSong = () => {
 
         addToRecentSongs(SongNumber);
 
+        if(thumbnailInformationForUpload){
+          try {
+            addProgressItem('Add Thumbnail');
+            await uploadThumbnail(thumbnailInformationForUpload);
+            addProgressItem('Add Thumbnail Complete');
+          } catch (e) {
+            console.error(e)
+            addProgressItem('Error Adding Thumbnail');
+          }
+        }
+
+
         addProgressItem('Adding Media Files');
         // Add Media
         for (let i = 0; i < generatedMediaForUpload.length; i++) {
@@ -321,7 +357,7 @@ const CreateSong = () => {
           addProgressItem('Add Comments Complete');
         }
 
-        setLicensingInformation(defaultLicensingInformationState);
+        setLicensingInformation(licensingInformationDefault);
         setBasicInformation(defaultBasicInfoState);
         setFilesStagedForUpload({});
         incrementNextCatalogNumberSuggestion();
@@ -418,6 +454,7 @@ const CreateSong = () => {
         </div>
 
         {/* STATUSES */}
+        <StatusDisplayEdit newSong statusData={statusData} handleChange={handleStatusChange}/>
         <InfoDisplayRow
           title="Status Information"
           subTitle="Update the status information here"
@@ -436,6 +473,10 @@ const CreateSong = () => {
           comments={comments}
           handleCreateComment={handleCreateComment}
         />
+
+        <div className="w-full ml-40 mb-10">
+          <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
+        </div>
 
         <div className="w-full mt-10 flex">
           <div className="flex flex-col ml-20">
@@ -486,7 +527,7 @@ const CreateSong = () => {
                 color: '#FF6969',
               },
             }}
-            onClick={() => setSelectedFile(null)}
+            onClick={reset}
           >
             Reset
           </Button>

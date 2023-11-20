@@ -2,6 +2,7 @@ import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
 import {useContext, useEffect, useState} from 'react';
+import { useNavigate } from "react-router-dom";
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {isWhiteSpace} from '../helpers/utils.js';
 import ApiUsers from './ApiUsers.jsx';
@@ -10,10 +11,13 @@ import VisibilityIcon from '@mui/icons-material/Visibility.js';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff.js';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
+import {DataTableData} from '../context/DataTableContext.jsx';
 
 export default function ViewSongDetails () {
+  const navigate = useNavigate();
   const [songNumber, setSongNumber] = useState(true);
   const [disableRequestButton, setDisableRequestButton] = useState(true);
+    const {addToRecentSongs} = useContext(DataTableData);
   const {
     getDetailsForSong
   } = useContext(SongDetailsContext);
@@ -24,8 +28,11 @@ export default function ViewSongDetails () {
     setDisableRequestButton(value?.length !== 5)
   }
 
-  const handleLookup = () => {
-    getDetailsForSong(songNumber)
+  const handleLookup = async () => {
+    // const songDetails = await getDetailsForSong(songNumber)
+    //   console.log('STM pages-ViewSongDetails.jsx:33', songDetails); // todo remove dev item
+    addToRecentSongs(songNumber);
+    navigate('/songdata', {state: {SongNumber: songNumber}});
   }
 
 

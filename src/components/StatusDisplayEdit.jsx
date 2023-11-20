@@ -7,8 +7,8 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
   try {
     return (
       <div className="w-full flex flex-col ">
-        <div className="w-full flex flex-row mt-10 flex">
-          <div className="flex flex-col ml-20 w-[40%]">
+        <div className="w-[90%] flex flex-row justify-between ml-20 mt-10 flex">
+          <div className="flex flex-col  w-[40%]">
             <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
             <Select
               sx={{marginTop: 1}}
@@ -21,63 +21,18 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
               ))}
             </Select>
           </div>
-          {!newSong && ( <div className="flex flex-col ml-20 w-[40%]">
-            <Typography sx={{fontWeight: 'bold'}}>Catalog #</Typography>
-            <TextField
-              name="Artist"
-              onChange={handleChange}
-              sx={{marginTop: 1}}
-              hiddenLabel
-              value={statusData.SongNumber}
-              variant="outlined"
-            />
-          </div>)}
-        </div>
-        {!newSong && (<div className="w-full flex flex-row mt-10 flex">
-          <div className="flex flex-col ml-20 w-[40%]">
-            <Typography sx={{fontWeight: 'bold'}}>Song Title</Typography>
-            <TextField
-              name="Title"
-              onChange={handleChange}
-              sx={{marginTop: 1}}
-              hiddenLabel
-              value={statusData.Title}
-              variant="outlined"
-            />
-          </div>
-          <div className="flex flex-col ml-20 w-[40%]">
-            <Typography sx={{fontWeight: 'bold'}}>Artist</Typography>
-            <TextField
-              name="Artist"
-              onChange={handleChange}
-              sx={{marginTop: 1}}
-              hiddenLabel
-              value={statusData.Artist}
-              variant="outlined"
-            />
-          </div>
-        </div> )}
-        <div className="w-full flex flex-row mt-10 flex">
-          {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
-            <Typography sx={{fontWeight: 'bold'}}>Release Scheduled For</Typography>
-            <DatePicker
-              name="ReleaseScheduledFor"
-              value={statusData.ReleaseScheduledFor}
-              onChange={(val) => {
-                handleChange({target: {value: val, name: 'ReleaseScheduledFor'}});
-              }}
-            />
-          </div>)}
-          {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
-            <Typography sx={{fontWeight: 'bold'}}>Status Last Updated At</Typography>
-            <DatePicker
-              value={statusData.StatusUpdatedAt}
-              readOnly
-            />
-          </div>)}
+            {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
+                <Typography sx={{fontWeight: 'bold'}}>Status Last Updated At</Typography>
+                <DatePicker
+                    sx={{marginTop: 1}}
+                    value={statusData.StatusUpdatedAt}
+                    readOnly
+                />
+            </div>)}
+
         </div>
         {!newSong && (
-          <div className="w-[90%] mt-5 flex items-center justify-end">
+          <div className="w-[90%] mt-5 ml-20 flex flex-row justify-end">
             <Button
               variant="outlined"
               onClick={() => {

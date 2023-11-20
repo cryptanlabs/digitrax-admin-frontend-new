@@ -131,6 +131,24 @@ const SongDetailsProvider = ({children}) => {
     return result.data;
   };
 
+  const uploadThumbnail = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:117', data); // todo remove dev item
+    const timeToUpload = Math.ceil(data.get('files').size/200)
+    const result = await axiosBase({
+      method: 'post',
+      url: '/uploadThumbnail',
+      timeout: timeToUpload,
+      data: data
+    })
+        .catch(error => {
+          console.error(error);
+          handleNotifyOfError(error)
+        });
+    // getData();
+    // getExistingBuckets()
+    return result.data;
+  };
+
   const addSong = async (data) => {
     const result = await axiosBase({
       method: 'post',
@@ -213,6 +231,7 @@ const SongDetailsProvider = ({children}) => {
     try {
       console.log('STM context-SongDetailsContext.jsx:82', SongNumber); // todo remove dev item
       const result = await axios.get(`${base_url}/catalogInternal?SongNumber=${SongNumber}`);
+      console.log('STM context-SongDetailsContext.jsx:216', result.data.data); // todo remove dev item
       return result.data.data[0];
     } catch (error) {
       console.error(error)
@@ -249,7 +268,8 @@ const SongDetailsProvider = ({children}) => {
       getCrossClearForSong,
       markCommentRemoved,
       updateMediaMetadata,
-      removeGeneratedMediaEntry
+      removeGeneratedMediaEntry,
+      uploadThumbnail
     }}>
       {children}
       <Snackbar

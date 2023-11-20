@@ -1,6 +1,6 @@
-import {useEffect, useState, useRef, useContext} from 'react';
+import React, {useEffect, useState, useRef, useContext} from 'react';
 import {useLocation} from 'react-router-dom';
-import {Button, Typography, TextField} from '@mui/material';
+import {Button, Typography, TextField, CircularProgress} from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {SongDetailsContext} from '../context/SongDetailsContext';
@@ -26,6 +26,7 @@ import {
 import dayjs from 'dayjs';
 import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
+import {Thumbnail} from '../components/Thumbnail.jsx';
 
 const publishingHeaders = [
   'ISRC',
@@ -69,7 +70,16 @@ const publishingColumnMappedToHeaders = {
   'MechanicalRegistrationNumberA': 'HFA-Mechanical-A Mix',
   'MechanicalRegistrationNumberD': 'HFA-Mechanical-D Mix',
   'Territories': 'Territories',
-  'Writer': 'Writer'
+  'Writer': 'Writer',
+  "ISRCCAMixVocalISRCCAMixVocal": "ISRC CA Mix Vocal",
+  "ISRCCCMixKaraoke": "ISRC CC Mix Karaoke",
+  "ISRCCDMixInstrumental": "ISRC CD MixInstrumental",
+  "ISRCAAMixVocal": "ISRC AA MixVocal",
+  "ISRCACMixKaraoke": "ISRC AC MixKaraoke",
+  "ISRCADMixInstrumental": "ISRC AD MixInstrumental",
+  "HFALicenseNumber": "HFA License Number",
+  "ISWC": "ISWC",
+  "MechanicalRegistrationNumberC": "HFA-Mechanical-C Mix",
 };
 
 const songPublisherHeaders = [
@@ -108,7 +118,8 @@ const SongDetails = () => {
     getCommentsForSong,
     markCommentRemoved,
     updateMediaMetadata,
-    removeGeneratedMediaEntry
+    removeGeneratedMediaEntry,
+    uploadThumbnail
   } = useContext(SongDetailsContext);
   const [comments, setComments] = useState(demoComments);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -125,10 +136,13 @@ const SongDetails = () => {
 
   const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
 
+  const [thumbnailInformation, setThumbnailInformation] = useState({});
+
   const [crossClearEntries, setCrossClearEntries] = useState([]);
   const [songNumberLookup, setSongNumberLookup] = useState(true);
   const [disableLookupRequestButton, setDisableLookupRequestButton] = useState(true);
   const [noSongFoundForCatalogNumber, setNoSongFoundForCatalogNumber] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
   const setup = async (rowData) => {
     console.log('STM pages-SongDetails.jsx:115', rowData.GeneratedMedia); // todo remove dev item
@@ -154,6 +168,8 @@ const SongDetails = () => {
       ...getBasicInfoFromSongData(rowData)
     }));
 
+    setThumbnailInformation(rowData?.Thumbnail ?? {})
+
     // localStorage.setItem('items', JSON.stringify(items));
 
 
@@ -162,6 +178,7 @@ const SongDetails = () => {
   };
 
   const setupBySongNumber = (songNumber) => {
+    setLoadingDetails(true)
     getDetailsForSong(songNumber)
       .then(songDetails => {
         if(!songDetails){
@@ -169,6 +186,7 @@ const SongDetails = () => {
         }
         setup(songDetails);
         location.state.rowData = songDetails;
+        setLoadingDetails(false)
       });
     getCrossClearForSong(songNumber)
       .then(crossRecords => {
@@ -360,7 +378,9 @@ const SongDetails = () => {
     });
   };
 
-
+  // const handleUploadThumbnail = async (data) => {
+  //
+  // }
   // File Upload Handlers
 
   const uploadMediaMetadataAndRefresh = async (data) => {
@@ -376,12 +396,17 @@ const SongDetails = () => {
     setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
   }
 
+
+
   // handleSongLookupChange
 
   return (
     <div className="w-full mt-4 flex flex-col items-center justify-between">
       <div className="w-full mt-4 flex items-center justify-between">
         <h1 className="text-4xl ml-20 font-medium">Song Data</h1>
+        {loadingDetails && (<div>
+          <CircularProgress />
+        </div>)}
         <div className="flex w-1/3  mr-3 justify-center">
           <div className="flex flex-col ml-20">
             <Typography sx={{ fontWeight: "bold" }}>Lookup Catalog ID #</Typography>
@@ -455,10 +480,10 @@ const SongDetails = () => {
           <Typography>Update the publishing information here</Typography>
         </div>
       </div>
-      <div className="w-[90%] mt-10 flex flex-row flex-wrap">
+      <div className="w-full mt-10 ml-20 flex flex-row flex-wrap">
         {Object.keys(licensingInformation).map((header, index) => (
           <div key={index} className="flex flex-col ml-10 w-[20%]">
-            <Typography sx={{ fontWeight: "bold" }}>{header}</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
             <TextField
               size="small"
               hiddenLabel
@@ -488,6 +513,45 @@ const SongDetails = () => {
           Save Changes
         </Button>
       </div>
+
+      {/* STATUSES */}
+      <InfoDisplayRow
+          title="Status Information"
+          subTitle="Update the status information here"
+          infoToDisplay={distributionInformation}
+          handleChange={handleDistributionChange}
+          useDropDown
+      />
+      <div className="w-[90%] mt-5 flex items-center justify-end">
+        <Button
+            variant="outlined"
+            onClick={handleDistributionEdit}
+            sx={{
+              marginRight: '15px',
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
+              },
+            }}
+        >
+          Save Changes
+        </Button>
+      </div>
+
+      <StatusDisplayEdit
+          statusData={statusData}
+          handleChange={handleStatusChange}
+          handleSave={handleStatusEdit}
+      />
+      <CommentDisplay
+          comments={comments}
+          handleCreateComment={handleCreateComment}
+          handleRemoveComment={handleRemoveComment}
+      />
+
       {/* PUBLISHER INFORMATION*/}
       <PublisherInfoDisplay
         songNumber={basicInformation.SongNumber}
@@ -537,43 +601,10 @@ const SongDetails = () => {
           multiRow
         />
       )}
-      {/* STATUSES */}
-      <InfoDisplayRow
-        title="Status Information"
-        subTitle="Update the status information here"
-        infoToDisplay={distributionInformation}
-        handleChange={handleDistributionChange}
-        useDropDown
-      />
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-        <Button
-          variant="outlined"
-          onClick={handleDistributionEdit}
-          sx={{
-            marginRight: '15px',
-            borderColor: '#00b00e',
-            backgroundColor: '#00b00e',
-            color: 'white',
-            '&:hover': {
-              borderColor: '#F1EFEF',
-              backgroundColor: '#86A789',
-            },
-          }}
-        >
-          Save Changes
-        </Button>
+      <div className="w-full ml-40 mb-10">
+        <Thumbnail thumbnailObject={thumbnailInformation} uploadFile={uploadThumbnail} songNumber={basicInformation.SongNumber}/>
       </div>
 
-      <StatusDisplayEdit
-        statusData={statusData}
-        handleChange={handleStatusChange}
-        handleSave={handleStatusEdit}
-      />
-      <CommentDisplay
-        comments={comments}
-        handleCreateComment={handleCreateComment}
-        handleRemoveComment={handleRemoveComment}
-      />
       {/* MEDIA */}
       <div className="w-full mt-10 flex">
         <div className="flex flex-col ml-20">
@@ -612,7 +643,7 @@ const SongDetails = () => {
         ></FileAdd>
       )}
 
-      <div className="w-full mt-10 ml-40 mb-20">
+      <div className="w-full  ml-40 mb-20">
       <DisplayMediaListing
         updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
         submit={uploadMediaFileAndRefresh}
