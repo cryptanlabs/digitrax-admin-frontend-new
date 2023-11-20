@@ -384,7 +384,7 @@ const SongDetails = () => {
         <h1 className="text-4xl ml-20 font-medium">Song Data</h1>
         <div className="flex w-1/3  mr-3 justify-center">
           <div className="flex flex-col ml-20">
-            <Typography sx={{ fontWeight: "bold" }}>Lookup Catalogue ID #</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>Lookup Catalog ID #</Typography>
             <div className="flex flex-row justify-betweenml-20">
               <TextField
                 name="SongNumber"

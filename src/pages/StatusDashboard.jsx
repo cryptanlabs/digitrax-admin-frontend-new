@@ -305,7 +305,7 @@ const StatusDashboard = () => {
         </div>
       </div>
       <div className="w-full h-10 mt-5 flex items-center justify-between ">
-        <h1 className="text-xl ml-8 font-medium">{statusDash.Catalogue}</h1>
+        <h1 className="text-xl ml-8 font-medium">{statusDash.Catalog}</h1>
       </div>
       <div className="w-[90%] h-20 ml-20 flex flex-row items-center justify-between ">
         <DatePicker

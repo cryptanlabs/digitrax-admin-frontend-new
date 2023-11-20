@@ -11,5 +11,5 @@ export const statusDash = {
   StatusManagementDashboard: "Status Management Dashboard",
   ReleaseScheduledFor: "Release Scheduled For",
   SetReleaseDate: "Set Release Date",
-  Catalogue: "Catalogue"
+  Catalog: "Catalog"
 }
