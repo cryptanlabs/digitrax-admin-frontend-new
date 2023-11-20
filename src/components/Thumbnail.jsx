@@ -1,0 +1,176 @@
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, TextField, Typography} from '@mui/material';
+import {base_url} from '../helpers/requests.js';
+import {isWhiteSpace} from '../helpers/utils.js';
+
+
+export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile = () => {}, handleMetadataChange = () => {}}){
+    const fileInputRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [generatedMedia, setGeneratedMedia] = useState({});
+    const [imageSource, setImageSource] = useState('');
+
+    // Form Data For Upload
+    const formData = new FormData();
+
+
+    useEffect(() => {
+        console.log('STM components-Thumbnail.jsx:18', songNumber); // todo remove dev item
+        console.log('STM components-thumbnail.jsx:12', thumbnailObject); // todo remove dev item
+        setGeneratedMedia(thumbnailObject)
+        if(newSong){
+            setImageSource('')
+        } else {
+            setImageSource(`${base_url}/thumbnail/${songNumber}`)
+        }
+
+    }, [thumbnailObject]);
+
+    // useEffect(() => {
+    //     if(newSong){
+    //         setImageSource('')
+    //     } else {
+    //         setImageSource(`${base_url}/thumbnail/${songNumber}`)
+    //     }
+    //
+    // }, [songNumber]);
+
+    useEffect(() => {
+        if(newSong){
+            uploadThumbnail()
+        }
+
+    }, [selectedFile]);
+
+    const handleFileUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log('STM components-Thumbnail.jsx:36', file); // todo remove dev item
+            setSelectedFile(file);
+            try {
+                console.log('STM components-Thumbnail.jsx:33', selectedFile); // todo remove dev item
+                setImageSource(URL.createObjectURL(file))
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    };
+
+    const uploadThumbnail = async () => {
+        if(isWhiteSpace(songNumber)) return;
+        try {
+            console.log('STM components-Thumbnail.jsx:52', selectedFile); // todo remove dev item
+            formData.append(
+                'files',
+                selectedFile
+            );
+            formData.append(
+                'songNumber',
+                songNumber
+            );
+
+
+            await uploadFile(formData);
+            // setSelectedFile(null)
+        } catch (e) {
+            console.error(e)
+            // setSelectedFile(null)
+        }
+    }
+
+    return (
+        <>
+            <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-t-lg border-gray-300 p-5">
+                <Typography sx={{ fontWeight: "bold" }}>Thumbnail</Typography>
+            </div>
+            <div className="w-[90%] flex flex-row  justify-between items-center border-b-2 border-x-2 rounded-b-lg border-gray-300 p-5">
+                <div className="flex-none ml-8">
+                    <img src={imageSource} height="200px" width="200px"/>
+                </div>
+                <div className="flex-none ml-8">
+                    {(selectedFile && !newSong) && (<Button
+                        variant="outlined"
+                        onClick={uploadThumbnail}
+                        sx={{
+                            marginRight: "15px",
+                            borderColor: "#00b00e",
+                            backgroundColor: "#00b00e",
+                            color: "white",
+                            "&:hover": {
+                                borderColor: "#F1EFEF",
+                                backgroundColor: "#86A789",
+                            },
+                        }}
+                    >
+                        upload Thumbnail
+                    </Button>)}
+                    {(!selectedFile && !newSong) && (<Button
+                        variant="outlined"
+                        onClick={handleFileUploadClick}
+                        sx={{
+                            marginRight: "15px",
+                            borderColor: "#00b00e",
+                            backgroundColor: "#00b00e",
+                            color: "white",
+                            "&:hover": {
+                                borderColor: "#F1EFEF",
+                                backgroundColor: "#86A789",
+                            },
+                        }}
+                    >
+                        Select Thumbnail
+                    </Button>)}
+                    {(newSong) && (<Button
+                        disabled={isWhiteSpace(songNumber)}
+                        variant="outlined"
+                        onClick={handleFileUploadClick}
+                        sx={{
+                            marginRight: "15px",
+                            borderColor: "#00b00e",
+                            backgroundColor: "#00b00e",
+                            color: "white",
+                            "&:hover": {
+                                borderColor: "#F1EFEF",
+                                backgroundColor: "#86A789",
+                            },
+                        }}
+                    >
+                        Select Thumbnail
+                    </Button>)}
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        onChange={handleFileChange}
+                        accept="*"
+                    />
+                </div>
+                {!newSong && (<div className="flex-none ml-8">
+                    <a href={`${base_url}/thumbnail/${songNumber}`} target="_blank" download>
+                        <Button
+                            variant="outlined"
+                            onClick={() => {setShowFileUpload(true)}}
+                            sx={{
+                                marginRight: "15px",
+                                borderColor: "#00b00e",
+                                backgroundColor: "#00b00e",
+                                color: "white",
+                                "&:hover": {
+                                    borderColor: "#F1EFEF",
+                                    backgroundColor: "#86A789",
+                                },
+                            }}
+                        >
+                            Download Thumbnail
+                        </Button>
+                    </a>
+                </div>)}
+            </div>
+
+        </>
+    )
+}
