@@ -615,7 +615,7 @@ const SongDetails = () => {
       <div className="w-full mt-10 ml-40 mb-20">
       <DisplayMediaListing
         updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
-        uploadMediaFileAndRefresh={uploadMediaFileAndRefresh}
+        submit={uploadMediaFileAndRefresh}
         songNumber={basicInformation.SongNumber}
         generatedSets={generatedSets}
         generatedMedia={generatedMedia}
