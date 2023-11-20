@@ -92,7 +92,7 @@ const Dashboard = () => {
               onClick={() => setShowSearch((prev) => !prev)}
               className="cursor-pointer"
             />
-            <Button
+            {/* <Button
               variant="outlined"
               startIcon={<SortByAlphaIcon/>}
               onClick={sortTitlesAlphabetically}
@@ -106,7 +106,7 @@ const Dashboard = () => {
               }}
             >
               Sort
-            </Button>
+            </Button> */}
             <Button
               variant="outlined"
               startIcon={<FileDownloadIcon/>}
