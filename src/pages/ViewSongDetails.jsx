@@ -33,7 +33,7 @@ export default function ViewSongDetails () {
     <>
       <div className="w-full flex-row justify-start mt-10 flex">
         <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
+          <Typography sx={{ fontWeight: "bold" }}>Catalog ID #</Typography>
           <TextField
             name="SongNumber"
             type="number"

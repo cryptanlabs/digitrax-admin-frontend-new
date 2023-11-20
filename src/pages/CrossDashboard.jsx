@@ -102,7 +102,7 @@ const CrossDashboard = () => {
           </div>
         </div>
         <div className="w-full h-20 mt-5 flex items-center justify-between ">
-          <h1 className="text-xl ml-8 font-medium">Catalogue</h1>
+          <h1 className="text-xl ml-8 font-medium">Catalog</h1>
           <div className="w-1/5 mr-8 flex items-center justify-center">
             {showSearch && (
               <SearchBar

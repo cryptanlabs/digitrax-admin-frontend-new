@@ -28,7 +28,7 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
       </div>
       <div className="w-full flex-row justify-between mt-10 flex">
         <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>Catalogue ID #</Typography>
+          <Typography sx={{ fontWeight: "bold" }}>Catalog ID #</Typography>
           <TextField
             name="SongNumber"
             type="number"

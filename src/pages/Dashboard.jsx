@@ -81,7 +81,7 @@ const Dashboard = () => {
       <div>
         <div className="w-full mt-4 flex items-center justify-between">
           <h1 className="text-4xl ml-10 font-medium">
-            Catalogue Management Dashboard
+            Catalog Management Dashboard
           </h1>
           <div className="flex items-center px-2 w-1/6 justify-between mr-3">
             <RefreshIcon
@@ -124,7 +124,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="w-full h-20 mt-5 flex items-center justify-between ">
-          <h1 className="text-xl ml-8 font-medium">Catalogue</h1>
+          <h1 className="text-xl ml-8 font-medium">Catalog</h1>
           <div className="w-1/5 mr-8 flex items-center justify-center">
             {showSearch && (
               <SearchBar
