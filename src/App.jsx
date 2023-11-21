@@ -33,7 +33,7 @@ const App = () => {
 
                 <Routes>
                   <Route element={<AccessGuard/>}>
-                    <Route path="/" element={<Home/>}/>
+                    <Route path="/" element={<Dashboard/>}/>
                     <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/songdata" element={<SongDetails/>}/>
                     <Route element={<InternalOnly/>}>

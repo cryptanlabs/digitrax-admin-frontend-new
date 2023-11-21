@@ -16,7 +16,8 @@ import {getStatusInfoFromSongData} from '../helpers/utils.js';
 import {
   basicInformationDefault,
   licensingInformationDefault,
-  statusInformationDefault
+  statusInformationDefault,
+  publishingColumnMappedToHeaders
 } from '../helpers/constants.js';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
 import {Thumbnail} from '../components/Thumbnail.jsx';
@@ -39,14 +40,7 @@ const publishingHeadersMappedToColumn = {
   Writer: "Writer",
 };
 
-const publishingColumnMappedToHeaders = {
-  'ISRCCAMixVocal': 'ISRC',
-  'HFASongCode': 'HFA Song Code',
-  'MechanicalRegistrationNumberA': 'HFA-Mechanical-A Mix',
-  'MechanicalRegistrationNumberD': 'HFA-Mechanical-D Mix',
-  'Territories': 'Territories',
-  'Writer': 'Writer'
-};
+
 
 
 const defaultLicensingInformationState = {
@@ -443,7 +437,7 @@ const CreateSong = () => {
         <div className="w-[90%] mt-10 flex flex-row flex-wrap">
           {Object.keys(licensingInformation).map((header, index) => (
             <div key={index} className="flex flex-col ml-10 w-[20%]">
-              <Typography sx={{ fontWeight: "bold" }}>{header}</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
               <TextField
                 size="small"
                 hiddenLabel

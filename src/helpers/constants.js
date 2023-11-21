@@ -170,3 +170,21 @@ export const statusDashboardFieldsShown = [
   'Duration',
   'BarIntro',
 ];
+
+export const publishingColumnMappedToHeaders = {
+  'ISRCCAMixVocal': 'ISRC',
+  'HFASongCode': 'HFA Song Code',
+  'MechanicalRegistrationNumberA': 'HFA-Mechanical-A Mix',
+  'MechanicalRegistrationNumberD': 'HFA-Mechanical-D Mix',
+  'Territories': 'Territories',
+  'Writer': 'Writer',
+  "ISRCCAMixVocalISRCCAMixVocal": "ISRC CA Mix Vocal",
+  "ISRCCCMixKaraoke": "ISRC CC Mix Karaoke",
+  "ISRCCDMixInstrumental": "ISRC CD MixInstrumental",
+  "ISRCAAMixVocal": "ISRC AA MixVocal",
+  "ISRCACMixKaraoke": "ISRC AC MixKaraoke",
+  "ISRCADMixInstrumental": "ISRC AD MixInstrumental",
+  "HFALicenseNumber": "HFA License Number",
+  "ISWC": "ISWC",
+  "MechanicalRegistrationNumberC": "HFA-Mechanical-C Mix",
+};
