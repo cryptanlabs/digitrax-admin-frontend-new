@@ -54,25 +54,25 @@ export function SimpleDataGrid ({
           {...buttonBaseProps}
           onClick={() => handleExport()}
         >
-          All
+          Export All
         </Button>
         <Button
           {...buttonBaseProps}
           onClick={() => handleExport({getRowsToExport: getRowsFromCurrentPage})}
         >
-          Current page rows
+          Export Current page rows
         </Button>
         <Button
           {...buttonBaseProps}
           onClick={() => handleExport({getRowsToExport: getFilteredRows})}
         >
-          Filtered rows
+          Export Filtered rows
         </Button>
         <Button
           {...buttonBaseProps}
           onClick={() => handleExport({getRowsToExport: getUnfilteredRows})}
         >
-          Unfiltered rows
+          Export Unfiltered rows
         </Button>
       </GridToolbarContainer>
     );

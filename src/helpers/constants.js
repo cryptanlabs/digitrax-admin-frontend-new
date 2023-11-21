@@ -54,7 +54,7 @@ export const ColumnHeadersMap = {
 // Mapping of column width based on db table name
 export const ColumnWidthMap = {
   Title: 250,
-  Artist: 250,
+  Artist: 100,
   Genre: 100,
   SongNumber: 100,
   SubGenre: 150,

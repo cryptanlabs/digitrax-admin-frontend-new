@@ -3,6 +3,7 @@ import axios from 'axios';
 import {axiosBase, base_url, returnLimit} from '../helpers/requests.js';
 import {ColumnHeadersMap, ColumnWidthMap, statusOptionsText} from '../helpers/constants.js';
 import {isWhiteSpace} from '../helpers/utils.js';
+import dayjs from 'dayjs';
 
 export const DataTableData = createContext(undefined);
 
@@ -41,6 +42,7 @@ const excludeFields = [
 
 const DataTableContext = ({children}) => {
   const [fetchingData, setFetchingData] = useState(false);
+  const [fetchingCrossClear, setFetchingCrossClear] = useState(false);
   const [generatedSets, setGeneratedSets] = useState([]);
   const [currentDataSet, setCurrentDataSet] = useState([]);
   const [nextPage, setNextPage] = useState(1);
@@ -75,6 +77,7 @@ const DataTableContext = ({children}) => {
       console.log('Result:', res);
       setFetchingData(false)
     } catch (e) {
+      console.error(e)
       setFetchingData(false)
     }
 
@@ -94,17 +97,28 @@ const DataTableContext = ({children}) => {
   }
 
   const getCrossData = async () => {
-    const limit = 1000; //-1 // -1
-    // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
-    const res = await axios.get(`${base_url}/getCrossClear`);
-    const lowercaseId = res?.data?.result?.map(item => {
 
-      return {id: item.Id, ...item};
-    });
-    // console.log('STM context-DataTableContext.jsx:79', lowercaseId); // todo remove dev item
-    setCrossClearDataSet(lowercaseId);
+    if(!fetchingCrossClear){
+      try {
+        setFetchingCrossClear(true);
+        const limit = 1000; //-1 // -1
+        // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
+        const res = await axios.get(`${base_url}/getCrossClear`);
+        const lowercaseId = res?.data?.result?.map(item => {
 
-    console.log('Result getCrossData:', res);
+          return {id: item.Id, ...item};
+        });
+        // console.log('STM context-DataTableContext.jsx:79', lowercaseId); // todo remove dev item
+        setCrossClearDataSet(lowercaseId);
+
+        console.log('Result getCrossData:', res);
+        setFetchingCrossClear(false);
+      } catch (e) {
+        console.error(e)
+        setFetchingCrossClear(false);
+      }
+    }
+
 
 
   };
@@ -124,6 +138,18 @@ const DataTableContext = ({children}) => {
       tableNameSource = datamodel?.models?.find(item => item.name = tableName)
     }
     const computedColumnNames = tableNameSource?.fields?.map(items => items.name);
+
+    const parseTypes = (prismaType) =>{
+      if (prismaType === 'Int' || prismaType === 'Decimal') {
+        return 'number'
+      } else if (prismaType === 'Boolean') {
+        return 'boolean'
+      } else if (prismaType === 'DateTime') {
+        return 'dateTime'
+      } else {
+        return 'string'
+      }
+    }
 
     // .filter(item => !excludeFields.includes(item.name))
     const computedColumnDetails = tableNameSource?.fields?.map(items => {
@@ -148,17 +174,30 @@ const DataTableContext = ({children}) => {
           }
         }
       }
+      if(items.type === 'DateTime'){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          type: 'dateTime',
+          width: ColumnWidthMap[items.name] ?? 150,
+          valueGetter: (params) => {
+            return dayjs(params.value).toDate()
+          }
+        };
+      }
       if(ColumnHeadersMap[items.name]){
         return {
           field: items.name,
           headerName: ColumnHeadersMap[items.name],
-          width: ColumnWidthMap[items.name] ?? 150
+          type: parseTypes(items.type),
+          width: ColumnWidthMap[items.name] ?? 150,
         };
       }
       return {
         field: items.name,
         headerName: items.name,
-        width: width ?? 150
+        type: parseTypes(items.type),
+        width: width ?? 150,
       };
     });
 
@@ -189,13 +228,17 @@ const DataTableContext = ({children}) => {
   }
 
   useEffect(() => {
+    const setupData = async () => {
+     await getColumnNames()
+          .then(getData)
+          .then(getCrossData)
+          .then(getExistingBuckets)
+          .then(getSongNumbersWithoutRecords)
+    }
+    setupData()
 
-    getColumnNames()
-      .then(getData)
-      .then(getCrossData)
-    getExistingBuckets()
-    getSongNumbersWithoutRecords()
-
+    // getExistingBuckets()
+    // getSongNumbersWithoutRecords()
   }, []);
 
 

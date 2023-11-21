@@ -19,7 +19,7 @@ import {UserContext} from '../context/UserContext.jsx';
 
 const drawerWidth = 240;
 
-const internalNav = ["Home", "Dashboard", "crossDashboard", "Create Song", "Reports", "queryBuilder", "Users", "statusDashboard", "batchUpload", "viewSongDetails"]
+const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Reports", "Query Builder", "Users", "Status Dashboard", "Batch Upload", "Lookup Song Details"]
 const externalNav = ["Home", "Dashboard"]
 
 export default function SideNav() {
@@ -32,64 +32,6 @@ export default function SideNav() {
     navigate("/songdata", { state: { SongNumber: song } });
   }
 
-  //  if(!loggedIn){
-  //   return (
-  //     <Drawer
-  //       sx={{
-  //         width: drawerWidth,
-  //         flexShrink: 0,
-  //         "& .MuiDrawer-paper": {
-  //           width: drawerWidth,
-  //           boxSizing: "border-box",
-  //           borderRight: "1px solid lightgrey",
-  //           display: 'flex',
-  //           justifyContent: 'space-between'
-  //         },
-  //       }}
-  //       variant="permanent"
-  //       anchor="left"
-  //     >
-  //       <Box>
-  //         <Toolbar>
-  //           <img src="/digitrax.png" alt="Digitrax" width="500" height="600" />
-  //         </Toolbar>
-  //         <List>
-  //           {["Home"].map((text, index) => (
-  //             <ListItem key={text}>
-  //               <Link
-  //                 to={(() => {
-  //                   switch (index) {
-  //                     case 0:
-  //                       return "/";
-  //                     default:
-  //                       return "/";
-  //                   }
-  //                 })()}
-  //                 style={{ textDecoration: "none", color: "inherit" }}
-  //               >
-  //                 <ListItemButton>
-  //                   <ListItemIcon>
-  //                     {(() => {
-  //                       switch (index) {
-  //                         case 0:
-  //                           return <BungalowIcon />;
-  //                         default:
-  //                           return null;
-  //                       }
-  //                     })()}
-  //                   </ListItemIcon>
-  //                   <ListItemText primary={text} />
-  //                 </ListItemButton>
-  //               </Link>
-
-  //             </ListItem>
-  //           ))}
-  //         </List>
-
-  //       </Box>
-  //     </Drawer>
-  //   );
-  // }
 
   if (loggedIn) {
     return (
@@ -118,25 +60,25 @@ export default function SideNav() {
                 <Link
                   to={(() => {
                     switch (index) {
+                      // case 0:
+                      //   return "/";
                       case 0:
-                        return "/";
-                      case 1:
                         return "/dashboard";
-                      case 2:
+                      case 1:
                         return "/crossDashboard";
-                      case 3:
+                      case 2:
                         return "/createsong";
-                      case 4:
+                      case 3:
                         return "/reports";
-                      case 5:
+                      case 4:
                         return "/queryBuilder";
-                      case 6:
+                      case 5:
                         return "/users";
-                      case 7:
+                      case 6:
                         return "/statusDashboard";
-                      case 8:
+                      case 7:
                         return "/batchUpload";
-                      case 9:
+                      case 8:
                         return "/viewSongDetails";
                       default:
                         return "/";
@@ -199,7 +141,7 @@ export default function SideNav() {
 
         </Box>
         <Box
-          sx={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+          sx={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: '40px'}}>
           <Typography sx={{fontWeight: "bold", paddingLeft: '30px'}}>
             Recent Songs
           </Typography>
@@ -218,23 +160,7 @@ export default function SideNav() {
           </List>
         </Box>
 
-        <Box sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-          <Button
-            startIcon={<SettingsSuggestIcon/>}
-            sx={{
-              borderColor: "gray",
-              padding: 1.5,
-              marginRight: 2,
-              color: "#454545",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#F5F7F8",
-              },
-            }}
-          >
-            Settings
-          </Button>
-        </Box>
+
       </Drawer>
     );
   }
