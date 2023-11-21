@@ -36,20 +36,10 @@ console.log('STM pages-Login.jsx:22', userName, password); // todo remove dev it
 
             </h1>
           </div>
-          <div className="flex flex-row w-[40%]">
-            <div className="flex flex-col w-[20%]">
-              <Typography sx={{fontWeight: 'bold'}}>Test Username:</Typography>
-              <Typography sx={{fontWeight: 'bold'}}>Test Password:</Typography>
-            </div>
-            <div className="flex flex-col w-[40%]">
-              <Typography sx={{fontWeight: 'bold'}}>Digitrax</Typography>
-              <Typography sx={{fontWeight: 'bold'}}>digitrax</Typography>
-            </div>
-          </div>
 
           <div className="w-full flex flex-col mt-40 items-center">
             <div className="flex flex-col w-[40%]">
-              <Typography sx={{fontWeight: 'bold'}}>UserName</Typography>
+              <Typography sx={{fontWeight: 'bold'}}>Username</Typography>
               <TextField
                 sx={{marginTop: 1}}
                 hiddenLabel

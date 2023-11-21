@@ -18,44 +18,16 @@ export default function UsersDashBoard () {
 
   return (
     <>
-      <div className="w-full flex ">
-        <div className="w-[90%] flex flex-row mt-10 items-center justify-center">
-          <Button
-            variant="outlined"
-            onClick={showOtherTypeOfUser}
-            sx={{
-              marginRight: '100px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Show Dashboard Users
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={showOtherTypeOfUser}
-            sx={{
-              marginRight: '15px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Show Api Users
-          </Button>
+      <div className="w-full flex flex-col">
+
+          <div className="w-[90%] flex flex-col mt-5 items-center justify-center">
+              <Typography sx={{fontWeight: 'bold', fontSize: '40px'}}>User Management</Typography>
+          </div>
+        <div className="w-[90%] flex flex-col items-center justify-center">
+            <ApiUsers/>
+            <Users/>
         </div>
       </div>
-      {showApiUsers && <ApiUsers/>}
-      {!showApiUsers && <Users/>}
     </>
   );
 }

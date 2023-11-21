@@ -136,13 +136,16 @@ const CreateSong = () => {
     }
 
     useEffect(() => {
-      setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
-      getSongNumbersWithoutRecords()
-        .then(res => {
-          const nextNum = res?.shift()?.toString()?.padStart(5, '0')
-          setNextCatNumbersToSuggest(res)
-          setNextCatSuggest(nextNum)
-        })
+            const setupNextCatalogNumbers = async () => {
+        setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
+        await getSongNumbersWithoutRecords()
+            .then(res => {
+              const nextNum = res?.shift()?.toString()?.padStart(5, '0')
+              setNextCatNumbersToSuggest(res)
+              setNextCatSuggest(nextNum)
+            })
+      }
+      setupNextCatalogNumbers()
 
     }, []);
 
