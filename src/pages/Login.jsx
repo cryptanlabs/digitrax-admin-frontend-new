@@ -22,7 +22,7 @@ export default function Login () {
 console.log('STM pages-Login.jsx:22', userName, password); // todo remove dev item
       const loginResult = await loginUser(userName, password);
       if (loginResult) {
-        navigate('/');
+        navigate('/dashboard');
       }
 
     };
