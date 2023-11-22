@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, TextField, Typography} from '@mui/material';
+import {Box, Button, TextField, Typography} from '@mui/material';
 import {base_url} from '../helpers/requests.js';
 import {isWhiteSpace} from '../helpers/utils.js';
 
@@ -83,15 +83,47 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
     }
 
     return (
-        <>
-            <div className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-t-lg border-gray-300 p-5">
-                <Typography sx={{ fontWeight: "bold" }}>Thumbnail</Typography>
-            </div>
-            <div className="w-[90%] flex flex-row  justify-between items-center border-b-2 border-x-2 rounded-b-lg border-gray-300 p-5">
-                <div className="flex-none ml-8">
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                borderRadius: 1,
+                gap: 2
+            }}
+        >
+            <Typography sx={{ fontWeight: "bold" }}>Thumbnail</Typography>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    height: '100%',
+                    width: '60%',
+                    alignItems: 'center',
+                    border: '1px solid #D1D5DB',
+                    borderRadius: 1
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        height: '100%',
+                        width: '50%',
+                        justifyContent: 'center',
+                        alignContent: 'center'
+                    }}
+                >
                     <img src={imageSource} height="200px" width="200px"/>
-                </div>
-                <div className="flex-none ml-8">
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        height: '100%',
+                        width: '50%',
+                        justifyContent: 'center',
+                        alignContent: 'center'
+                    }}
+                >
                     {(selectedFile && !newSong) && (<Button
                         variant="outlined"
                         onClick={uploadThumbnail}
@@ -148,7 +180,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                         onChange={handleFileChange}
                         accept="*"
                     />
-                </div>
+                </Box>
                 {!newSong && (<div className="flex-none ml-8">
                     <a href={`${base_url}/thumbnail/${songNumber}`} target="_blank" download>
                         <Button
@@ -169,8 +201,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                         </Button>
                     </a>
                 </div>)}
-            </div>
-
-        </>
+            </Box>
+        </Box>
     )
 }

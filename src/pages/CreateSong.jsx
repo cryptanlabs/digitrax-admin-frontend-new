@@ -529,9 +529,8 @@ const CreateSong = () => {
           handleCreateComment={handleCreateComment}
         />
 
-        <div className="w-full ml-40 mb-10">
-          <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
-        </div>
+        {/* SEVENTH SECTION: THUMBNAIL */}
+        <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
 
         <div className="w-full mt-10 flex">
           <div className="flex flex-col ml-20">
