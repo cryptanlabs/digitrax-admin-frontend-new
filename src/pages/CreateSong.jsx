@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Typography, TextField } from "@mui/material";
+import { Box, Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { SongDetailsContext } from "../context/SongDetailsContext";
@@ -383,10 +383,37 @@ const CreateSong = () => {
     }, [basicInformation]);
 
     return (
-      <div className="w-full mt-4 flex flex-col items-center justify-between">
-        <div className="w-full mt-4 flex items-center justify-between">
-          <h1 className="text-4xl ml-20 font-medium">Create Song Entry</h1>
-          <div className="flex w-1/3  mr-3 justify-center">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          p: 4
+        }}
+      >
+        {/* FIRST ROW: TITLE AND BUTTONS */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+            mb: 5
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 'bold'
+            }}
+          >
+            Create Song Entry
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+          >
             <Button
               variant="outlined"
               sx={{
@@ -417,8 +444,10 @@ const CreateSong = () => {
             >
               Export
             </Button>
-          </div>
-        </div>
+          </Box>
+        </Box>
+
+        {/* SECOND ROW: DESCRIPTION */}
         <BasicSongInfoDisplay
           newSong
           handleChange={handleChange}
@@ -550,7 +579,7 @@ const CreateSong = () => {
             <Typography key={index}>{messageEntry}</Typography>
           ))}
         </div>
-      </div>
+      </Box>
     );
   } catch (e) {
     console.error(e)
