@@ -1,4 +1,4 @@
-import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
+import {Box, Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {statusOptions, statusOptionsText} from '../helpers/constants.js';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
@@ -6,9 +6,28 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
 
   try {
     return (
-      <div className="w-full flex flex-col ">
-        <div className="w-[90%] flex flex-row justify-between ml-20 mt-10 flex">
-          <div className="flex flex-col  w-[40%]">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%'
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%'
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '40%'
+            }}
+          >
             <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
             <Select
               sx={{marginTop: 1}}
@@ -20,19 +39,33 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
                 <MenuItem key={index} value={value}>{statusOptionsText[value]}</MenuItem>
               ))}
             </Select>
-          </div>
-            {!newSong && (<div className="flex flex-col ml-20 w-[40%]">
+            {!newSong && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '40%'
+                }}
+              >
                 <Typography sx={{fontWeight: 'bold'}}>Status Last Updated At</Typography>
                 <DatePicker
-                    sx={{marginTop: 1}}
-                    value={statusData.StatusUpdatedAt}
-                    readOnly
+                  sx={{marginTop: 1}}
+                  value={statusData.StatusUpdatedAt}
+                  readOnly
                 />
-            </div>)}
-
-        </div>
+              </Box>
+            )}
+          </Box>
+        </Box>
         {!newSong && (
-          <div className="w-[90%] mt-5 ml-20 flex flex-row justify-end">
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'flex-end'
+            }}
+          >
             <Button
               variant="outlined"
               onClick={() => {
@@ -51,9 +84,9 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
             >
               Save Changes
             </Button>
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
     );
   } catch (e) {
     console.error(e)
