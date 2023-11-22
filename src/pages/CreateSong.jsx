@@ -532,12 +532,16 @@ const CreateSong = () => {
         {/* SEVENTH SECTION: THUMBNAIL */}
         <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
 
-        <div className="w-full mt-10 flex">
-          <div className="flex flex-col ml-20">
-            <Typography sx={{fontWeight: 'bold', fontSize: '30px'}}>Media</Typography>
-          </div>
-        </div>
-        <div className="w-full flex flex-row flex-wrap grow ml-40 ">
+        {/* EIGHTH SECTION: MEDIA */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: 2
+          }}
+        >
+          <Typography sx={{fontWeight: 'bold'}}>Media</Typography>
           {Object.keys(filesStagedForUpload).map((item, index) => (
             <div className="w-64 flex-col" key={index}>
               <Typography sx={{fontWeight: 'bold'}}>{item}</Typography>
@@ -546,9 +550,6 @@ const CreateSong = () => {
               ))}
             </div>
           ))}
-        </div>
-
-        <div className="w-full ml-40 ">
           <FileAdd
             newSong
             buttonOnly
@@ -558,50 +559,58 @@ const CreateSong = () => {
             hideHandler={() => {
               setShowFileUpload(false);
             }}
-          ></FileAdd>
+          />
           <DisplayMediaListing
             newSong
             songNumber={basicInformation.SongNumber}
             submit={uploadMediaFileAndForCreateSong}
             generatedSets={generatedSets}
           />
-        </div>
+        </Box>
 
-        <div className="w-[90%] mt-5 flex items-center justify-end">
+        {/* NINTH SECTION: RESET SAVE BUTTONS */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'center'
+          }}
+        >
           <Button
-            variant="outlined"
-            sx={{
-              marginRight: '15px',
-              borderColor: '#FF6969',
-              backgroundColor: '#FF6969',
-              color: 'white',
-              '&:hover': {
+              variant="outlined"
+              sx={{
+                marginRight: '15px',
                 borderColor: '#FF6969',
-                backgroundColor: '#white',
-                color: '#FF6969',
-              },
-            }}
-            onClick={reset}
-          >
-            Reset
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleSongUpload}
-            sx={{
-              marginRight: '15px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Save
-          </Button>
-        </div>
+                backgroundColor: '#FF6969',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#FF6969',
+                  backgroundColor: '#white',
+                  color: '#FF6969',
+                },
+              }}
+              onClick={reset}
+            >
+              Reset
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleSongUpload}
+              sx={{
+                marginRight: '15px',
+                borderColor: '#00b00e',
+                backgroundColor: '#00b00e',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#86A789',
+                },
+              }}
+            >
+              Save
+            </Button>
+        </Box>
         <div className="w-[90%] mt-5 mb-10 flex flex-col items-center justify-end">
           {SaveProgress.map((messageEntry, index) => (
             <Typography key={index}>{messageEntry}</Typography>

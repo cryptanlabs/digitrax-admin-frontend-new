@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Checkbox,
     TextField,
@@ -640,7 +641,13 @@ export function FileAdd({
 
 
         return (
-            <div className="w-full">
+            <Box
+                sx={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: 'center'
+                }}
+            >
                 <div
                     className={`w-[90%] mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
                     <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
@@ -664,12 +671,19 @@ export function FileAdd({
                     </Button>
                 </div>
                 <ShowGeneratedMediaFiles generatedMediaItems={mediaObjects}/>
-            </div>
+            </Box>
         );
     }
 
     return (
-        <>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                justifyContent: 'center'
+            }}
+        >
             <div
                 className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-t-lg border-gray-300 p-5">
                 <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
@@ -808,6 +822,6 @@ export function FileAdd({
             >
                 <Alert severity={`${uploadError ? 'error' : 'success'}`} onClose={handleSnackBarClose}>{snackBarMessage}</Alert>
             </Snackbar>
-        </>
+        </Box>
     );
 }
