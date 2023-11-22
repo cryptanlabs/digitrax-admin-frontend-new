@@ -388,7 +388,8 @@ const CreateSong = () => {
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
-          p: 4,
+          py: 3,
+          px: 5,
           gap: 5
         }}
       >
@@ -400,12 +401,7 @@ const CreateSong = () => {
             width: '100%',
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 'bold'
-            }}
-          >
+          <Typography variant="h4">
             Create Song Entry
           </Typography>
           <Box

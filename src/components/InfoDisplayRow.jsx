@@ -1,4 +1,4 @@
-import {MenuItem, Select, TextField, Typography} from '@mui/material';
+import {Box, MenuItem, Select, TextField, Typography} from '@mui/material';
 import {
   dropDownColumns,
   dropDownOptionMap,
@@ -31,7 +31,13 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
       }
 
       return (
-        <div className="w-[90%]">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+          }}
+        >
           <Select
             sx={{marginTop: 1}}
             name={keyValue}
@@ -42,7 +48,7 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
               <MenuItem key={index} value={value}>{statusOptionsText[value] ?? value}</MenuItem>
             ))}
           </Select>
-        </div>
+        </Box>
       );
     };
 
@@ -53,10 +59,14 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
     const DetailRow = ({keyValue, detailValue}) => {
 
       return (
-        <div className="w-full h-20 flex items-center justify-center border-r border-gray-400">
-          <div style={{textAlign: 'center'}}
-               className=" h-full   pt-3  "
-          >
+        <Box
+          sx={{
+            borderTop: '1px solid gray',
+            py: 2,
+            px: 3
+          }}
+        >
+          <Box>
             {shouldUseDropDown(keyValue) ? (
               <DropDownType
                 keyValue={keyValue}
@@ -74,31 +84,59 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
                 variant="outlined"
               />
             )}
-
-          </div>
-        </div>
+          </Box>
+        </Box>
       );
     };
 
     return (
-      <>
-        <div className="w-full mt-20 flex">
-          <div className="flex flex-col ml-20">
-            <Typography sx={{fontWeight: 'bold'}}>
-              {title}
-            </Typography>
-            <Typography>{subTitle}</Typography>
-          </div>
-        </div>
-        <div className="w-[90%] mt-10 flex flex-row flex-1 border-2 rounded-lg border-gray-300">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        {/* Title */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            mb: 3
+          }}
+        >
+          <Typography sx={{fontWeight: 'bold'}}>
+            {title}
+          </Typography>
+          <Typography>{subTitle}</Typography>
+        </Box>
+
+        {/* Information */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: '100%',
+          }}
+        >
           {Object.keys(infoToDisplayLocal).map((key, index) => (
-            <div key={index}
-                 className={`w-[${calculateWidths}%] h-full flex flex-col  items-center justify-start border-b border-gray-300`}>
-              <div key={index} className={`w-full h-10 pt-2 border-b border-r border-gray-400`}>
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                border: '1px solid gray',
+                width: `${calculateWidths}%`
+              }}
+            >
+              <Box
+                sx={{
+                  py: 1
+                }}
+              >
                 <div style={{textAlign: 'center'}}>
                   {headerMap ? headerMap[key] : key}
                 </div>
-              </div>
+              </Box>
               {!multiRow ? (
                 <DetailRow
                   keyValue={key}
@@ -113,11 +151,10 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
                   onChange={handleChange}
                 />
               ))}
-            </div>
+            </Box>
           ))}
-
-        </div>
-      </>
+        </Box>
+      </Box>
     );
   } catch (e) {
     console.error(e)
