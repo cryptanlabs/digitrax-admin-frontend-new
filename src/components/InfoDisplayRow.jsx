@@ -61,7 +61,7 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
       return (
         <Box
           sx={{
-            borderTop: '1px solid gray',
+            borderTop: '1px solid #D1D5DB',
             py: 2,
             px: 3
           }}
@@ -116,6 +116,8 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
+            border: '1px solid #D1D5DB',
+            borderRadius: 1
           }}
         >
           {Object.keys(infoToDisplayLocal).map((key, index) => (
@@ -124,7 +126,7 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                border: '1px solid gray',
+                borderRight: index === Object.keys(infoToDisplayLocal).length - 1 ? 'none' : '1px solid #D1D5DB',
                 width: `${calculateWidths}%`
               }}
             >

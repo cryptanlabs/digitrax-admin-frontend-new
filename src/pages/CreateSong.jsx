@@ -514,6 +514,8 @@ const CreateSong = () => {
           handleChange={handleDistributionChange}
           useDropDown
         />
+
+        {/* PUBLISHER */}
         <PublisherInfoDisplay
           songNumber={basicInformation.SongNumber}
           saveNewPublisher={savePublisher}
