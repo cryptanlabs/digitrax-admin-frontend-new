@@ -218,7 +218,7 @@ const CreateSong = () => {
       const copyComment = {
         SongNumber: basicInformation.SongNumber,
         Content: commentContent,
-        UserName: 'Added on Save',
+        UserName: 'Sample Username',
       };
       setComments((prev) => [copyComment, ...prev]);
       // setNewComment('');
@@ -505,7 +505,7 @@ const CreateSong = () => {
           </Box>
         </Box>
 
-        {/* STATUSES */}
+        {/* FOURTH SECTION: STATUSES */}
         <StatusDisplayEdit newSong statusData={statusData} handleChange={handleStatusChange}/>
         <InfoDisplayRow
           title="Status Information"
@@ -515,7 +515,7 @@ const CreateSong = () => {
           useDropDown
         />
 
-        {/* PUBLISHER */}
+        {/* FIFTH SECTION: PUBLISHER */}
         <PublisherInfoDisplay
           songNumber={basicInformation.SongNumber}
           saveNewPublisher={savePublisher}
@@ -523,6 +523,7 @@ const CreateSong = () => {
           setSongPublishers={setPublishersForUpload}
         />
 
+        {/* SIXTH SECTION: COMMENTS */}
         <CommentDisplay
           comments={comments}
           handleCreateComment={handleCreateComment}
