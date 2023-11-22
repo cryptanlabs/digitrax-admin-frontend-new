@@ -388,16 +388,16 @@ const CreateSong = () => {
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
-          p: 4
+          p: 4,
+          gap: 5
         }}
       >
-        {/* FIRST ROW: TITLE AND BUTTONS */}
+        {/* FIRST SECTION: TITLE AND BUTTONS */}
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
             width: '100%',
-            mb: 5
           }}
         >
           <Typography
@@ -447,37 +447,67 @@ const CreateSong = () => {
           </Box>
         </Box>
 
-        {/* SECOND ROW: DESCRIPTION */}
+        {/* SECOND SECTION: DESCRIPTION */}
         <BasicSongInfoDisplay
           newSong
           handleChange={handleChange}
           basicInformation={basicInformation}
           nextCatNumberToSuggest={nextCatSuggest}
         />
-        {/* LICENSING INFORMATION VIEW/EDIT */}
-        <div className="w-full mt-10 flex">
-          <div className="flex flex-col ml-20">
+
+        {/* THIRD SECTION: LICENSING INFORMATION VIEW/EDIT */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              mb: 3
+            }}
+          >
             <Typography sx={{ fontWeight: "bold" }}>
               Publishing Information
             </Typography>
             <Typography>Update the publishing information here</Typography>
-          </div>
-        </div>
-        <div className="w-[90%] mt-10 flex flex-row flex-wrap">
-          {Object.keys(licensingInformation).map((header, index) => (
-            <div key={index} className="flex flex-col ml-10 w-[20%]">
-              <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
-              <TextField
-                size="small"
-                hiddenLabel
-                name={header.key}
-                onChange={handleLicensingChange}
-                value={licensingInformation[header.key]}
-                variant="outlined"
-              />
-            </div>
-          ))}
-        </div>
+          </Box>
+
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 1
+            }}
+          >
+            {Object.keys(licensingInformation).map((header, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '20%',
+                }}
+              >
+                <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
+                <TextField
+                  size="small"
+                  hiddenLabel
+                  name={header.key}
+                  onChange={handleLicensingChange}
+                  value={licensingInformation[header.key]}
+                  variant="outlined"
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
 
         {/* STATUSES */}
         <StatusDisplayEdit newSong statusData={statusData} handleChange={handleStatusChange}/>
