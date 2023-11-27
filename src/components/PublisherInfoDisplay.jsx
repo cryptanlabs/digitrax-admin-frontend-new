@@ -1,4 +1,4 @@
-import {Button, TextField, Typography, IconButton } from '@mui/material';
+import {Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import {useState} from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -44,8 +44,22 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
     const [share, setShare] = useState('')
 
     return (
-      <div className="w-full border-b flex border-gray-300 h-20">
-        <div className="w-[33%] h-full flex items-center justify-center ">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            width: '31%',
+            borderRight: '1px solid #D1D5DB',
+            justifyContent: 'center',
+            py: 1
+          }}
+        >
           <TextField
             sx={{ marginTop: 1, width: "90%" }}
             size="small"
@@ -53,10 +67,17 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             variant="outlined"
             value={publisherAdmin}
             onChange={e => setPublisherAdmin(e.target.value)}
-          ></TextField>
-        </div>
-        <div className="w-[33%] h-full flex items-center justify-center">
-          {" "}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '31%',
+            borderRight: '1px solid #D1D5DB',
+            justifyContent: 'center',
+            py: 1
+          }}
+        >
           <TextField
             sx={{ marginTop: 1, width: "90%" }}
             size="small"
@@ -64,9 +85,17 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             variant="outlined"
             value={subPublisherDetails}
             onChange={e => setSubPublisherDetails(e.target.value)}
-          ></TextField>
-        </div>
-        <div className="w-[33%] h-full flex items-center justify-center">
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '31%',
+            borderRight: '1px solid #D1D5DB',
+            justifyContent: 'center',
+            py: 1
+          }}
+        >
           <TextField
             sx={{ marginTop: 1, width: "90%" }}
             size="small"
@@ -74,60 +103,105 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             variant="outlined"
             value={share}
             onChange={e => setShare(e.target.value)}
-          ></TextField>
-        </div>
-        <IconButton
-          onClick={() => {
-            console.log('STM components-PublisherInfoDisplay.jsx:79', {
-              SongNumber: songNumber,
-              PublisherAdmin: publisherAdmin,
-              SubPublisherDetails: subPublisherDetails,
-              Share: share
-            }); // todo remove dev item
-            saveNewPublisher({
-              SongNumber: songNumber,
-              PublisherAdmin: publisherAdmin,
-              SubPublisherDetails: subPublisherDetails,
-              Share: share
-            })
-            setAddNewPublisher(false)
-          }}
-          size="small"
+          />
+        </Box>
+        <Box
           sx={{
-            borderColor: "gray",
-            color: "black",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#F5F7F8",
-            },
+            display: 'flex',
+            flexDirection: 'row',
+            width: '7%',
+            justifyContent: 'space-between',
           }}
         >
-          <SaveIcon fontSize="small"/>
-        </IconButton>
-        <IconButton
-          onClick={() => {
-            setAddNewPublisher(false)
-          }}
-          size="small"
-          sx={{
-            borderColor: "gray",
-            color: "black",
-            "&:hover": {
-              borderColor: "#F1EFEF",
-              backgroundColor: "#F5F7F8",
-            },
-          }}
-        >
-          <CloseIcon fontSize="small"/>
-        </IconButton>
-      </div>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '50%',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Typography sx={{ fontSize: 10 }}>Save</Typography>
+            <IconButton
+              onClick={() => {
+                console.log('STM components-PublisherInfoDisplay.jsx:79', {
+                  SongNumber: songNumber,
+                  PublisherAdmin: publisherAdmin,
+                  SubPublisherDetails: subPublisherDetails,
+                  Share: share
+                }); // todo remove dev item
+                saveNewPublisher({
+                  SongNumber: songNumber,
+                  PublisherAdmin: publisherAdmin,
+                  SubPublisherDetails: subPublisherDetails,
+                  Share: share
+                })
+                setAddNewPublisher(false)
+              }}
+              size="small"
+              sx={{
+                borderColor: "gray",
+                color: "black",
+                "&:hover": {
+                  borderColor: "#F1EFEF",
+                  backgroundColor: "#F5F7F8",
+                },
+              }}
+            >
+              <SaveIcon fontSize="small"/>
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '50%',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Typography sx={{ fontSize: 10 }}>Cancel</Typography>
+            <IconButton
+              onClick={() => {
+                setAddNewPublisher(false)
+              }}
+              size="small"
+              sx={{
+                borderColor: "gray",
+                color: "black",
+                "&:hover": {
+                  borderColor: "#F1EFEF",
+                  backgroundColor: "#F5F7F8",
+                },
+              }}
+            >
+              <CloseIcon fontSize="small"/>
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
     )
   }
   const PublisherRow = ({publisher = {}, index}) => {
 
     return (
-      <div className="w-full border-b flex border-gray-300 h-20">
-        <div className="w-[33%] h-full flex items-center justify-center ">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            width: '31%',
+            borderRight: '1px solid #D1D5DB',
+            justifyContent: 'center',
+            py: 1
+          }}
+        >
           <TextField
             sx={{ marginTop: 1, width: "90%" }}
             size="small"
@@ -135,10 +209,17 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             variant="outlined"
             value={publisher?.PublisherAdmin}
             onChange={handleChange(index)}
-          ></TextField>
-        </div>
-        <div className="w-[33%] h-full flex items-center justify-center">
-          {" "}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '31%',
+            borderRight: '1px solid #D1D5DB',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
           <TextField
             sx={{ marginTop: 1, width: "90%" }}
             size="small"
@@ -146,9 +227,17 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             variant="outlined"
             value={publisher?.SubPublisherDetails}
             onChange={handleChange(index)}
-          ></TextField>
-        </div>
-        <div className="w-[33%] h-full flex items-center justify-center">
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '31%',
+            borderRight: '1px solid #D1D5DB',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
           <TextField
             sx={{ marginTop: 1, width: "90%" }}
             size="small"
@@ -156,65 +245,108 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             variant="outlined"
             value={publisher?.Share}
             onChange={handleChange(index)}
-          ></TextField>
-        </div>
-        {showRemovePublisher && (<>
-          <IconButton
-            onClick={async () => {
-              await removePublisher(publisher)
-              setShowRemovePublisher(false)
-            }}
-            size="small"
+          />
+        </Box>
+        {showRemovePublisher && (
+          <Box
             sx={{
-              borderColor: "gray",
-              color: "black",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#F5F7F8",
-              },
+              display: 'flex',
+              flexDirection: 'row',
+              width: '7%',
+              justifyContent: 'space-between',
             }}
           >
-            <DeleteIcon fontSize="small"/>
-          </IconButton>
-          <IconButton
-            onClick={() => {
-              setShowRemovePublisher(false)
-            }}
-            size="small"
-            sx={{
-              borderColor: "gray",
-              color: "black",
-              "&:hover": {
-                borderColor: "#F1EFEF",
-                backgroundColor: "#F5F7F8",
-              },
-            }}
-          >
-            <CloseIcon fontSize="small"/>
-          </IconButton>
-        </>)}
-
-      </div>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '50%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Typography sx={{ fontSize: 10 }}>Delete</Typography>
+              <IconButton
+                onClick={async () => {
+                  await removePublisher(publisher)
+                  setShowRemovePublisher(false)
+                }}
+                size="small"
+                sx={{
+                  borderColor: "gray",
+                  color: "black",
+                  "&:hover": {
+                    borderColor: "#F1EFEF",
+                    backgroundColor: "#F5F7F8",
+                  },
+                }}
+              >
+                <DeleteIcon fontSize="small"/>
+              </IconButton>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '50%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Typography sx={{ fontSize: 10 }}>Cancel</Typography>
+              <IconButton
+                onClick={() => {
+                  setShowRemovePublisher(false)
+                }}
+                size="small"
+                sx={{
+                  borderColor: "gray",
+                  color: "black",
+                  "&:hover": {
+                    borderColor: "#F1EFEF",
+                    backgroundColor: "#F5F7F8",
+                  },
+                }}
+              >
+                <CloseIcon fontSize="small"/>
+              </IconButton>
+            </Box>
+          </Box>
+        )}
+      </Box>
     )
   }
 
 
 
   return (
-    <>
-      <div className="w-full mt-20 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{ fontWeight: "bold" }}>
-            Edit Publisher Details
-          </Typography>
-        </div>
-      </div>
-      <div className="w-[90%] flex items-center justify-end">
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        gap: 2
+      }}
+    >
+      {/* row 1: title */}
+      <Typography sx={{ fontWeight: "bold" }}>
+        Edit Publisher Details
+      </Typography>
+
+      {/* row 2: buttons */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          justifyContent: 'flex-end',
+          gap: 1
+        }}
+      >
         <Button
           variant="outlined"
           onClick={() => {setAddNewPublisher(true)}}
           sx={{
-            marginRight: "15px",
             borderColor: "#00b00e",
             backgroundColor: "#00b00e",
             color: "white",
@@ -230,7 +362,6 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
           variant="outlined"
           onClick={() => {setShowRemovePublisher(true)}}
           sx={{
-            marginRight: "15px",
             borderColor: "#00b00e",
             backgroundColor: "#00b00e",
             color: "white",
@@ -242,27 +373,56 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
         >
           Remove Publisher
         </Button>
-      </div>
-      <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-        <div className="w-full h-10 border-b flex border-gray-300">
+      </Box>
+
+      {/* row 3: input fields */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          border: '1px solid #D1D5DB',
+          borderRadius: 1
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            flexDirection: 'row',
+          }}
+        >
           {songPublisherHeaders.map((header, index) => (
-            <div
+            <Box
               key={index}
-              index={index}
-              className="w-[33%] flex items-center justify-center border-r border-gray-400 last:border-r-0"
+              sx={{
+                display: 'flex',
+                height: '100%',
+                width: `31%`,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRight: '1px solid #D1D5DB',
+                borderBottom: '1px solid #D1D5DB',
+                py: 1
+              }}
             >
               <Typography sx={{ fontSize: 14 }}>{header}</Typography>
-            </div>
+            </Box>
           ))}
-        </div>
-        {songPublishers?.map((publisher, index) => (
-          <PublisherRow
-            key={index}
-            publisher={publisher}>
-          </PublisherRow>
-        ))}
-        {(addNewPublisher || songPublishers?.length === 0) && <NewPublisherRow></NewPublisherRow>}
-      </div>
-    </>
+        </Box>
+        {/* <div className="w-full h-10 border-b flex border-gray-300">
+        </div> */}
+        <Box>
+          {songPublishers?.map((publisher, index) => (
+            <PublisherRow
+              key={index}
+              publisher={publisher}>
+            </PublisherRow>
+          ))}
+          {(addNewPublisher || songPublishers?.length === 0) && <NewPublisherRow></NewPublisherRow>}
+        </Box>
+      </Box>
+      {/* <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
+      </div> */}
+    </Box>
   )
 }

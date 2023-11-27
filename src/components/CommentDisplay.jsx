@@ -1,4 +1,4 @@
-import {Button, TextField, Typography} from '@mui/material';
+import {Box, Button, TextField, Typography} from '@mui/material';
 import {useState} from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from 'dayjs';
@@ -29,16 +29,33 @@ export function CommentDisplay ({
 
     const NoComments = () => {
       return (
-        <div className={`flex flex-col  mb-5`}>
-          <div className="bg-gray-300 w-80 ml-10 p-2 rounded-md ">
-            <Typography>No Comments For Song</Typography>
-          </div>
-        </div>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            borderRadius: 2,
+            backgroundColor: '#D1D5DB',
+            justifyContent: 'center',
+            py: 3
+          }}
+        >
+          <Typography>No Comments For Song</Typography>
+        </Box>
       );
     };
     const OneComment = ({comment, index}) => {
       return (
-        <div className={`flex flex-col  mb-5`}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            borderRadius: 2,
+            backgroundColor: '#D1D5DB',
+            justifyContent: 'center',
+            py: 3
+          }}
+        >
           {showRemoveButton && <Button
             onClick={() => {
               handleRemoveComment(comment.CommentId);
@@ -63,29 +80,42 @@ export function CommentDisplay ({
           <div className="bg-gray-300 w-80 ml-5 p-2 rounded-md ">
             <Typography>{comment?.Content}</Typography>
           </div>
-        </div>
+        </Box>
+        // <div className={`flex flex-col  mb-5`}>
+        // </div>
       );
     };
 
-    return (<>
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col ml-20">
-          <Typography sx={{fontWeight: 'bold'}}>Comments</Typography>
-        </div>
-      </div>
-      <div className="w-[90%] mt-5 ml-20 flex flex-wrap">
+    return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        gap: 2
+      }}
+    >
+      <Typography sx={{fontWeight: 'bold'}}>Comments</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          gap: 1,
+        }}
+      >
         {comments?.length > 0 && comments.map((comment, index) => (
           <OneComment key={index} comment={comment} index={index}/>
         ))}
-        {comments?.length === 0 && <NoComments/>}
-      </div>
-      <div className="w-full mt-5 flex">
-        <div className="flex flex-col w-[90%] ml-20">
-
-          <div className="flex flex-row w-full justify-between">
-            <Typography sx={{fontWeight: 'bold'}}>Add a Comment</Typography>
-
-            {comments?.length > 0 && <Typography
+        {comments?.length > 0 &&
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <Typography
               onClick={handleShowCommentDelete}
               sx={{
                 cursor: 'default',
@@ -97,41 +127,59 @@ export function CommentDisplay ({
                 '&:active': {
                   backgroundColor: '#aac9d9',
                 }
-              }}>{showRemoveButton ? 'Hide Comment Remove' : 'Show Comment Remove'}</Typography>}
-          </div>
-          <TextField
-            sx={{marginTop: 1}}
-            hiddenLabel
-            multiline
-            rows={2}
-            value={newComment}
-            onChange={handleCommentChange}
-            variant="outlined"
-          />
-        </div>
-      </div>
-      <div className="w-[90%] mt-5 flex items-center justify-end">
-        <Button
+              }}
+            >
+              {showRemoveButton ? 'Cancel' : 'Remove Comment'}
+            </Typography>
+          </Box>}
+        {comments?.length === 0 && <NoComments/>}
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          gap: 1
+        }}
+      >
+        <Typography sx={{fontWeight: 'bold'}}>Add a Comment</Typography>
+        <TextField
+          sx={{marginTop: 1}}
+          hiddenLabel
+          multiline
+          rows={2}
+          value={newComment}
+          onChange={handleCommentChange}
           variant="outlined"
-          onClick={() => {
-            handleCreateComment(newComment);
-            setNewComment('');
-          }}
+        />
+        <Box
           sx={{
-            marginRight: '15px',
-            borderColor: '#00b00e',
-            backgroundColor: '#00b00e',
-            color: 'white',
-            '&:hover': {
-              borderColor: '#F1EFEF',
-              backgroundColor: '#86A789',
-            },
+            display: 'flex',
+            width: '100%',
+            justifyContent: 'flex-end'
           }}
         >
-          Save Comment
-        </Button>
-      </div>
-    </>);
+          <Button
+            variant="outlined"
+            onClick={() => {
+              handleCreateComment(newComment);
+              setNewComment('');
+            }}
+            sx={{
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
+              },
+            }}
+          >
+            Save Comment
+          </Button>
+        </Box>
+      </Box>
+    </Box>);
   } catch (e) {
     console.error(e)
     return (

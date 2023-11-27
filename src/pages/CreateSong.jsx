@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Typography, TextField } from "@mui/material";
+import { Box, Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { SongDetailsContext } from "../context/SongDetailsContext";
@@ -218,7 +218,7 @@ const CreateSong = () => {
       const copyComment = {
         SongNumber: basicInformation.SongNumber,
         Content: commentContent,
-        UserName: 'Added on Save',
+        UserName: 'Sample Username',
       };
       setComments((prev) => [copyComment, ...prev]);
       // setNewComment('');
@@ -383,10 +383,33 @@ const CreateSong = () => {
     }, [basicInformation]);
 
     return (
-      <div className="w-full mt-4 flex flex-col items-center justify-between">
-        <div className="w-full mt-4 flex items-center justify-between">
-          <h1 className="text-4xl ml-20 font-medium">Create Song Entry</h1>
-          <div className="flex w-1/3  mr-3 justify-center">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          py: 3,
+          px: 5,
+          gap: 5
+        }}
+      >
+        {/* FIRST SECTION: TITLE AND BUTTONS */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
+          <Typography variant="h4">
+            Create Song Entry
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+          >
             <Button
               variant="outlined"
               sx={{
@@ -417,40 +440,72 @@ const CreateSong = () => {
             >
               Export
             </Button>
-          </div>
-        </div>
+          </Box>
+        </Box>
+
+        {/* SECOND SECTION: DESCRIPTION */}
         <BasicSongInfoDisplay
           newSong
           handleChange={handleChange}
           basicInformation={basicInformation}
           nextCatNumberToSuggest={nextCatSuggest}
         />
-        {/* LICENSING INFORMATION VIEW/EDIT */}
-        <div className="w-full mt-10 flex">
-          <div className="flex flex-col ml-20">
+
+        {/* THIRD SECTION: LICENSING INFORMATION VIEW/EDIT */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              mb: 3
+            }}
+          >
             <Typography sx={{ fontWeight: "bold" }}>
               Publishing Information
             </Typography>
             <Typography>Update the publishing information here</Typography>
-          </div>
-        </div>
-        <div className="w-[90%] mt-10 flex flex-row flex-wrap">
-          {Object.keys(licensingInformation).map((header, index) => (
-            <div key={index} className="flex flex-col ml-10 w-[20%]">
-              <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
-              <TextField
-                size="small"
-                hiddenLabel
-                name={header.key}
-                onChange={handleLicensingChange}
-                value={licensingInformation[header.key]}
-                variant="outlined"
-              />
-            </div>
-          ))}
-        </div>
+          </Box>
 
-        {/* STATUSES */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 1
+            }}
+          >
+            {Object.keys(licensingInformation).map((header, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '20%',
+                }}
+              >
+                <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
+                <TextField
+                  size="small"
+                  hiddenLabel
+                  name={header.key}
+                  onChange={handleLicensingChange}
+                  value={licensingInformation[header.key]}
+                  variant="outlined"
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+
+        {/* FOURTH SECTION: STATUSES */}
         <StatusDisplayEdit newSong statusData={statusData} handleChange={handleStatusChange}/>
         <InfoDisplayRow
           title="Status Information"
@@ -459,6 +514,8 @@ const CreateSong = () => {
           handleChange={handleDistributionChange}
           useDropDown
         />
+
+        {/* FIFTH SECTION: PUBLISHER */}
         <PublisherInfoDisplay
           songNumber={basicInformation.SongNumber}
           saveNewPublisher={savePublisher}
@@ -466,21 +523,25 @@ const CreateSong = () => {
           setSongPublishers={setPublishersForUpload}
         />
 
+        {/* SIXTH SECTION: COMMENTS */}
         <CommentDisplay
           comments={comments}
           handleCreateComment={handleCreateComment}
         />
 
-        <div className="w-full ml-40 mb-10">
-          <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
-        </div>
+        {/* SEVENTH SECTION: THUMBNAIL */}
+        <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
 
-        <div className="w-full mt-10 flex">
-          <div className="flex flex-col ml-20">
-            <Typography sx={{fontWeight: 'bold', fontSize: '30px'}}>Media</Typography>
-          </div>
-        </div>
-        <div className="w-full flex flex-row flex-wrap grow ml-40 ">
+        {/* EIGHTH SECTION: MEDIA */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: 2
+          }}
+        >
+          <Typography sx={{fontWeight: 'bold'}}>Media</Typography>
           {Object.keys(filesStagedForUpload).map((item, index) => (
             <div className="w-64 flex-col" key={index}>
               <Typography sx={{fontWeight: 'bold'}}>{item}</Typography>
@@ -489,9 +550,6 @@ const CreateSong = () => {
               ))}
             </div>
           ))}
-        </div>
-
-        <div className="w-full ml-40 ">
           <FileAdd
             newSong
             buttonOnly
@@ -501,56 +559,64 @@ const CreateSong = () => {
             hideHandler={() => {
               setShowFileUpload(false);
             }}
-          ></FileAdd>
+          />
           <DisplayMediaListing
             newSong
             songNumber={basicInformation.SongNumber}
             submit={uploadMediaFileAndForCreateSong}
             generatedSets={generatedSets}
           />
-        </div>
+        </Box>
 
-        <div className="w-[90%] mt-5 flex items-center justify-end">
+        {/* NINTH SECTION: RESET SAVE BUTTONS */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'center'
+          }}
+        >
           <Button
-            variant="outlined"
-            sx={{
-              marginRight: '15px',
-              borderColor: '#FF6969',
-              backgroundColor: '#FF6969',
-              color: 'white',
-              '&:hover': {
+              variant="outlined"
+              sx={{
+                marginRight: '15px',
                 borderColor: '#FF6969',
-                backgroundColor: '#white',
-                color: '#FF6969',
-              },
-            }}
-            onClick={reset}
-          >
-            Reset
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleSongUpload}
-            sx={{
-              marginRight: '15px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Save
-          </Button>
-        </div>
+                backgroundColor: '#FF6969',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#FF6969',
+                  backgroundColor: '#white',
+                  color: '#FF6969',
+                },
+              }}
+              onClick={reset}
+            >
+              Reset
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleSongUpload}
+              sx={{
+                marginRight: '15px',
+                borderColor: '#00b00e',
+                backgroundColor: '#00b00e',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#86A789',
+                },
+              }}
+            >
+              Save
+            </Button>
+        </Box>
         <div className="w-[90%] mt-5 mb-10 flex flex-col items-center justify-end">
           {SaveProgress.map((messageEntry, index) => (
             <Typography key={index}>{messageEntry}</Typography>
           ))}
         </div>
-      </div>
+      </Box>
     );
   } catch (e) {
     console.error(e)
