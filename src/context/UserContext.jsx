@@ -11,7 +11,7 @@ const UserProvider = ({children}) => {
   const [user, setUser] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
   const [userType, setUserType] = useState('external');
-
+  const [adminDashToken, setAdminDashToken] = useState();
 
   const logInByToken = () => {
     window.localStorage.getItem('AdminDashToken')
@@ -46,9 +46,11 @@ console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev ite
         console.log(error);
       });
 
+
     console.log('STM context-UserContext.jsx:30', result?.data); // todo remove dev item
     if(result?.data?.token) {
       window.localStorage.setItem('AdminDashToken', result.data.token)
+      setAdminDashToken(result.data.token)
       setLoggedIn(true)
       delete result?.data?.token
       setUser(result?.data)
@@ -89,7 +91,8 @@ console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev ite
       logoutUser,
       loggedIn,
       user,
-      userType
+      userType,
+      adminDashToken
     }}>
       {children}
     </UserContext.Provider>

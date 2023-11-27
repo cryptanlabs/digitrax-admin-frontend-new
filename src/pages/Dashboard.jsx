@@ -21,6 +21,9 @@ import { useNavigate } from "react-router-dom";
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {statusOptions, statusOptionsText} from '../helpers/constants.js';
 
+const statusFilterOptions = [...statusOptions, 'none']
+const statusFilterOptionsText = {...statusOptionsText, none: 'Clear'}
+
 const Dashboard = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
@@ -69,6 +72,11 @@ const Dashboard = () => {
 
     const handleFilterByStatus = (e) => {
       const {value} = e.target
+      if(value === 'none'){
+        setStatusToFilter('')
+        setFilteredResults(currentDataSet);
+        return
+      }
       setStatusToFilter(value)
       console.log('STM pages-Dashboard.jsx:72', value); // todo remove dev item
       const sortedArray = [...currentDataSet].filter((rowEntry) => {
@@ -135,8 +143,8 @@ const Dashboard = () => {
               value={statusToFilter}
               onChange={handleFilterByStatus}
             >
-              {statusOptions.map((value, index) => (
-                <MenuItem key={index} value={value}>{statusOptionsText[value]}</MenuItem>
+              {statusFilterOptions.map((value, index) => (
+                <MenuItem key={index} value={value}>{statusFilterOptionsText[value]}</MenuItem>
               ))}
             </Select>
           </div>

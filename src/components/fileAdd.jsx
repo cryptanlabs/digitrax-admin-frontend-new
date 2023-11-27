@@ -492,6 +492,8 @@ export function FileAdd({
                                     <Button
                                         onClick={handleEdit}
                                         sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
                                             margin: 0,
                                             borderColor: 'gray',
                                             color: 'black',
@@ -501,6 +503,7 @@ export function FileAdd({
                                             },
                                         }}
                                     >
+                                        <Typography sx={{ fontSize: 10 }}>Edit</Typography>
                                         <EditIcon></EditIcon>
                                     </Button>
                                 )}
@@ -509,6 +512,8 @@ export function FileAdd({
                                         <Button
                                             onClick={handleEdit}
                                             sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
                                                 borderColor: 'gray',
                                                 color: 'black',
                                                 '&:hover': {
@@ -517,11 +522,14 @@ export function FileAdd({
                                                 },
                                             }}
                                         >
+                                            <Typography sx={{ fontSize: 10 }}>Close</Typography>
                                             <CloseIcon></CloseIcon>
                                         </Button>
                                         <Button
                                             onClick={handleSave}
                                             sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
                                                 borderColor: 'gray',
                                                 color: 'black',
                                                 '&:hover': {
@@ -530,25 +538,30 @@ export function FileAdd({
                                                 },
                                             }}
                                         >
+                                            <Typography sx={{ fontSize: 10 }}>Save</Typography>
                                             <SaveIcon></SaveIcon>
+                                        </Button>
+                                        <Button
+                                          onClick={handleDelete}
+                                          sx={{
+                                              display: 'flex',
+                                              flexDirection: 'column',
+                                              borderColor: 'gray',
+                                              color: 'black',
+                                              '&:hover': {
+                                                  borderColor: '#F1EFEF',
+                                                  backgroundColor: '#F5F7F8',
+                                              },
+                                          }}
+                                        >
+                                            <Typography sx={{ fontSize: 10 }}>Remove</Typography>
+                                            <DeleteIcon></DeleteIcon>
                                         </Button>
                                     </>
 
                                 )}
                             </div>
-                            <Button
-                                onClick={handleDelete}
-                                sx={{
-                                    borderColor: 'gray',
-                                    color: 'black',
-                                    '&:hover': {
-                                        borderColor: '#F1EFEF',
-                                        backgroundColor: '#F5F7F8',
-                                    },
-                                }}
-                            >
-                                <DeleteIcon></DeleteIcon>
-                            </Button>
+
                         </div>
                     </div>
                     <Dialog

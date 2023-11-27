@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {axiosBase, base_url} from '../helpers/requests.js';
+import {axiosBase, axiosBaseWithKey, base_url} from '../helpers/requests.js';
 import axios from 'axios';
 import {DataTableData} from './DataTableContext.jsx';
 import {UserContext} from './UserContext.jsx';
@@ -13,7 +13,7 @@ const SongDetailsProvider = ({children}) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState('');
   const {getData, generatedSets, getExistingBuckets} = useContext(DataTableData);
-  const {user} = useContext(UserContext);
+  const {user, adminDashToken} = useContext(UserContext);
 
 
   const handleNotifyOfError = (error) => {
@@ -36,7 +36,7 @@ const SongDetailsProvider = ({children}) => {
 
   const updateSong = async (data) => {
     console.log('STM context-SongDetailsContext.jsx:23', data); // todo remove dev item
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateSong',
       data: data
@@ -51,7 +51,7 @@ const SongDetailsProvider = ({children}) => {
 
   const updateMediaMetadata = async (data) => {
     console.log('STM context-SongDetailsContext.jsx:23', data); // todo remove dev item
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateGeneratedMediaMetaData',
       data: data
@@ -68,7 +68,7 @@ const SongDetailsProvider = ({children}) => {
   const createComment = async (data) => {
     data.UserId = user.UserId
     data.UserName = user.UserName
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/createComment',
       data: data
@@ -116,7 +116,7 @@ const SongDetailsProvider = ({children}) => {
   const uploadMediaFile = async (data) => {
     console.log('STM context-SongDetailsContext.jsx:117', data); // todo remove dev item
     const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/upload',
       timeout: timeToUpload,
