@@ -49,9 +49,9 @@ export function CommentDisplay ({
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            width: '100%',
+            // width: '100%',
             borderRadius: 2,
-            backgroundColor: '#D1D5DB',
+            // backgroundColor: '#D1D5DB',
             justifyContent: 'center',
             py: 3
           }}
@@ -99,7 +99,7 @@ export function CommentDisplay ({
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
           width: '100%',
           gap: 1,
         }}
@@ -129,7 +129,7 @@ export function CommentDisplay ({
                 }
               }}
             >
-              {showRemoveButton ? 'Cancel' : 'Remove Comment'}
+              {showRemoveButton ? 'Cancel Remove Comment' : 'Remove Comment'}
             </Typography>
           </Box>}
         {comments?.length === 0 && <NoComments/>}

@@ -359,7 +359,7 @@ const SongDetails = () => {
     setComments((prev) => {
       const idx = prev?.findIndex(item => item.CommentId === CommentId);
       prev.splice(idx, 1);
-      return prev;
+      return ([...prev]);
     });
   };
 
@@ -386,8 +386,8 @@ const SongDetails = () => {
   // handleSongLookupChange
 
   return (
-    <div className="w-full mt-4 flex flex-col items-center justify-between">
-      <div className="w-full mt-4 flex items-center justify-between">
+    <div className="w-[90%] mt-4 ml-20 flex flex-col items-center justify-between">
+      <div className="w-[90%] mt-4 flex items-center justify-between">
         <h1 className="text-4xl ml-20 font-medium">Song Data</h1>
         {loadingDetails && (<div>
           <CircularProgress />
@@ -458,16 +458,16 @@ const SongDetails = () => {
 
       {/* LICENSING INFORMATION VIEW/EDIT */}
       <div className="w-full mt-10 flex">
-        <div className="flex flex-col ml-20">
+        <div className="flex flex-col">
           <Typography sx={{ fontWeight: "bold" }}>
             Publishing Information
           </Typography>
           <Typography>Update the publishing information here</Typography>
         </div>
       </div>
-      <div className="w-full mt-10 ml-20 flex flex-row flex-wrap">
+      <div className="w-full mt-10 flex flex-row flex-wrap">
         {Object.keys(licensingInformation).map((header, index) => (
-          <div key={index} className="flex flex-col ml-10 w-[20%]">
+          <div key={index} className="flex flex-col ml-5 w-[20%]">
             <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
             <TextField
               size="small"
@@ -526,11 +526,15 @@ const SongDetails = () => {
         </Button>
       </div>
 
+      <div className="w-full border border-gray-300 mt-1">
+      </div>
       <StatusDisplayEdit
           statusData={statusData}
           handleChange={handleStatusChange}
           handleSave={handleStatusEdit}
       />
+      <div className="w-full border border-gray-300 mt-1">
+      </div>
       <CommentDisplay
           comments={comments}
           handleCreateComment={handleCreateComment}
@@ -538,6 +542,8 @@ const SongDetails = () => {
       />
 
       {/* PUBLISHER INFORMATION*/}
+      <div className="w-full border border-gray-300 mt-1">
+      </div>
       <PublisherInfoDisplay
         songNumber={basicInformation.SongNumber}
         setSongPublishers={setSongPublishers}
@@ -564,6 +570,8 @@ const SongDetails = () => {
       </div>
 
       {/* CROSS CLEAR */}
+      <div className="w-full border border-gray-300 mt-1">
+      </div>
       {crossClearEntries?.length === 0 && (
         <div className="w-full mt-20 flex">
           <div className="w-full flex flex-col ml-20">
@@ -578,6 +586,7 @@ const SongDetails = () => {
 
         </div>
       )}
+
       {crossClearEntries?.length > 0 && (
         <InfoDisplayRow
           title="Cross Clear Information"
@@ -586,39 +595,26 @@ const SongDetails = () => {
           multiRow
         />
       )}
-      <div className="w-full ml-40 mb-10">
+
+      {/* THUMBNAIL UPLOAD */}
+      <div className="w-full border border-gray-300 mt-10">
+      </div>
+      <div className="w-full mb-10">
         <Thumbnail thumbnailObject={thumbnailInformation} uploadFile={uploadThumbnail} songNumber={basicInformation.SongNumber}/>
       </div>
 
       {/* MEDIA */}
-      <div className="w-full mt-10 flex">
-        <div className="flex flex-col ml-20">
+      <div className="w-full border border-gray-300 mt-1">
+      </div>
+      <div className="w-full flex">
+        <div className="flex flex-col">
           <Typography sx={{fontWeight: 'bold', fontSize: '30px'}}>Media</Typography>
         </div>
       </div>
-      {!showFileUpload ? (
-        <div className="w-[90%] mt-5 flex items-center justify-start">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setShowFileUpload(true);
-            }}
-            sx={{
-              marginRight: '15px',
-              borderColor: '#00b00e',
-              backgroundColor: '#00b00e',
-              color: 'white',
-              '&:hover': {
-                borderColor: '#F1EFEF',
-                backgroundColor: '#86A789',
-              },
-            }}
-          >
-            Add Media
-          </Button>
-        </div>
-      ) : (
+
+      <div className="w-full ">
         <FileAdd
+          buttonOnly
           songNumber={basicInformation.SongNumber}
           submit={uploadMediaFileAndRefresh}
           buckets={generatedSets}
@@ -626,9 +622,9 @@ const SongDetails = () => {
             setShowFileUpload(false);
           }}
         ></FileAdd>
-      )}
+      </div>
 
-      <div className="w-full  ml-40 mb-20">
+      <div className="w-full  mb-20">
       <DisplayMediaListing
         updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
         submit={uploadMediaFileAndRefresh}

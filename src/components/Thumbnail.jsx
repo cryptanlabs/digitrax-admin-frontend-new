@@ -98,7 +98,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                     display: 'flex',
                     flexDirection: 'row',
                     height: '100%',
-                    width: '60%',
+                    // width: '60%',
                     alignItems: 'center',
                     border: '1px solid #D1D5DB',
                     borderRadius: 1
@@ -108,7 +108,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                     sx={{
                         display: 'flex',
                         height: '100%',
-                        width: '50%',
+                        // width: '50%',
                         justifyContent: 'center',
                         alignContent: 'center'
                     }}
@@ -119,7 +119,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                     sx={{
                         display: 'flex',
                         height: '100%',
-                        width: '50%',
+                        // width: '50%',
                         justifyContent: 'center',
                         alignContent: 'center'
                     }}

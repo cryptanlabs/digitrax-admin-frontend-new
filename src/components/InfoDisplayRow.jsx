@@ -93,7 +93,8 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          width: '100%',
         }}
       >
         {/* Title */}

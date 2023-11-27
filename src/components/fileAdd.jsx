@@ -71,6 +71,7 @@ export function FileAdd({
     const [videoDimension, setVideoDimension] = useState('');
 
 
+
     // Form Data For Upload
     const formData = new FormData();
 
@@ -597,7 +598,7 @@ export function FileAdd({
             <>
                 {generatedMediaItems.map((mediaEntry, index) => (
                     <div key={index}
-                         className={`w-[90%] flex flex-row  justify-between items-center border-b-2 border-x-2 ${index === (count - 1) ? 'rounded-b-lg' : ''} border-gray-300 p-5`}>
+                         className={`flex flex-row  justify-between items-center border-b-2 border-x-2 ${index === (count - 1) ? 'rounded-b-lg' : ''} border-gray-300 p-5`}>
                         <ShowFile
                             mediaItem={mediaEntry}
                         />
@@ -609,47 +610,45 @@ export function FileAdd({
     };
 
 
+
+    if(!showFileUpload && buttonOnly){
+        return (
+          <div>
+              <div
+                className={`w-[90%] flex flex-row justify-start`}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                        setShowFileUpload(true);
+                    }}
+                    sx={{
+                        marginRight: '15px',
+                        borderColor: '#00b00e',
+                        backgroundColor: '#00b00e',
+                        color: 'white',
+                        '&:hover': {
+                            borderColor: '#F1EFEF',
+                            backgroundColor: '#86A789',
+                        },
+                    }}
+                  >
+                      Add Media
+                  </Button>
+
+              </div>
+          </div>
+        );
+    }
+
     if (!showFileUpload) {
-        if (buttonOnly) {
-            return (
-                <div>
-                    <div
-                        className={`w-[90%] flex flex-row justify-start`}>
-                        <Button
-                            variant="outlined"
-                            onClick={() => {
-                                setShowFileUpload(true);
-                            }}
-                            sx={{
-                                marginRight: '15px',
-                                borderColor: '#00b00e',
-                                backgroundColor: '#00b00e',
-                                color: 'white',
-                                '&:hover': {
-                                    borderColor: '#F1EFEF',
-                                    backgroundColor: '#86A789',
-                                },
-                            }}
-                        >
-                            Add Media
-                        </Button>
-
-                    </div>
-                </div>
-            );
-        }
-
-
         return (
             <Box
                 sx={{
-                    display: 'flex',
                     width: '100%',
-                    justifyContent: 'center'
                 }}
             >
                 <div
-                    className={`w-[90%] mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
+                    className={`mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
                     <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
                     <Button
                         variant="outlined"
@@ -681,14 +680,14 @@ export function FileAdd({
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                justifyContent: 'center'
+                // justifyContent: 'center'
             }}
         >
             <div
-                className="w-[90%] mt-10 flex flex-col border-2 justify-center rounded-t-lg border-gray-300 p-5">
+                className=" mt-10  border-2 justify-center rounded-t-lg border-gray-300 p-5">
                 <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
             </div>
-            <div className="w-[90%]  flex flex-row  border-b-2 border-x-2  border-gray-300">
+            <div className="  flex flex-row  border-b-2 border-x-2  border-gray-300">
                 <div className="w-[90%] m-2 flex flex-row flex-wrap mt-3 ">
 
 

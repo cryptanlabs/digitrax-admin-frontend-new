@@ -65,41 +65,6 @@ const CrossDashboard = () => {
           <h1 className="text-4xl ml-10 font-medium">
             All CrossClear Reported Information
           </h1>
-          <div className="flex items-center px-2 w-1/6 justify-between mr-3">
-            <SearchIcon
-              onClick={() => setShowSearch((prev) => !prev)}
-              className="cursor-pointer"
-            />
-            <Button
-              variant="outlined"
-              startIcon={<SortByAlphaIcon/>}
-              onClick={sortTitlesAlphabetically}
-              sx={{
-                borderColor: 'gray',
-                color: 'black',
-                '&:hover': {
-                  borderColor: '#F1EFEF',
-                  backgroundColor: '#F5F7F8',
-                },
-              }}
-            >
-              Sort
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<FileDownloadIcon/>}
-              sx={{
-                borderColor: 'gray',
-                color: 'black',
-                '&:hover': {
-                  borderColor: '#F1EFEF',
-                  backgroundColor: '#F5F7F8',
-                },
-              }}
-            >
-              Export
-            </Button>
-          </div>
         </div>
         <div className="w-full h-20 mt-5 flex items-center justify-between ">
           <h1 className="text-xl ml-8 font-medium">Catalog</h1>

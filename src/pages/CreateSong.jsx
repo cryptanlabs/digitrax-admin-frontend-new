@@ -506,7 +506,11 @@ const CreateSong = () => {
         </Box>
 
         {/* FOURTH SECTION: STATUSES */}
+        <div className="w-full border border-gray-200">
+        </div>
         <StatusDisplayEdit newSong statusData={statusData} handleChange={handleStatusChange}/>
+        <div className="w-full border border-gray-200">
+        </div>
         <InfoDisplayRow
           title="Status Information"
           subTitle="Update the status information here"
@@ -516,6 +520,8 @@ const CreateSong = () => {
         />
 
         {/* FIFTH SECTION: PUBLISHER */}
+        <div className="w-full border border-gray-200">
+        </div>
         <PublisherInfoDisplay
           songNumber={basicInformation.SongNumber}
           saveNewPublisher={savePublisher}
@@ -524,15 +530,21 @@ const CreateSong = () => {
         />
 
         {/* SIXTH SECTION: COMMENTS */}
+        <div className="w-full border border-gray-200">
+        </div>
         <CommentDisplay
           comments={comments}
           handleCreateComment={handleCreateComment}
         />
 
         {/* SEVENTH SECTION: THUMBNAIL */}
+        <div className="w-full border border-gray-200">
+        </div>
         <Thumbnail newSong songNumber={basicInformation.SongNumber} thumbnailObject={thumbnailInformation} uploadFile={handleThumbnailChange}/>
 
         {/* EIGHTH SECTION: MEDIA */}
+        <div className="w-full border border-gray-200">
+        </div>
         <Box
           sx={{
             display: 'flex',
