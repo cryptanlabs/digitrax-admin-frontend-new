@@ -1,9 +1,6 @@
-import SearchIcon from '@mui/icons-material/Search';
-import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import {Button, Typography} from '@mui/material';
 import {useState, useContext, useEffect} from 'react';
 import {DataTableData} from '../context/DataTableContext';
-import {useNavigate} from 'react-router-dom';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
@@ -12,7 +9,6 @@ import weekOfYear from 'dayjs/plugin/weekOfYear';
 import {
   statusDashboardFieldsHidden,
   statusDashboardFieldsShown,
-  statusOptions
 } from '../helpers/constants.js';
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
@@ -65,8 +61,6 @@ const StatusDashboard = () => {
   const [processing, setProcessing] = useState(false);
   const [generatedMedia, setGeneratedMedia] = useState([]);
 
-  const navigate = useNavigate();
-
   // TODO use an object to reduce the complexity of resetting state
   const resetState = () => {
     setShowStatusDetails(false)
@@ -88,11 +82,6 @@ const StatusDashboard = () => {
 
   const columns = columnDetails;
 
-  useEffect(() => {
-
-    console.log('Columns', columns);
-  }, []);
-
   const resetSelection = () => {
     setFilteredResults(currentDataSet);
     setRowSelectionModel([]);
@@ -107,27 +96,23 @@ const StatusDashboard = () => {
   };
 
   const handleRowClick = async (params) => {
-    console.log('STM pages-StatusDashboard.jsx:106', params); // todo remove dev item
     delete params.row.id;
     setRowData({
-      SongNumber: params.row.SongNumber,
-      Status: params.row.Status,
-      Title: params.row.Title,
-      Artist: params.row.Artist,
-      ReleaseScheduledFor: dayjs(params.row.ReleaseScheduledFor),
-      StatusUpdatedAt: dayjs(params.row.StatusUpdatedAt)
+      SongNumber: params?.row?.SongNumber,
+      Status: params?.row?.Status,
+      Title: params?.row?.Title,
+      Artist: params?.row?.Artist,
+      ReleaseScheduledFor: dayjs(params?.row?.ReleaseScheduledFor),
+      StatusUpdatedAt: dayjs(params?.row?.StatusUpdatedAt)
     });
 
-    console.log('STM pages-StatusDashboard.jsx:116', params); // todo remove dev item
-    console.log('STM pages-StatusDashboard.jsx:116', params.row.GeneratedMedia); // todo remove dev item
-    setGeneratedMedia(params.row.GeneratedMedia)
+    setGeneratedMedia(params?.row?.GeneratedMedia)
     await getComments(params.row.SongNumber);
     setShowStatusDetails(true);
   };
 
   const getComments = async (SongNumber) => {
     const results = await getCommentsForSong(SongNumber);
-    console.log('STM pages-SongDetails.jsx:119', results); // todo remove dev item
     setComments((prev) => ([
       ...results,
     ]));
@@ -139,7 +124,6 @@ const StatusDashboard = () => {
       Content: newComment,
     };
     const createdComment = await createComment(copyComment);
-    console.log('STM pages-SongDetails.jsx:281', createdComment); // todo remove dev item
     setComments((prev) => ([
       createdComment,
       ...prev,
@@ -164,9 +148,6 @@ const StatusDashboard = () => {
   };
 
   const handleGetForWeek = (value) => {
-    const result = value.day();
-    console.log('STM pages-StatusDashboard.jsx:122', result); // todo remove dev item
-    console.log('STM pages-StatusDashboard.jsx:123', value.day(0)); // todo remove dev item
     setReleasePeriodStart(value.day(0));
     setReleasePeriodEnd(value.day(6));
     setSelectedDate(value);
@@ -269,7 +250,6 @@ const StatusDashboard = () => {
   }
 
   const SongStatusEdit = () => {
-    console.log('STM pages-StatusDashboard.jsx:243', rowData); // todo remove dev item
     return (
       <div className="w-full flex flex-col mt-10  mb-20">
         <StatusDisplayEdit

@@ -137,9 +137,6 @@ export default function SideNav() {
           </List>
 
         </Box>
-        {/*<Box sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>*/}
-
-        {/*</Box>*/}
         <Box
           sx={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: '40px'}}>
           <Typography sx={{fontWeight: "bold", paddingLeft: '30px'}}>

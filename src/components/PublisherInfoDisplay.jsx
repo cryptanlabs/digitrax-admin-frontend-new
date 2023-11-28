@@ -25,10 +25,6 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
     const index = idx
     return (e) => {
       const {name, value} = e.target;
-      // setLocalSongPublishers((prev) => {
-      //   prev[index].name = value
-      //   return prev
-      // });
       if(setSongPublishers){
         setSongPublishers((prev) => {
           prev[index].name = value
@@ -409,8 +405,6 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             </Box>
           ))}
         </Box>
-        {/* <div className="w-full h-10 border-b flex border-gray-300">
-        </div> */}
         <Box>
           {songPublishers?.map((publisher, index) => (
             <PublisherRow
@@ -421,8 +415,6 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
           {(addNewPublisher || songPublishers?.length === 0) && <NewPublisherRow></NewPublisherRow>}
         </Box>
       </Box>
-      {/* <div className="w-[90%] mt-10 flex flex-col border-2 border-black rounded-lg border-gray-300">
-      </div> */}
     </Box>
   )
 }

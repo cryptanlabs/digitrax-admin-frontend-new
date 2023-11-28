@@ -12,13 +12,9 @@ import {
     DialogTitle,
     CircularProgress, Snackbar, Alert, IconButton
 } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload.js';
 import CloseIcon from '@mui/icons-material/Close';
 import React, {useEffect, useRef, useState} from 'react';
-import {FileUpload} from './fileUpload.jsx';
-import {TextFields15Pct} from './textFields.jsx';
-import {axiosBase, base_url} from '../helpers/requests.js';
-import EditNoteIcon from '@mui/icons-material/EditNote';
+import {base_url} from '../helpers/requests.js';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -80,7 +76,6 @@ export function FileAdd({
             setBucketName(preSetBucketTo);
         }
         if (localGeneratedSets.length === 0) {
-            console.log('STM components-fileAdd.jsx:55: buckets', buckets); // todo remove dev item
             setLocalGeneratedSets(buckets);
         }
     }, []);
@@ -208,7 +203,6 @@ export function FileAdd({
         const file = event.target.files[0];
         if (file) {
             try {
-                console.log('STM components-fileAdd.jsx:130', selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString(), songNumber); // todo remove dev item
                 setDifferentFilename(file.name.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
             } catch (e) {
                 console.error(e);
@@ -232,7 +226,6 @@ export function FileAdd({
         setCurrentFileName(value);
         setFileNameChanged(true);
         try {
-            console.log('STM components-fileAdd.jsx:153', selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString(), songNumber); // todo remove dev item
             setDifferentFilename(value.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
         } catch (e) {
             console.error(e);
@@ -253,30 +246,6 @@ export function FileAdd({
         }
     };
 
-
-
-    // if(buttonOnly){
-    //   return (
-    //     <Button
-    //       variant="outlined"
-    //       onClick={() => {
-    //         setShowFileUpload(true);
-    //       }}
-    //       sx={{
-    //         marginRight: '15px',
-    //         borderColor: '#00b00e',
-    //         backgroundColor: '#00b00e',
-    //         color: 'white',
-    //         '&:hover': {
-    //           borderColor: '#F1EFEF',
-    //           backgroundColor: '#86A789',
-    //         },
-    //       }}
-    //     >
-    //       Add Media
-    //     </Button>
-    //   )
-    // }
     const bucketNameEnterSelectElem = () => {
 
         if (preSetBucketTo) {
@@ -389,8 +358,6 @@ export function FileAdd({
         const handleOkToDelete = async () => {
             setOpenConfirmDeleteDialog(false);
             handleRequestDeleteMediaEntry(mediaItem.requestString);
-            console.log('STM components-fileAdd.jsx:338', 'confirm delete'); // todo remove dev item
-
         };
 
         const handleEdit = () => {

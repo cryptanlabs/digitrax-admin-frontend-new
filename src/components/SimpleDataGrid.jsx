@@ -114,7 +114,6 @@ export function SimpleDataGrid ({
 
   if(rowSelectionModel && setRowSelectionModel){
     propObject.onRowSelectionModelChange = (newRowSelectionModel) => {
-      console.log('STM components-SimpleDataGrid.jsx:96', newRowSelectionModel); // todo remove dev item
       setRowSelectionModel(newRowSelectionModel);
     }
     propObject.rowSelectionModel = rowSelectionModel

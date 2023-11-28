@@ -1,13 +1,6 @@
-import SearchIcon from "@mui/icons-material/Search";
-import { Button } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import SearchBar from "../components/Searchbar";
-import { useState, useContext, useEffect } from "react";
-import { DataGrid, GridToolbarExport  } from "@mui/x-data-grid";
-import { DataTableData } from "../context/DataTableContext";
-import { useNavigate } from "react-router-dom";
+import SearchBar from '../components/Searchbar';
+import {useContext, useEffect, useState} from 'react';
+import {DataTableData} from '../context/DataTableContext';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 
 const CrossDashboard = () => {
@@ -17,47 +10,16 @@ const CrossDashboard = () => {
       currentDataSet,
       crossClearDataSet,
       crossColumnDetails,
-      addToRecentSongs
     } = useContext(DataTableData);
     const [filteredResults, setFilteredResults] = useState([]);
-    const [sortInstructions, setSortIntructions] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
-      if (currentDataSet?.length > 0) setIsLoading(false);
+      if (currentDataSet?.length > 0) {
+        setIsLoading(false);
+      }
       setFilteredResults(crossClearDataSet);
     }, [crossClearDataSet]);
-
-    const columns = crossColumnDetails;
-
-    useEffect(() => {
-      console.log('Columns', columns);
-    }, []);
-
-    const sortTitlesAlphabetically = () => {
-      const sortedArray = [...crossClearDataSet].sort((a, b) => {
-        const titleA = a.Title.toLowerCase();
-        const titleB = b.Title.toLowerCase();
-
-        if (titleA < titleB) return sortInstructions ? 1 : -1;
-        if (titleA > titleB) return sortInstructions ? -1 : 1;
-        return 0;
-      });
-
-      setFilteredResults(sortedArray);
-      setSortIntructions((prev) => !prev);
-    };
-
-    const handleRowClick = (params) => {
-      const rowData = params.row.SongCatalog;
-      const crossData = params.row;
-      addToRecentSongs(params.row.SongNumber);
-      navigate('/songdata', {state: {crossData, rowData, SongNumber: params.row.songNumber}});
-    };
-
-    console.log('STM pages-Dashboard.jsx:58', crossClearDataSet);
 
     return (
       <div>
@@ -78,7 +40,7 @@ const CrossDashboard = () => {
             )}
           </div>
         </div>
-        <SimpleDataGrid columns={columns} rows={filteredResults} onRowClick={() => {
+        <SimpleDataGrid columns={crossColumnDetails} rows={filteredResults} onRowClick={() => {
         }} loading={isLoading}/>
 
       </div>

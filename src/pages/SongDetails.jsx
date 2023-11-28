@@ -1,11 +1,8 @@
-import React, {useEffect, useState, useRef, useContext, useLayoutEffect} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {useLocation, useParams} from 'react-router-dom';
 import {Button, Typography, TextField, CircularProgress} from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {SongDetailsContext} from '../context/SongDetailsContext';
-import {TextFields40Pct, TextFields15Pct} from '../components/textFields';
-import {FileUpload} from '../components/fileUpload';
 import {FileAdd} from '../components/fileAdd.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
 import {PublisherInfoDisplay} from '../components/PublisherInfoDisplay.jsx';
@@ -24,7 +21,6 @@ import {
   statusInformationDefault,
   publishingColumnMappedToHeaders
 } from '../helpers/constants.js';
-import dayjs from 'dayjs';
 import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {Thumbnail} from '../components/Thumbnail.jsx';
@@ -114,7 +110,6 @@ const SongDetails = () => {
   const [songPublishers, setSongPublishers] = useState([]);
 
   const [statusData, setStatusData] = useState({});
-  const [licensingInfoDisplay, setLicensingInfoDisplay] = useState([]);
 
   const [distributionInformation, setDistributionInformation] = useState(statusInformationDefault);
 
@@ -129,13 +124,8 @@ const SongDetails = () => {
   const [disableLookupRequestButton, setDisableLookupRequestButton] = useState(true);
   const [noSongFoundForCatalogNumber, setNoSongFoundForCatalogNumber] = useState(false);
   const [loadingDetails, setLoadingDetails] = useState(false);
-  const [resetCount, setResetCount] = useState(0);
 
   const reset = () => {
-    console.log('STM pages-SongDetails.jsx:135', licensingInformation); // todo remove dev item
-    // setLicensingInformation(licensingInformationDefault);
-    // setBasicInformation(basicInformationDefault);
-    // setDistributionInformation(statusInformationDefault)
     setDistributionInformation(() => ({
       statusInformationDefault
     }));
@@ -153,11 +143,8 @@ const SongDetails = () => {
     }));
     setThumbnailInformation({})
     setComments([])
-    // setStatusData({...statusInformationDefault, Status: 'Status1'})
-    console.log('STM pages-SongDetails.jsx:141', 'reset'); // todo remove dev item
   }
   const setup = async (rowData) => {
-    console.log('STM pages-SongDetails.jsx:115', rowData.GeneratedMedia); // todo remove dev item
     setGeneratedMedia(rowData.GeneratedMedia);
 
     setDistributionInformation(() => ({
@@ -177,9 +164,6 @@ const SongDetails = () => {
     }));
 
     setThumbnailInformation(rowData?.Thumbnail ?? {})
-
-    // localStorage.setItem('items', JSON.stringify(items));
-
 
     setSongPublishers(rowData.SongPublisher ?? []);
     getCommentsForSong();
@@ -205,35 +189,26 @@ const SongDetails = () => {
 
   useEffect(() => {
     if (location.state.rowData) {
-      console.log('STM pages-SongDetails.jsx:92', location.state.rowData); // todo remove dev item
       setup(location.state.rowData);
       getCrossClearForSong(location.state.rowData.SongNumber)
         .then(crossRecords => {
           setCrossClearEntries(crossRecords.map(entry => reduceCrossInfoForSong(entry)));
         })
         .catch(console.error);
-
-      console.log('STM pages-SongDetails.jsx:105', licensingInformation); // todo remove dev item
-      console.log('STM pages-SongDetails.jsx:108', basicInformation); // todo remove dev item
-      console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
-      console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
-    console.log('STM pages-SongDetails.jsx:199', location); // todo remove dev item
+
     if (location.state.SongNumber) {
       setupBySongNumber(location.state.SongNumber)
     }
   }, []);
 
   useEffect(() => {
-    console.log("location",location)
-    console.log('STM pages-SongDetails.jsx:208', 'routeParams', routeParams); // todo remove dev item
     reset()
     setupBySongNumber(routeParams.SongNumber)
   }, [location])
 
 
   useEffect(() => {
-console.log('STM pages-SongDetails.jsx:213', 'getComments'); // todo remove dev item
     const getComments = async () => {
       if (location.state.rowData && location.state?.rowData?.SongNumber) {
         const results = await getCommentsForSong(location.state?.rowData?.SongNumber);
@@ -246,21 +221,6 @@ console.log('STM pages-SongDetails.jsx:213', 'getComments'); // todo remove dev 
     getComments();
 
   }, [setBasicInformation]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     const detailsInOrder = publishingHeaders.map(val => {
-  //       return {
-  //         key: publishingHeadersMappedToColumn[val],
-  //         value: licensingInformation[publishingHeadersMappedToColumn[val]]
-  //       };
-  //     });
-  //
-  //     console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
-  //     setLicensingInfoDisplay(detailsInOrder);
-  //   };
-  //
-  // }, [licensingInformation]);
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -358,7 +318,6 @@ console.log('STM pages-SongDetails.jsx:213', 'getComments'); // todo remove dev 
   };
 
   const handleSaveNewPublisher = async (data) => {
-    console.log('STM pages-SongDetails.jsx:279', data); // todo remove dev item
     const newPublisher = await addPublisher(data);
     setSongPublishers((prev) => ([
       ...prev,
@@ -367,9 +326,7 @@ console.log('STM pages-SongDetails.jsx:213', 'getComments'); // todo remove dev 
   };
 
   const handleRemovePublisher = async (data) => {
-    console.log('STM pages-SongDetails.jsx:279', data); // todo remove dev item
-    const removed = await removePublisher(data);
-    console.log('STM pages-SongDetails.jsx:286', removed); // todo remove dev item
+    await removePublisher(data);
     setSongPublishers((prev) => {
       const idx = prev.findIndex(item => item.PublisherDatabaseId === data.PublisherDatabaseId);
       prev.splice(idx, 1);
@@ -383,7 +340,6 @@ console.log('STM pages-SongDetails.jsx:213', 'getComments'); // todo remove dev 
       Content: newComment,
     };
     const createdComment = await createComment(copyComment);
-    console.log('STM pages-SongDetails.jsx:281', createdComment); // todo remove dev item
     setComments((prev) => ([
       createdComment,
       ...prev,

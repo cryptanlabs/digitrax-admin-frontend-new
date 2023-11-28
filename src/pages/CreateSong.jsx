@@ -87,12 +87,7 @@ const CreateSong = () => {
     } =
       useContext(SongDetailsContext);
     const {addToRecentSongs, getData, nextTwentyCatalogNumbers, getSongNumbersWithoutRecords} = useContext(DataTableData);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [newComment, setNewComment] = useState('');
-
-    const fileInputRef = useRef(null);
     const [showFileUpload, setShowFileUpload] = useState(false);
-    const [generatedMedia, setGeneratedMedia] = useState([]);
     const [generatedMediaForUpload, setGeneratedMediaForUpload] = useState([]);
 
     const [publishersForUpload, setPublishersForUpload] = useState([]);
@@ -152,7 +147,6 @@ const CreateSong = () => {
           };
         });
 
-        console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
         setLicensingInfoDisplay(detailsInOrder);
       };
     }, [licensingInformation]);
@@ -167,7 +161,6 @@ const CreateSong = () => {
 
     const handleLicensingChange = (e) => {
       const {name, value} = e.target;
-      console.log('STM pages-CreateSong.jsx:124', name, value); // todo remove dev item
       setLicensingInformation((prev) => ({
         ...prev,
         [name]: value,
@@ -243,9 +236,7 @@ const CreateSong = () => {
         }
         if(typeof thing[1] === 'object'){
           fileName = thing[1]?.name
-          console.log('STM pages-CreateSong.jsx:150', thing[1]?.name); // todo remove dev item
         }
-        console.log('STM components-fileAdd.jsx:23', typeof thing[1]); // todo remove dev item
       }
 
       setFilesStagedForUpload((prev) => {
@@ -258,8 +249,6 @@ const CreateSong = () => {
         }
         return prev
       })
-      console.log('STM pages-CreateSong.jsx:163', filesStagedForUpload); // todo remove dev item
-      console.log('STM pages-CreateSong.jsx:165', generatedMediaForUpload); // todo remove dev item
     };
 
 
@@ -370,12 +359,6 @@ const CreateSong = () => {
         addProgressItem("Song Creation Steps Above With 'Complete' Succeeded");
       }
     };
-
-    // const handleCommentChange = (e) => {
-    //   const {value} = e.target;
-    //   console.log('STM pages-CreateSong.jsx:258', value); // todo remove dev item
-    //   setNewComment(value);
-    // };
 
 
     useEffect(() => {

@@ -1,6 +1,3 @@
-import {FileUpload} from './fileUpload.jsx';
-import {Typography} from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload.js';
 import {useEffect, useRef, useState} from 'react';
 import {FileAdd} from './fileAdd.jsx';
 
@@ -39,12 +36,10 @@ export default function DisplayMediaListing ({
 
     if (!newSong) {
       useEffect(() => {
-        console.log('STM components-DisplayMediaListing.jsx:30', generatedMedia); // todo remove dev item
         regenerateMediaMap(generatedMedia);
       }, [generatedMedia]);
     } else {
       useEffect(() => {
-        console.log('STM components-DisplayMediaListing.jsx:30', generatedMedia); // todo remove dev item
         regenerateMediaMap(generatedMedia);
       }, []);
     }

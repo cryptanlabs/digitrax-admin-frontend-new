@@ -81,8 +81,6 @@ export function CommentDisplay ({
             <Typography>{comment?.Content}</Typography>
           </div>
         </Box>
-        // <div className={`flex flex-col  mb-5`}>
-        // </div>
       );
     };
 

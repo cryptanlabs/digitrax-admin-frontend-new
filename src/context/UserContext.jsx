@@ -1,7 +1,5 @@
 import {createContext, useEffect, useState} from 'react';
-import axios from 'axios';
-import {axiosBase, base_url} from '../helpers/requests.js';
-import {ColumnHeadersMap} from '../helpers/constants.js';
+import {axiosBase} from '../helpers/requests.js';
 
 export const UserContext = createContext(undefined);
 
@@ -30,13 +28,11 @@ const UserProvider = ({children}) => {
       logInData = {UserName: userName, Password: password}
     } else {
       const hasToken = window.localStorage.getItem('AdminDashToken')
-      console.log('STM context-UserContext.jsx:32', hasToken); // todo remove dev item
 
       if(hasToken){
         logInData = {token: hasToken}
       }
     }
-console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev item
     const result = await axiosBase({
       method: 'post',
       url: '/loginUser',
@@ -47,7 +43,6 @@ console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev ite
       });
 
 
-    console.log('STM context-UserContext.jsx:30', result?.data); // todo remove dev item
     if(result?.data?.token) {
       // priorRecentSongs
       window.localStorage.setItem('AdminDashToken', result.data.token)

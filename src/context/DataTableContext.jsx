@@ -58,8 +58,6 @@ const DataTableContext = ({children}) => {
   const [nextTwentyCatalogNumbers, setNextTwentyCatalogNumbers] = useState([]);
 
   const getData = async () => {
-    // const limit = 1000; //-1 // -1
-    // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
 
     if(fetchingData) return
     setFetchingData(true)
@@ -91,7 +89,6 @@ const DataTableContext = ({children}) => {
     })
       .then(response => {
         const buckets = response.data?.map(item => item.bucket);
-        console.log('STM context-DataTableContext.jsx:82', buckets); // todo remove dev item
         setGeneratedSets(buckets);
       });
   }
@@ -101,14 +98,11 @@ const DataTableContext = ({children}) => {
     if(!fetchingCrossClear){
       try {
         setFetchingCrossClear(true);
-        const limit = 1000; //-1 // -1
-        // const res = await axios.get(`${base_url}/catalogInternal?limit=1000`)
         const res = await axios.get(`${base_url}/getCrossClear`);
         const lowercaseId = res?.data?.result?.map(item => {
 
           return {id: item.Id, ...item};
         });
-        // console.log('STM context-DataTableContext.jsx:79', lowercaseId); // todo remove dev item
         setCrossClearDataSet(lowercaseId);
 
         console.log('Result getCrossData:', res);
@@ -123,11 +117,6 @@ const DataTableContext = ({children}) => {
 
   };
 
-  // useEffect(() => {
-  //   console.log('Total Results:', totalResults);
-  //   console.log('Total pages:', totalPages);
-  //   console.log('Column Details:', columnDetails);
-  // }, [totalResults, totalPages, columnDetails]);
 
   const getColumnNamesAndHeaderDetails = (tableName, datamodel = dataModels, { width } = {width: 150}) => {
 
@@ -201,7 +190,6 @@ const DataTableContext = ({children}) => {
       };
     });
 
-    // console.log('STM context-DataTableContext.jsx:111', computedColumnDetails, computedColumnNames); // todo remove dev item
     return [computedColumnDetails, computedColumnNames]
   }
 
@@ -221,7 +209,6 @@ const DataTableContext = ({children}) => {
 
   const getSongNumbersWithoutRecords = async () => {
     const res = await axios.get(`${base_url}/getAvailableSongNumbers`);
-    console.log('STM context-DataTableContext.jsx:175', res); // todo remove dev item
     setNextTwentyCatalogNumbers(res.data.slice(0,20))
     return res.data.slice(0,20)
     // getAvailableSongNumbers

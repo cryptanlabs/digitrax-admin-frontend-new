@@ -1,16 +1,12 @@
 import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
-import {ReportButton} from '../components/ReportButton.jsx';
-import {axiosBase, base_url} from '../helpers/requests.js';
+import {axiosBase} from '../helpers/requests.js';
 import {useEffect, useState} from 'react';
 import {addIdForDataTable, isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
-import {ColumnHeadersMap} from '../helpers/constants.js';
 import WithFilters from '../components/WithFilter.jsx';
 
 export default function QueryBuilder () {
   try {
-    const [dbSchemas, setDbSchemas] = useState({});
-    const [availableTables, setAvailableTables] = useState();
     const [modelDetails, setModelDetails] = useState({});
     const [modelDetailsClean, setModelDetailsClean] = useState({});
     const [selectedTable, setSelectedTable] = useState('');
@@ -36,7 +32,6 @@ export default function QueryBuilder () {
           console.log(error);
         });
       setSavedQueries(result.data)
-      console.log('STM pages-Reports.jsx:17', result); // todo remove dev item
     };
 
     const getTablesAndColumns = async () => {
@@ -49,15 +44,10 @@ export default function QueryBuilder () {
         });
 
       const models = result.data.datamodel.models;
-      // console.log('STM pages-QueryBuilder.jsx:17', models); // todo remove dev item
       const modelDetailsLocal = {};
       const modelDetailsLocalClean = {};
 
       for (const model of models) {
-        // console.log('STM pages-QueryBuilder.jsx:23', model); // todo remove dev item
-        // if (model.name === 'SongCatalog') {
-        //   continue;
-        // }
         modelDetailsLocal[model.name] = {};
         modelDetailsLocalClean[model.name] = {};
 
@@ -65,12 +55,10 @@ export default function QueryBuilder () {
           if(field.relationFromFields){
             continue
           }
-          // console.log('STM pages-QueryBuilder.jsx:23', field); // todo remove dev item
           modelDetailsLocal[model.name][field.name] = field.type;
           modelDetailsLocalClean[model.name][field.name] = '';
         }
       }
-      console.log('STM pages-QueryBuilder.jsx:34', modelDetailsLocal); // todo remove dev item
       setModelDetails(modelDetailsLocal);
       setModelDetailsClean(modelDetailsLocalClean);
     };
@@ -95,7 +83,6 @@ export default function QueryBuilder () {
         const available = Object.keys(modelDetails[value]);
         setAvailableFields(modelDetails[value]);
         setQueryFields(modelDetailsClean[value]);
-        console.log('STM pages-QueryBuilder.jsx:72', queryFields); // todo remove dev item
       }
 
       setSelectedTable(value);
@@ -103,8 +90,6 @@ export default function QueryBuilder () {
 
 
     const handleSaveParams = () => {
-      console.log('STM pages-QueryBuilder.jsx:80', availableFields); // todo remove dev item
-      // setCollectQueryParams({});
       return new Promise((resolve) => {
             const forTable = {};
             const currentDetails = modelDetails[selectedTable];
@@ -179,10 +164,6 @@ export default function QueryBuilder () {
         query.include = {SongCatalog: true}
       }
 
-      // {
-      //   include: queryNested
-      // }
-      console.log('STM pages-QueryBuilder.jsx:138', query); // todo remove dev item
       setLastQuery({
         tableName,
         query
@@ -205,7 +186,6 @@ export default function QueryBuilder () {
         });
 
       const data = result.data.data;
-      console.log('STM pages-QueryBuilder.jsx:134', data); // todo remove dev item
       if (data.length > 0) {
         const columnSet = Object.keys(data[0])?.map(item => {
           if (item === 'Id') {
@@ -215,13 +195,6 @@ export default function QueryBuilder () {
               width: 75,
             };
           }
-          // if(ColumnHeadersMap[item]){
-          //   return {
-          //     field: item,
-          //     headerName: ColumnHeadersMap[item],
-          //     width:  150
-          //   };
-          // }
           return {
             field: item,
             headerName: item,
@@ -232,7 +205,6 @@ export default function QueryBuilder () {
       }
 
       setResults(addIdForDataTable(data));
-      console.log('STM pages-QueryBuilder.jsx:114', result); // todo remove dev item
     }
 
     const getTableNames = () => {
@@ -252,7 +224,6 @@ export default function QueryBuilder () {
     const handleLoadSavedQuery = async (e) => {
       try {
         const {name, value} = e.target
-        console.log('STM pages-QueryBuilder.jsx:255', value); // todo remove dev item
         const savedQueryEntry = savedQueries.find(item => item.Label === value.Label);
         if(savedQueryEntry){
           setLoadedSavedQuery(value)

@@ -1,21 +1,7 @@
-import SearchIcon from "@mui/icons-material/Search";
 import {Button, MenuItem, Select, Typography} from '@mui/material';
-import MenuIcon from "@mui/icons-material/Menu";
-import SortByAlphaIcon from "@mui/icons-material/SortByAlpha";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { createSvgIcon } from '@mui/material/utils';
-import LinearProgress from '@mui/material/LinearProgress';
 import SearchBar from "../components/Searchbar";
 import { useState, useContext, useEffect } from "react";
-import {
-  DataGrid,
-  gridPaginatedVisibleSortedGridRowIdsSelector,
-  gridSortedRowIdsSelector,
-  GridToolbarContainer,
-  gridExpandedSortedRowIdsSelector,
-  useGridApiContext
-} from "@mui/x-data-grid";
 import { DataTableData } from "../context/DataTableContext";
 import { useNavigate } from "react-router-dom";
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
@@ -29,7 +15,6 @@ const Dashboard = () => {
     const [showSearch, setShowSearch] = useState(false);
     const {currentDataSet, columnDetails, addToRecentSongs, getData} = useContext(DataTableData);
     const [filteredResults, setFilteredResults] = useState([]);
-    const [sortInstructions, setSortIntructions] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [statusToFilter, setStatusToFilter] = useState('');
 
@@ -38,9 +23,6 @@ const Dashboard = () => {
     useEffect(() => {
       if (currentDataSet?.length > 0) setIsLoading(false);
       setFilteredResults(currentDataSet);
-      if (currentDataSet?.length > 0) {
-        console.log('STM pages-Dashboard.jsx:35', currentDataSet[0]); // todo remove dev item
-      }
     }, [currentDataSet]);
 
     const columns = columnDetails;
@@ -49,22 +31,7 @@ const Dashboard = () => {
       console.log('Columns', columns);
     }, []);
 
-    const sortTitlesAlphabetically = () => {
-      const sortedArray = [...currentDataSet].sort((a, b) => {
-        const titleA = a.Title.toLowerCase();
-        const titleB = b.Title.toLowerCase();
-
-        if (titleA < titleB) return sortInstructions ? 1 : -1;
-        if (titleA > titleB) return sortInstructions ? -1 : 1;
-        return 0;
-      });
-
-      setFilteredResults(sortedArray);
-      setSortIntructions((prev) => !prev);
-    };
-
     const handleRowClick = (params) => {
-      console.log('STM pages-Dashboard.jsx:62', params.row); // todo remove dev item
       const rowData = params.row;
       addToRecentSongs(params.row.SongNumber);
       navigate(`/songdata/${params.row.SongNumber}`, {state: {rowData}});
@@ -78,7 +45,6 @@ const Dashboard = () => {
         return
       }
       setStatusToFilter(value)
-      console.log('STM pages-Dashboard.jsx:72', value); // todo remove dev item
       const sortedArray = [...currentDataSet].filter((rowEntry) => {
         return rowEntry.Status === value
       })
@@ -107,20 +73,6 @@ const Dashboard = () => {
             >
               Refresh
             </Button>
-            {/*<Button*/}
-            {/*  variant="outlined"*/}
-            {/*  startIcon={<FileDownloadIcon/>}*/}
-            {/*  sx={{*/}
-            {/*    borderColor: 'gray',*/}
-            {/*    color: 'black',*/}
-            {/*    '&:hover': {*/}
-            {/*      borderColor: '#F1EFEF',*/}
-            {/*      backgroundColor: '#F5F7F8',*/}
-            {/*    },*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  Export*/}
-            {/*</Button>*/}
           </div>
         </div>
         <div className="w-full h-20 mt-5 flex items-center justify-between ">
