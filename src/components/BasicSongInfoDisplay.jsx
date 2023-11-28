@@ -106,7 +106,7 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
             <DatePicker
               sx={{ marginTop: 1 }}
               name="ReleaseScheduledFor"
-              value={basicInformation.ReleaseScheduledFor}
+              value={basicInformation.ReleaseScheduledFor || dayjs()}
               onChange={(val) => {
                 handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
               }}

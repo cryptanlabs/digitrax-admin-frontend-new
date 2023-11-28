@@ -107,7 +107,7 @@ const SongDetails = () => {
     removeGeneratedMediaEntry,
     uploadThumbnail
   } = useContext(SongDetailsContext);
-  const [comments, setComments] = useState(demoComments);
+  const [comments, setComments] = useState([]);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [generatedMedia, setGeneratedMedia] = useState([]);
 
@@ -129,28 +129,50 @@ const SongDetails = () => {
   const [disableLookupRequestButton, setDisableLookupRequestButton] = useState(true);
   const [noSongFoundForCatalogNumber, setNoSongFoundForCatalogNumber] = useState(false);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [resetCount, setResetCount] = useState(0);
 
+  const reset = () => {
+    console.log('STM pages-SongDetails.jsx:135', licensingInformation); // todo remove dev item
+    // setLicensingInformation(licensingInformationDefault);
+    // setBasicInformation(basicInformationDefault);
+    // setDistributionInformation(statusInformationDefault)
+    setDistributionInformation(() => ({
+      statusInformationDefault
+    }));
+
+    setStatusData(() => ({
+      ...{...statusInformationDefault, Status: 'Status1'}
+    }));
+
+    setLicensingInformation(() => ({
+      ...licensingInformationDefault
+    }));
+
+    setBasicInformation(() => ({
+      ...basicInformationDefault
+    }));
+    setThumbnailInformation({})
+    setComments([])
+    // setStatusData({...statusInformationDefault, Status: 'Status1'})
+    console.log('STM pages-SongDetails.jsx:141', 'reset'); // todo remove dev item
+  }
   const setup = async (rowData) => {
     console.log('STM pages-SongDetails.jsx:115', rowData.GeneratedMedia); // todo remove dev item
     setGeneratedMedia(rowData.GeneratedMedia);
 
-    setDistributionInformation((prev) => ({
-      ...prev,
+    setDistributionInformation(() => ({
       ...getDistributionInfoFromSongData(rowData)
     }));
 
-    setStatusData((prev) => ({
-      ...prev,
+    setStatusData(() => ({
       ...getStatusInfoFromSongData(rowData)
     }));
 
-    setLicensingInformation((prev) => ({
-      ...prev,
+    setLicensingInformation(() => ({
       ...getLicensingInfoFromSongData(rowData)
     }));
 
-    setBasicInformation((prev) => ({
-      ...prev,
+    setBasicInformation(() => ({
       ...getBasicInfoFromSongData(rowData)
     }));
 
@@ -202,14 +224,16 @@ const SongDetails = () => {
     }
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     console.log("location",location)
     console.log('STM pages-SongDetails.jsx:208', 'routeParams', routeParams); // todo remove dev item
+    reset()
     setupBySongNumber(routeParams.SongNumber)
   }, [location])
 
 
   useEffect(() => {
+console.log('STM pages-SongDetails.jsx:213', 'getComments'); // todo remove dev item
     const getComments = async () => {
       if (location.state.rowData && location.state?.rowData?.SongNumber) {
         const results = await getCommentsForSong(location.state?.rowData?.SongNumber);
@@ -223,20 +247,20 @@ const SongDetails = () => {
 
   }, [setBasicInformation]);
 
-  useEffect(() => {
-    return () => {
-      const detailsInOrder = publishingHeaders.map(val => {
-        return {
-          key: publishingHeadersMappedToColumn[val],
-          value: licensingInformation[publishingHeadersMappedToColumn[val]]
-        };
-      });
-
-      console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
-      setLicensingInfoDisplay(detailsInOrder);
-    };
-
-  }, [licensingInformation]);
+  // useEffect(() => {
+  //   return () => {
+  //     const detailsInOrder = publishingHeaders.map(val => {
+  //       return {
+  //         key: publishingHeadersMappedToColumn[val],
+  //         value: licensingInformation[publishingHeadersMappedToColumn[val]]
+  //       };
+  //     });
+  //
+  //     console.log('STM pages-SongDetails.jsx:118', detailsInOrder); // todo remove dev item
+  //     setLicensingInfoDisplay(detailsInOrder);
+  //   };
+  //
+  // }, [licensingInformation]);
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -293,7 +317,9 @@ const SongDetails = () => {
 
   const handleSongEdit = async () => {
     const updatedDetails = await updateSong(basicInformation);
-    setBasicInformation(updatedDetails);
+    setBasicInformation(() => ({
+      ...getBasicInfoFromSongData(updatedDetails)
+    }));
     console.log(basicInformation);
   };
 
@@ -301,7 +327,11 @@ const SongDetails = () => {
     const withSongNumber = {...licensingInformation, SongNumber: basicInformation.SongNumber};
 
     const updatedDetails = await updateSong(withSongNumber);
-    setLicensingInformation(updatedDetails);
+    setLicensingInformation(
+    (prev) => ({
+      ...prev,
+      ...getLicensingInfoFromSongData(updatedDetails)
+    }))
     console.log(basicInformation);
   };
 
@@ -466,21 +496,22 @@ const SongDetails = () => {
       <div className="w-full mt-10 flex">
         <div className="flex flex-col">
           <Typography sx={{ fontWeight: "bold" }}>
-            Publishing Information
+            Licensing Information
           </Typography>
-          <Typography>Update the publishing information here</Typography>
+          <Typography>Update the licensing information here</Typography>
         </div>
       </div>
       <div className="w-full mt-10 flex flex-row flex-wrap">
         {Object.keys(licensingInformation).map((header, index) => (
           <div key={index} className="flex flex-col ml-5 w-[20%]">
             <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
+
             <TextField
               size="small"
               hiddenLabel
-              name={header.key}
+              name={header}
               onChange={handleLicensingChange}
-              value={licensingInformation[header.key]}
+              value={licensingInformation[header]}
               variant="outlined"
             />
           </div>

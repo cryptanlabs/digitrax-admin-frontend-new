@@ -404,43 +404,6 @@ const CreateSong = () => {
           <Typography variant="h4">
             Create Song Entry
           </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row'
-            }}
-          >
-            <Button
-              variant="outlined"
-              sx={{
-                borderColor: 'gray',
-                color: 'black',
-                '&:hover': {
-                  borderColor: '#F1EFEF',
-                  backgroundColor: '#F5F7F8',
-                },
-              }}
-            >
-              Upload Another Song
-            </Button>
-
-            <Button
-              variant="outlined"
-              startIcon={<StarBorderIcon/>}
-              sx={{
-                borderColor: '#00b00e',
-                backgroundColor: '#00b00e',
-                marginLeft: '15px',
-                color: 'white',
-                '&:hover': {
-                  borderColor: '#F1EFEF',
-                  backgroundColor: '#86A789',
-                },
-              }}
-            >
-              Export
-            </Button>
-          </Box>
         </Box>
 
         {/* SECOND SECTION: DESCRIPTION */}
