@@ -1,13 +1,15 @@
 import {Button, Checkbox, MenuItem, Select, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
-import {axiosBase, base_url} from '../helpers/requests.js';
-import {useEffect, useRef, useState} from 'react';
+import {axiosBase, axiosBaseWithKey, base_url} from '../helpers/requests.js';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {statusDash} from '../helpers/strings.js';
 import {statusOptions, statusOptionsText} from '../helpers/constants.js';
+import {UserContext} from '../context/UserContext.jsx';
 
 export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
   try {
+    const {adminDashToken} = useContext(UserContext);
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [rowData, setRowData] = useState([]);
@@ -74,7 +76,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
           file
         );
 
-        const result = await axiosBase({
+        const result = await axiosBaseWithKey(adminDashToken)({
           method: 'post',
           url: '/convertCsv',
           data: formData
@@ -121,7 +123,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
       for (let i = 0; i < rowData.length; i += 100) {
         const rowSlice = rowData.slice(i, i + 100);
 
-        const result = await axiosBase({
+        const result = await axiosBaseWithKey(adminDashToken)({
           method: 'post',
           url: '/catalogUpdateMany',
           data: {rows: rowSlice, isNumeric, fieldToUpdate: columnToUpdate, force: !doNotOverwrite}

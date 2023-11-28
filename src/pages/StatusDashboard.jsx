@@ -17,10 +17,11 @@ import {
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
 import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
-import {axiosBase} from '../helpers/requests.js';
+import {axiosBase, axiosBaseWithKey} from '../helpers/requests.js';
 import {addIdForDataTable} from '../helpers/utils.js';
 import {statusDash} from '../helpers/strings.js';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
+import {UserContext} from '../context/UserContext.jsx';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
@@ -36,6 +37,7 @@ const columnVisibilityModel = {
   }, {}),
 };
 const StatusDashboard = () => {
+  const {adminDashToken} = useContext(UserContext);
   const {currentDataSet, columnDetails, addToRecentSongs} = useContext(DataTableData);
   const {
     updateSong,
@@ -172,7 +174,7 @@ const StatusDashboard = () => {
 
   const getForSelectedWeek = async () => {
     if (releasePeriodStart && releasePeriodEnd) {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'post',
         timeout: 10000,
         url: '/rawQuery',

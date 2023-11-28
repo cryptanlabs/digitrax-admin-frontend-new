@@ -49,6 +49,7 @@ console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev ite
 
     console.log('STM context-UserContext.jsx:30', result?.data); // todo remove dev item
     if(result?.data?.token) {
+      // priorRecentSongs
       window.localStorage.setItem('AdminDashToken', result.data.token)
       setAdminDashToken(result.data.token)
       setLoggedIn(true)
@@ -73,19 +74,10 @@ console.log('STM context-UserContext.jsx:39', logInData); // todo remove dev ite
     setLoggedIn(false)
   }
 
-  const addToRecentSongs = (song) => {
-    setRecentSongs((prev) => {
-      if (prev.length > 7) {
-        prev.shift();
-      }
-      return [...prev, song];
-    });
-  };
 
 
   return (
     <UserContext.Provider value={{
-      addToRecentSongs,
       recentSongs,
       loginUser,
       logoutUser,

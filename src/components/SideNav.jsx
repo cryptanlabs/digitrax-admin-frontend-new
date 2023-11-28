@@ -29,7 +29,7 @@ export default function SideNav() {
 
 
   const navigateToRecentSong = (song) => {
-    navigate("/songdata", { state: { SongNumber: song } });
+    navigate(`/songdata/${song}`, { state: { SongNumber: song } });
   }
 
 
@@ -56,7 +56,7 @@ export default function SideNav() {
           </Toolbar>
           <List>
             {(userType === 'internal' ? internalNav : externalNav).map((text, index) => (
-              <ListItem key={text}>
+              <ListItem key={text} sx={{paddingBottom: '0px', paddingTop: '0px'}}>
                 <Link
                   to={(() => {
                     switch (index) {
@@ -137,9 +137,9 @@ export default function SideNav() {
           </List>
 
         </Box>
-        <Box sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+        {/*<Box sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>*/}
 
-        </Box>
+        {/*</Box>*/}
         <Box
           sx={{width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: '40px'}}>
           <Typography sx={{fontWeight: "bold", paddingLeft: '30px'}}>
@@ -148,11 +148,20 @@ export default function SideNav() {
           <List>
             {recentSongs.map((song, idx) => (
               <ListItem key={idx}
+                        sx={{width: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          marginBottom: '0',
+                          paddingBottom: '0px',
+                          paddingTop: '0px'}}
                         onClick={() => {
                           navigateToRecentSong(song)
                         }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  sx={{paddingBottom: '0px', paddingTop: '0px'}}
+                >
                   <ListItemText primary={`C${song}`}/>
                 </ListItemButton>
               </ListItem>

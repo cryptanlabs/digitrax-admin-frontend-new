@@ -67,7 +67,7 @@ const Dashboard = () => {
       console.log('STM pages-Dashboard.jsx:62', params.row); // todo remove dev item
       const rowData = params.row;
       addToRecentSongs(params.row.SongNumber);
-      navigate('/songdata', {state: {rowData}});
+      navigate(`/songdata/${params.row.SongNumber}`, {state: {rowData}});
     };
 
     const handleFilterByStatus = (e) => {

@@ -35,7 +35,6 @@ const SongDetailsProvider = ({children}) => {
   }
 
   const updateSong = async (data) => {
-    console.log('STM context-SongDetailsContext.jsx:23', data); // todo remove dev item
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateSong',
@@ -50,7 +49,6 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const updateMediaMetadata = async (data) => {
-    console.log('STM context-SongDetailsContext.jsx:23', data); // todo remove dev item
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateGeneratedMediaMetaData',
@@ -98,7 +96,7 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const markCommentRemoved = async (CommentId) => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'delete',
       url: '/removeComment',
       params: {
@@ -114,7 +112,6 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadMediaFile = async (data) => {
-    console.log('STM context-SongDetailsContext.jsx:117', data); // todo remove dev item
     const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
@@ -132,9 +129,8 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadThumbnail = async (data) => {
-    console.log('STM context-SongDetailsContext.jsx:117', data); // todo remove dev item
     const timeToUpload = Math.ceil(data.get('files').size/200)
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/uploadThumbnail',
       timeout: timeToUpload,
@@ -150,7 +146,7 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const addSong = async (data) => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/addSong',
       data: data
@@ -164,7 +160,7 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const addPublisher = async (data) => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/addPublisher',
       data: data
@@ -178,7 +174,7 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const removePublisher = async (data) => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/removePublisher',
       data: data
@@ -208,7 +204,7 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const removeGeneratedMediaEntry = async (requestString) => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       timeout: 30000,
       url: '/removeGeneratedMediaEntry',
@@ -229,9 +225,7 @@ const SongDetailsProvider = ({children}) => {
 
   const getDetailsForSong = async (SongNumber) => {
     try {
-      console.log('STM context-SongDetailsContext.jsx:82', SongNumber); // todo remove dev item
       const result = await axios.get(`${base_url}/catalogInternal?SongNumber=${SongNumber}`);
-      console.log('STM context-SongDetailsContext.jsx:216', result.data.data); // todo remove dev item
       return result.data.data[0];
     } catch (error) {
       console.error(error)

@@ -35,7 +35,7 @@ const App = () => {
                   <Route element={<AccessGuard/>}>
                     <Route path="/" element={<Dashboard/>}/>
                     <Route path="/dashboard" element={<Dashboard/>}/>
-                    <Route path="/songdata" element={<SongDetails/>}/>
+                    <Route path="/songdata/:SongNumber" element={<SongDetails/>}/>
                     <Route element={<InternalOnly/>}>
                       <Route path="/viewSongDetails" element={<ViewSongDetails />} />
                       <Route path="/crossDashboard" element={<CrossDashboard/>}/>

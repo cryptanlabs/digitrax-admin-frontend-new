@@ -1,11 +1,13 @@
 import {Button, Checkbox, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
-import {axiosBase, base_url} from '../helpers/requests.js';
-import {useRef, useState} from 'react';
+import {axiosBase, axiosBaseWithKey, base_url} from '../helpers/requests.js';
+import {useContext, useRef, useState} from 'react';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
+import {UserContext} from '../context/UserContext.jsx';
 
 export default function UploadBatch () {
   try {
+    const {adminDashToken} = useContext(UserContext);
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [rowData, setRowData] = useState([]);
@@ -52,7 +54,7 @@ export default function UploadBatch () {
         // setColumns([]);
         setProcessing(false)
         setCancel(false)
-        const result = await axiosBase({
+        const result = await axiosBaseWithKey(adminDashToken)({
           method: 'post',
           url: '/convertCsv',
           // url: '/catalogAddMany',
@@ -103,7 +105,7 @@ export default function UploadBatch () {
         console.log('STM components-UploadBatch.jsx:77', cancel); // todo remove dev item
 
 
-        const result = await axiosBase({
+        const result = await axiosBaseWithKey(adminDashToken)({
           method: 'post',
           url: endPointToUse,
           data: {rows: rowSlice, startIndex: i}

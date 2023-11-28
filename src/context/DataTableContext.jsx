@@ -227,6 +227,13 @@ const DataTableContext = ({children}) => {
     // getAvailableSongNumbers
   }
 
+  const getPriorRecentSongs = () => {
+    const priorRecentSongs = window.localStorage.getItem('RecentSongs')
+    if(priorRecentSongs){
+      setRecentSongs(JSON.parse(priorRecentSongs))
+    }
+  }
+
   useEffect(() => {
     const setupData = async () => {
      await getColumnNames()
@@ -235,6 +242,7 @@ const DataTableContext = ({children}) => {
           .then(getExistingBuckets)
           .then(getSongNumbersWithoutRecords)
     }
+    getPriorRecentSongs()
     setupData()
 
     // getExistingBuckets()
@@ -248,14 +256,19 @@ const DataTableContext = ({children}) => {
     getSongNumbersWithoutRecords()
   }
 
+
   const addToRecentSongs = (song) => {
     setRecentSongs((prev) => {
-      if (prev.length > 7) {
-        prev.shift();
+      const tempArray = Array.from(new Set([...prev, song]))
+      if (tempArray.length > 6) {
+        tempArray.shift();
       }
-      return [...prev, song];
+      window.localStorage.setItem('RecentSongs', JSON.stringify([...tempArray]))
+      return [...tempArray];
     });
+
   };
+
 
 
   return (

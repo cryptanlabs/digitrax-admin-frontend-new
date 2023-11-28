@@ -1,9 +1,10 @@
 import {Button, TextField, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
-import {axiosBase, base_url} from '../helpers/requests.js';
-import {useEffect, useState} from 'react';
+import {axiosBase, axiosBaseWithKey, base_url} from '../helpers/requests.js';
+import {useContext, useEffect, useState} from 'react';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {isWhiteSpace} from '../helpers/utils.js';
+import {UserContext} from '../context/UserContext.jsx';
 
 
 const newApiUserDefault = {
@@ -50,6 +51,7 @@ const columns = [
 ];
 export default function ApiUsers () {
   try {
+    const {adminDashToken} = useContext(UserContext);
     const [registeredApiUsers, setRegisteredApiUsers] = useState([]);
     const [showRegisterApiUser, setShowRegisterApiUser] = useState(false);
     const [showRegisteredApiUser, setShowRegisteredApiUser] = useState(false);
@@ -88,7 +90,7 @@ export default function ApiUsers () {
       if (isWhiteSpace(newApiUser.Name) || isWhiteSpace(newApiUser.Email)) {
         return;
       }
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'post',
         url: '/createAPiUser',
         data: newApiUser

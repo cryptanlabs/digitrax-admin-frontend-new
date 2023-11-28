@@ -1,5 +1,5 @@
-import React, {useEffect, useState, useRef, useContext} from 'react';
-import {useLocation} from 'react-router-dom';
+import React, {useEffect, useState, useRef, useContext, useLayoutEffect} from 'react';
+import {useLocation, useParams} from 'react-router-dom';
 import {Button, Typography, TextField, CircularProgress} from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -91,6 +91,7 @@ const demoComments = [democomment, democomment2];
 
 const SongDetails = () => {
   const location = useLocation();
+  const routeParams = useParams();
   const {
     generatedSets,
     addPublisher,
@@ -195,12 +196,17 @@ const SongDetails = () => {
       console.log('STM pages-SongDetails.jsx:114', location); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:122', location.state.rowData.GeneratedMedia); // todo remove dev item
     }
+    console.log('STM pages-SongDetails.jsx:199', location); // todo remove dev item
     if (location.state.SongNumber) {
       setupBySongNumber(location.state.SongNumber)
-
-
     }
   }, []);
+
+  useLayoutEffect(() => {
+    console.log("location",location)
+    console.log('STM pages-SongDetails.jsx:208', 'routeParams', routeParams); // todo remove dev item
+    setupBySongNumber(routeParams.SongNumber)
+  }, [location])
 
 
   useEffect(() => {
@@ -387,12 +393,12 @@ const SongDetails = () => {
 
   return (
     <div className="w-[90%] mt-4 ml-20 flex flex-col items-center justify-between">
-      <div className="w-[90%] mt-4 flex items-center justify-between">
-        <h1 className="text-4xl ml-20 font-medium">Song Data</h1>
+      <div className="w-full mt-4 flex items-center justify-between">
+        <h1 className="text-4xl font-medium">Song Data</h1>
         {loadingDetails && (<div>
           <CircularProgress />
         </div>)}
-        <div className="flex w-1/3  mr-3 justify-center">
+        <div className="flex w-1/3  justify-center">
           <div className="flex flex-col ml-20">
             <Typography sx={{ fontWeight: "bold" }}>Lookup Catalog ID #</Typography>
             <div className="flex flex-row justify-betweenml-20">
