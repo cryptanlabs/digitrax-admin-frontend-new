@@ -19,6 +19,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Upload from './pages/Upload.jsx';
 import ViewSongDetails from './pages/ViewSongDetails.jsx';
+import BatchMedia from './pages/BatchMedia.jsx';
 
 const App = () => {
   return (
@@ -41,6 +42,8 @@ const App = () => {
                       <Route path="/crossDashboard" element={<CrossDashboard/>}/>
                       <Route path="/createsong" element={<CreateSong/>}/>
                       <Route path="/reports" element={<Reports/>}/>
+
+                      <Route path="/batchMedia" element={<BatchMedia />} />
                       <Route path="/queryBuilder" element={<QueryBuilder/>}/>
                       <Route path="/users" element={<UsersDashBoard/>}/>
                       <Route path="/statusDashboard" element={<StatusDashboard/>}/>

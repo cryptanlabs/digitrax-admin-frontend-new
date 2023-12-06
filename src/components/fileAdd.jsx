@@ -66,6 +66,8 @@ export function FileAdd({
     const [description, setDescription] = useState('');
     const [videoDimension, setVideoDimension] = useState('');
 
+    const [bucketAddOptions, setBucketAddOptions] = useState(['bucketOne', 'bucketTwo', 'bucketThree'])
+    const [bucketToAdd, setBucketsToAdd] = useState([])
 
 
     // Form Data For Upload
@@ -90,6 +92,8 @@ export function FileAdd({
         setOpenSnackBar(false)
         setUploadError(false)
     }
+
+
 
     const action = (
         <React.Fragment>
@@ -272,7 +276,7 @@ export function FileAdd({
         return (
             <>
                 <div className="flex flex-col  w-52">
-                    <Typography sx={{fontWeight: 'bold'}}>Bucket Name</Typography>
+                    <Typography sx={{fontWeight: 'bold'}}>Folder Name</Typography>
                     {createBucket ? (
                         <TextField
                             sx={{marginTop: 1}}
@@ -654,6 +658,27 @@ export function FileAdd({
         );
     }
 
+    // const handleChange = (event) => {
+    //     const {
+    //         target: { value },
+    //     } = event;
+    //     setPersonName(
+    //       // On autofill we get a stringified value.
+    //       typeof value === 'string' ? value.split(',') : value,
+    //     );
+    // };
+
+    const handleBucketSelectChange = (e) => {
+        const {name, value} = e.target;
+
+        setBucketsToAdd(typeof value === 'string' ? value.split(',') : value)
+
+        // setBucketAddOptions((prev) => ({
+        //     ...prev,
+        //     [name]: value,
+        // }));
+    };
+
     return (
         <Box
             sx={{
@@ -745,9 +770,41 @@ export function FileAdd({
                         </div>
                     </div>
                     <div className="flex-none ml-8">
-                        {bucketNameEnterSelectElem()}
+                        <div className=" flex flex-row flex-wrap">
+                            <div className="flex-col">
+                                {bucketNameEnterSelectElem()}
+                            </div>
+                            <div className="flex-col ml-8">
+                                {/*{bucketAddOptions.map((item, idx) => (*/}
+                                {/*  <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}
+                                {/*      <Checkbox name={item} onChange={handleBucketSelectChange}/>*/}
+                                {/*      <span style={{paddingTop: '9px'}}>{item}</span>*/}
+                                {/*  </div>*/}
+                                {/*))}*/}
+                                <Select
+                                  multiple
+                                  sx={{marginTop: 1}}
+                                  value={bucketToAdd}
+                                  onChange={handleBucketSelectChange}
+                                >
+                                    {bucketAddOptions.map((value, index) => (
+                                      <MenuItem key={index} value={value}>{value}</MenuItem>
+                                    ))}
+                                </Select>
+
+
+                            </div>
+                            {/*<div className="flex-col ml-8">*/}
+                            {/*    {bucketAddOptions.map((item, idx) => (*/}
+                            {/*      <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}
+                            {/*          <Checkbox name={item} onChange={handleBucketSelectChange}/>*/}
+                            {/*          <span style={{paddingTop: '9px'}}>{item}</span>*/}
+                            {/*      </div>*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
+                        </div>
                     </div>
-                    <div className=" flex flex-row flex-wrap">
+                    <div className=" flex flex-col flex-wrap">
                         <div className="flex ml-8">
                             <div className="flex flex-col mt-2 w-52">
                                 <Typography sx={{fontWeight: 'bold'}}>Resolution</Typography>
