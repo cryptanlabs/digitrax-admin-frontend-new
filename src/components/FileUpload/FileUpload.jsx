@@ -24,7 +24,7 @@ import {useDropzone} from 'react-dropzone';
 import {ShowFile} from './ShowFile.jsx'
 import {BucketName} from './BucketName.jsx';
 import {FileSelect} from './FileSelect.jsx';
-import * as tus from 'tus-js-client'
+import {FileDetails} from './FileDetails.jsx';
 
 export function FileUpload({
                             newSong,
@@ -40,7 +40,8 @@ export function FileUpload({
                             mediaObjects = [],
                             filesStagedForUpload = [],
                             handleRequestDeleteMediaEntry = () => {
-                            }
+                            },
+                               uploadMultipleMediaFiles = () => {}
                         }) {
     // notifications
     const [uploadingProgress, setUploadingProgress] = useState(false);
@@ -49,8 +50,8 @@ export function FileUpload({
     const [uploadError, setUploadError] = useState(false);
 
     // File upload handling
-    const fileInputRef = useRef(null);
-    const [selectedFile, setSelectedFile] = useState(null);
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     // Bucket Name
     const [bucketName, setBucketName] = useState('');
@@ -99,44 +100,7 @@ export function FileUpload({
         setUploadError(false)
     }
 
-    const uploader = (file) => {
-        // Get the selected file from the input element
-        // var file = e.target.files[0]
-console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
-        // Create a new tus upload
-        var upload = new tus.Upload(file, {
-            endpoint: `${base_url}/upload/`,
-            retryDelays: [0, 3000, 5000, 10000, 20000],
-            metadata: {
-                filename: file.name,
-                filetype: file.type,
-            },
-            onError: function (error) {
-                console.log('Failed because: ' + error)
-                console.log("Request", error.originalRequest)
-                console.log("Response", error.originalResponse)
-            },
-            onProgress: function (bytesUploaded, bytesTotal) {
-                var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
-                console.log(bytesUploaded, bytesTotal, percentage + '%')
-            },
-            onSuccess: function () {
-                console.log('Download %s from %s', upload.file.name, upload.url)
-            },
-        })
 
-        console.log('STM FileUpload-FileUpload.jsx:126', upload); // todo remove dev item
-        // Check if there are any previous uploads to continue.
-        upload.findPreviousUploads().then(function (previousUploads) {
-            // Found previous uploads so we select the first one.
-            if (previousUploads.length) {
-                upload.resumeFromPreviousUpload(previousUploads[0])
-            }
-
-            // Start the upload
-            upload.start()
-        })
-    }
 
 
     const action = (
@@ -151,9 +115,7 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
             </IconButton>
         </React.Fragment>
     );
-    const handleFileUploadClick = () => {
-        fileInputRef.current.click();
-    };
+
 
     const addNewBucketToList = (bucketName) => {
         if (createBucket) {
@@ -165,7 +127,7 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
 
     const handleClosePanel = (isReset = true) => {
         // submit(formData);
-        setSelectedFile(null);
+        setSelectedFiles(null);
         setUploadEnabled(false);
         setCreateBucket(false);
         if(isReset) setShowFileUpload(false);
@@ -183,59 +145,74 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
 
     const submitFile = async () => {
         // if (!songNumber) return;
+        console.log('STM FileUpload-FileUpload.jsx:148', submitFile); // todo remove dev item
         let message
         try {
+            setBucketName('demo')
             setUploadingProgress(true);
-            addNewBucketToList(bucketName);
+            // addNewBucketToList(bucketName);
             message = `${currentFileName} to ${bucketName}`
-            uploader(selectedFile)
-            if (fileNameChanged) {
-                formData.append(
-                    bucketName,
-                    selectedFile,
-                    currentFileName
-                );
-            } else {
-                formData.append(
-                    bucketName,
-                    selectedFile
-                );
-            }
+            // if (fileNameChanged) {
+            //     formData.append(
+            //         bucketName,
+            //         selectedFiles,
+            //         currentFileName
+            //     );
+            // } else {
+            //     formData.append(
+            //         bucketName,
+            //         selectedFiles
+            //     );
+            // }
+            //
+            // formData.append(
+            //     'bucketName',
+            //     bucketName
+            // );
+            //
+            // if (createBucket) {
+            //     formData.append(
+            //         'force',
+            //         true
+            //     );
+            // } else if (newSong && !preSetBucketTo) {
+            //     formData.append(
+            //         'force',
+            //         true
+            //     );
+            // }
+            //
+            // if (!isWhiteSpace(description)) {
+            //     formData.append(
+            //         'description',
+            //         description
+            //     );
+            //
+            // }
+            //
+            //
+            // if (!isWhiteSpace(videoDimension)) {
+            //     formData.append(
+            //         'videoDimension',
+            //         videoDimension
+            //     );
+            // }
 
             formData.append(
                 'bucketName',
                 bucketName
             );
-
-            if (createBucket) {
+            for(let file of selectedFiles){
+                console.log('STM FileUpload-FileUpload.jsx:203', file); // todo remove dev item
+                console.log('STM FileUpload-FileUpload.jsx:201', file.name); // todo remove dev item
                 formData.append(
-                    'force',
-                    true
-                );
-            } else if (newSong && !preSetBucketTo) {
-                formData.append(
-                    'force',
-                    true
+                  file.name,
+                  file
                 );
             }
 
-            if (!isWhiteSpace(description)) {
-                formData.append(
-                    'description',
-                    description
-                );
-
-            }
-
-
-            if (!isWhiteSpace(videoDimension)) {
-                formData.append(
-                    'videoDimension',
-                    videoDimension
-                );
-            }
-
-
+console.log('STM FileUpload-FileUpload.jsx:208', formData); // todo remove dev item
+            uploadMultipleMediaFiles(formData)
             // await submit(formData);
             // addNewBucketToList(bucketName);
             // handleSnackBarOpen(`Uploaded ${message}`)
@@ -246,28 +223,41 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
         }
 
         setUploadingProgress(false)
-        handleClosePanel(false);
+        // handleClosePanel(false);
     };
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            try {
-                setDifferentFilename(file.name.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
-            } catch (e) {
-                console.error(e);
+    const handleFileChange = (files) => {
+        console.log('STM FileUpload-FileUpload.jsx:229', files); // todo remove dev item
+        // const file = event.target.files[0];
+        if (files) {
+console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
+            // try {
+            //     setDifferentFilename(file.name.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
+            // } catch (e) {
+            //     console.error(e);
+            // }
+            const updatedArray = []
+            for(let file of files){
+                const present = selectedFiles.find(item => item.name === file.name)
+                if(!present){
+                    updatedArray.push(file)
+                }
+                console.log('STM FileUpload-FileUpload.jsx:239', file); // todo remove dev item
+                console.log('STM FileUpload-FileUpload.jsx:240', file.name); // todo remove dev item
             }
-            setSelectedFile(file);
-            setCurrentFileName(file.name);
-            if (bucketName !== '') {
-                setUploadEnabled(true);
-            }
+            setSelectedFiles((prev) => (
+              [...prev, ...updatedArray]
+            ));
+            // setCurrentFileName(file.name);
+            // if (bucketName !== '') {
+            //     setUploadEnabled(true);
+            // }
         }
     };
 
     const handleBucketNameChange = (e) => {
         const {name, value} = e.target;
         setBucketName(value);
-        setUploadEnabled(value !== '' && selectedFile);
+        setUploadEnabled(value !== '' && selectedFiles);
     };
 
     const handleFileNameChange = (e) => {
@@ -289,9 +279,9 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
     const handleDifferentFilenameCheckbox = (e) => {
         const {checked} = e.target;
         setChangeFilename(checked);
-        if (!checked && selectedFile) {
-            setCurrentFileName(selectedFile?.name);
-            setDifferentFilename(selectedFile?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
+        if (!checked && selectedFiles) {
+            setCurrentFileName(selectedFiles?.name);
+            setDifferentFilename(selectedFiles?.name?.split('.')[0].replace(/-\w$/, '').replace(/^\w/, '').toString() !== songNumber);
         }
     };
 
@@ -414,41 +404,22 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
                 <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
             </div>
             <div className="  flex flex-row  border-b-2 border-x-2  border-gray-300">
+                <div className="  flex flex-col ">
                 <div className="w-[90%] m-2 flex flex-row flex-wrap mt-3 ">
-                    <div className="flex flex-col">
-                        <Typography sx={{fontWeight: 'light', fontSize: 12}}>{`Catalog #: C${songNumber}`}</Typography>
-                        {uploadingProgress && <CircularProgress />}
-                        {!uploadingProgress && (<Button
-                          variant="outlined"
-                          onClick={submitFile}
-                          // disabled={(!uploadEnabled || differentFilename)}
-                          sx={{
-
-                              borderColor: 'gray',
-                              color: uploadEnabled ? 'white' : 'black',
-                              height: '60px',
-                              backgroundColor: uploadEnabled ? '#00b00e' : 'inherit',
-                              '&:hover': {
-                                  borderColor: '#F1EFEF',
-                                  backgroundColor: '#F5F7F8',
-                              },
-                          }}
-                        >
-                            Upload
-                        </Button>)}
-
-                        {/*  video/x-cdg,video/mp4,audio/mpeg */}
-                    </div>
                     <FileSelect
                       songNumber={songNumber}
                       uploadingProgress={uploadingProgress}
                       submitFile={submitFile}
                       uploadEnabled={uploadEnabled}
                       differentFilename={differentFilename}
-                      fileInputRef={fileInputRef}
                       handleFileChange={handleFileChange}
                     />
-
+                    <ul>
+                        <li><h3>Files Staged For Upload</h3></li>
+                        {selectedFiles.map((file, idx) => (
+                          <FileDetails file={file} key={idx} />
+                          ))}
+                    </ul>
                     {changeFilename && <div className="flex-none ml-8">
                         <div className="flex flex-col  w-48">
                             <Typography sx={{fontWeight: 'bold'}}>New Filename</Typography>
@@ -471,22 +442,7 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
                                 fontSize: '11px',
                                 marginTop: '5px'
                             }}>File name doesn't match catalog #</Typography>}
-                        <Button
-                            variant="outlined"
-                            onClick={handleFileUploadClick}
-                            sx={{
-                                borderColor: differentFilename ? '#af1a1a' : 'gray',
-                                color: differentFilename ? '#af1a1a' : 'black',
-                                marginTop: differentFilename ? 'auto' : '25px',
-                                height: '60px',
-                                '&:hover': {
-                                    borderColor: '#F1EFEF',
-                                    backgroundColor: '#F5F7F8',
-                                },
-                            }}
-                        >
-                            {currentFileName !== '' ? currentFileName : 'Select File'}
-                        </Button>
+
                         <div className="flex flex-row  w-52">
                             <Checkbox checked={changeFilename} onChange={handleDifferentFilenameCheckbox}/>
                             <span style={{paddingTop: '9px'}}>Use Different Filename</span>
@@ -562,23 +518,49 @@ console.log('STM FileUpload-FileUpload.jsx:105', file); // todo remove dev item
                         </div>
                     </div>
                 </div>
+                    <div className="flex flex-col mb-2 ml-2">
+                        <Typography sx={{fontWeight: 'light', fontSize: 12}}>{`Catalog #: C${songNumber}`}</Typography>
+                        {uploadingProgress && <CircularProgress />}
+                        {!uploadingProgress && (<Button
+                          variant="outlined"
+                          onClick={submitFile}
+                          // disabled={(!uploadEnabled || differentFilename)}
+                          sx={{
+
+                              borderColor: 'gray',
+                              color: uploadEnabled ? 'white' : 'black',
+                              height: '60px',
+                              backgroundColor: uploadEnabled ? '#00b00e' : 'inherit',
+                              '&:hover': {
+                                  borderColor: '#F1EFEF',
+                                  backgroundColor: '#F5F7F8',
+                              },
+                          }}
+                        >
+                            Upload
+                        </Button>)}
+
+                        {/*  video/x-cdg,video/mp4,audio/mpeg */}
+                    </div>
+            </div>
                 <div className="flex-none ml-20 content-start">
                     <Button
-                        onClick={handleClosePanel}
-                        sx={{
+                      onClick={handleClosePanel}
+                      sx={{
 
-                            borderColor: 'gray',
-                            color: 'black',
-                            '&:hover': {
-                                borderColor: '#F1EFEF',
-                                backgroundColor: '#F5F7F8',
-                            },
-                        }}
+                          borderColor: 'gray',
+                          color: 'black',
+                          '&:hover': {
+                              borderColor: '#F1EFEF',
+                              backgroundColor: '#F5F7F8',
+                          },
+                      }}
                     >
                         <CloseIcon></CloseIcon>
                     </Button>
                 </div>
             </div>
+
             <ShowGeneratedMediaFiles generatedMediaItems={mediaObjects}/>
             <Snackbar
                 open={openSnackBar}

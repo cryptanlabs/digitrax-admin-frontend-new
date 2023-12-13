@@ -25,7 +25,8 @@ export default function BatchMedia () {
       markCommentRemoved,
       updateMediaMetadata,
       removeGeneratedMediaEntry,
-      uploadThumbnail
+      uploadThumbnail,
+      uploadMultipleMediaFiles
     } = useContext(SongDetailsContext);
 
     const uploadMediaFileAndRefresh = async (data) => {
@@ -45,6 +46,7 @@ export default function BatchMedia () {
             hideHandler={() => {
               setShowFileUpload(false);
             }}
+            uploadMultipleMediaFiles={uploadMultipleMediaFiles}
           ></FileUpload>
         </div>
       </>
