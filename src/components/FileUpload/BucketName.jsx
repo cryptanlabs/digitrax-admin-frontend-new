@@ -53,7 +53,7 @@ export function BucketName({preSetBucketTo, createBucket, bucketName, localGener
       </div>
       <div className="flex flex-row  w-52">
         <Checkbox checked={createBucket} onChange={handleChckboxChange}/>
-        <span style={{paddingTop: '9px'}}>Create Bucket</span>
+        <span style={{paddingTop: '9px'}}>Create Folder</span>
       </div>
     </>
   );

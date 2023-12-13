@@ -68,7 +68,7 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
 
   return (
     <>
-      <div className="w-full flex flex-col">
+      <div className="w-full flex flex-col ">
         <input
           multiple
           type="file"
@@ -77,37 +77,13 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
           onChange={handleFileChangeLocal}
           accept="*"
         />
-        <section className="container" style={{backgroundColor: 'gray', height: '100px'}}
-                 onClick={handleFileUploadClick}>
+        <section className="w-full flex flex-col justify-center text-center rounded-lg h-36 bg-gray-200"  onClick={handleFileUploadClick}>
           <div {...getRootProps({className: 'dropzone'})}>
             <input {...getInputProps()} />
             <p>Drag 'n' drop some files here, or click to select files</p>
           </div>
-          {/*<aside>*/}
-          {/*  <h4>Files</h4>*/}
-          {/*  <ul>{files}</ul>*/}
-          {/*</aside>*/}
         </section>
         <div className="flex flex-row">
-        {/*  video/x-cdg,video/mp4,audio/mpeg */}
-        {/*<Button*/}
-        {/*  variant="outlined"*/}
-        {/*  onClick={handleFileUploadClick}*/}
-        {/*  sx={{*/}
-        {/*    borderColor: differentFilename ? '#af1a1a' : 'gray',*/}
-        {/*    color: differentFilename ? '#af1a1a' : 'black',*/}
-        {/*    marginTop: differentFilename ? 'auto' : '25px',*/}
-        {/*    height: '60px',*/}
-        {/*    '&:hover': {*/}
-        {/*      borderColor: '#F1EFEF',*/}
-        {/*      backgroundColor: '#F5F7F8',*/}
-        {/*    },*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  Select File*/}
-        {/*  /!*{currentFileName !== '' ? currentFileName : 'Select File'}*!/*/}
-        {/*</Button>*/}
-        {/*<Plugin />*/}
         </div>
       </div>
 

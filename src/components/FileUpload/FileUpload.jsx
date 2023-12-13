@@ -314,68 +314,68 @@ console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
 
 
 
-    if(!showFileUpload && buttonOnly){
-        return (
-          <div>
-              <div
-                className={`w-[90%] flex flex-row justify-start`}>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                        setShowFileUpload(true);
-                    }}
-                    sx={{
-                        marginRight: '15px',
-                        borderColor: '#00b00e',
-                        backgroundColor: '#00b00e',
-                        color: 'white',
-                        '&:hover': {
-                            borderColor: '#F1EFEF',
-                            backgroundColor: '#86A789',
-                        },
-                    }}
-                  >
-                      Add Media
-                  </Button>
-
-              </div>
-          </div>
-        );
-    }
-
-    if (!showFileUpload) {
-        return (
-            <Box
-                sx={{
-                    width: '100%',
-                }}
-            >
-                <div
-                    className={`mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
-                    <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
-                    <Button
-                        variant="outlined"
-                        onClick={() => {
-                            setShowFileUpload(true);
-                        }}
-                        sx={{
-                            marginRight: '15px',
-                            borderColor: '#00b00e',
-                            backgroundColor: '#00b00e',
-                            color: 'white',
-                            '&:hover': {
-                                borderColor: '#F1EFEF',
-                                backgroundColor: '#86A789',
-                            },
-                        }}
-                    >
-                        Add Media
-                    </Button>
-                </div>
-                <ShowGeneratedMediaFiles generatedMediaItems={mediaObjects}/>
-            </Box>
-        );
-    }
+    // if(!showFileUpload && buttonOnly){
+    //     return (
+    //       <div>
+    //           <div
+    //             className={`w-[90%] flex flex-row justify-start`}>
+    //               <Button
+    //                 variant="outlined"
+    //                 onClick={() => {
+    //                     setShowFileUpload(true);
+    //                 }}
+    //                 sx={{
+    //                     marginRight: '15px',
+    //                     borderColor: '#00b00e',
+    //                     backgroundColor: '#00b00e',
+    //                     color: 'white',
+    //                     '&:hover': {
+    //                         borderColor: '#F1EFEF',
+    //                         backgroundColor: '#86A789',
+    //                     },
+    //                 }}
+    //               >
+    //                   Add Media
+    //               </Button>
+    //
+    //           </div>
+    //       </div>
+    //     );
+    // }
+    //
+    // if (!showFileUpload) {
+    //     return (
+    //         <Box
+    //             sx={{
+    //                 width: '100%',
+    //             }}
+    //         >
+    //             <div
+    //                 className={`mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
+    //                 <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
+    //                 <Button
+    //                     variant="outlined"
+    //                     onClick={() => {
+    //                         setShowFileUpload(true);
+    //                     }}
+    //                     sx={{
+    //                         marginRight: '15px',
+    //                         borderColor: '#00b00e',
+    //                         backgroundColor: '#00b00e',
+    //                         color: 'white',
+    //                         '&:hover': {
+    //                             borderColor: '#F1EFEF',
+    //                             backgroundColor: '#86A789',
+    //                         },
+    //                     }}
+    //                 >
+    //                     Add Media
+    //                 </Button>
+    //             </div>
+    //             <ShowGeneratedMediaFiles generatedMediaItems={mediaObjects}/>
+    //         </Box>
+    //     );
+    // }
 
 
 
@@ -403,9 +403,8 @@ console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
                 className=" mt-10  border-2 justify-center rounded-t-lg border-gray-300 p-5">
                 <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
             </div>
-            <div className="  flex flex-row  border-b-2 border-x-2  border-gray-300">
-                <div className="  flex flex-col ">
-                <div className="w-[90%] m-2 flex flex-row flex-wrap mt-3 ">
+            <div className="w-full  flex flex-row  border-b-2 border-x-2  border-gray-300">
+                <div className="w-full  flex flex-col ">
                     <FileSelect
                       songNumber={songNumber}
                       uploadingProgress={uploadingProgress}
@@ -414,6 +413,8 @@ console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
                       differentFilename={differentFilename}
                       handleFileChange={handleFileChange}
                     />
+                <div className="w-[90%] m-2 flex flex-row flex-wrap mt-3 ">
+
                     <ul>
                         <li><h3>Files Staged For Upload</h3></li>
                         {selectedFiles.map((file, idx) => (
@@ -433,21 +434,7 @@ console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
                             />
                         </div>
                     </div>}
-                    <div className={`flex-none mt-2 ${changeFilename ? '' : 'ml-56'}`}>
-                        {differentFilename && <Typography
-                            sx={{
-                                color: '#af1a1a',
-                                width: '180px',
-                                overflowWrap: 'break-word',
-                                fontSize: '11px',
-                                marginTop: '5px'
-                            }}>File name doesn't match catalog #</Typography>}
 
-                        <div className="flex flex-row  w-52">
-                            <Checkbox checked={changeFilename} onChange={handleDifferentFilenameCheckbox}/>
-                            <span style={{paddingTop: '9px'}}>Use Different Filename</span>
-                        </div>
-                    </div>
                     <div className="flex-none ml-8">
                         <div className=" flex flex-row flex-wrap">
                             <div className="flex-col">
@@ -460,61 +447,20 @@ console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
                                   handleBucketNameChange={handleBucketNameChange}
                                 />
                             </div>
-                            <div className="flex-col ml-8">
-                                {/*{bucketAddOptions.map((item, idx) => (*/}
-                                {/*  <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}
-                                {/*      <Checkbox name={item} onChange={handleBucketSelectChange}/>*/}
-                                {/*      <span style={{paddingTop: '9px'}}>{item}</span>*/}
-                                {/*  </div>*/}
-                                {/*))}*/}
-                                <Select
-                                  multiple
-                                  sx={{marginTop: 1}}
-                                  value={bucketToAdd}
-                                  onChange={handleBucketSelectChange}
-                                >
-                                    {bucketAddOptions.map((value, index) => (
-                                      <MenuItem key={index} value={value}>{value}</MenuItem>
-                                    ))}
-                                </Select>
-
-
-                            </div>
                             {/*<div className="flex-col ml-8">*/}
-                            {/*    {bucketAddOptions.map((item, idx) => (*/}
-                            {/*      <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}
-                            {/*          <Checkbox name={item} onChange={handleBucketSelectChange}/>*/}
-                            {/*          <span style={{paddingTop: '9px'}}>{item}</span>*/}
-                            {/*      </div>*/}
-                            {/*    ))}*/}
-                            {/*</div>*/}
-                        </div>
-                    </div>
-                    <div className=" flex flex-col flex-wrap">
-                        <div className="flex ml-8">
-                            <div className="flex flex-col mt-2 w-52">
-                                <Typography sx={{fontWeight: 'bold'}}>Resolution</Typography>
-                                <TextField
+                            {/*    <Select*/}
+                            {/*      multiple*/}
+                            {/*      sx={{marginTop: 1}}*/}
+                            {/*      value={bucketToAdd}*/}
+                            {/*      onChange={handleBucketSelectChange}*/}
+                            {/*    >*/}
+                            {/*        {bucketAddOptions.map((value, index) => (*/}
+                            {/*          <MenuItem key={index} value={value}>{value}</MenuItem>*/}
+                            {/*        ))}*/}
+                            {/*    </Select>*/}
 
-                                    hiddenLabel
-                                    name="videoDimension"
-                                    value={videoDimension}
-                                    onChange={e => setVideoDimension(e.target.value)}
-                                    variant="outlined"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex ml-8">
-                            <div className="flex flex-col mt-2 w-52">
-                                <Typography sx={{fontWeight: 'bold'}}>Description</Typography>
-                                <TextField
-                                    hiddenLabel
-                                    name="description"
-                                    value={description}
-                                    onChange={e => setDescription(e.target.value)}
-                                    variant="outlined"
-                                />
-                            </div>
+
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>
