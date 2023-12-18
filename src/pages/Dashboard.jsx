@@ -56,13 +56,13 @@ const Dashboard = () => {
 
     const AddSelected = () => {
       const newlySelected = rowSelectionModel.reduce((acc, id) => {
-        if (selectedIds.includes(id)) {
-          return acc;
-        }
-        setSelectedIds((prev) => ([
-          ...prev,
-          id
-        ]));
+        // if (selectedIds.includes(id)) {
+        //   return acc;
+        // }
+        // setSelectedIds((prev) => ([
+        //   ...prev,
+        //   id
+        // ]));
         const result = filteredResults.find(item => item.id === id);
         if (result) {
           acc.push(result);
@@ -71,7 +71,7 @@ const Dashboard = () => {
       }, []);
 
       setAllSelected((prev) => ([
-        ...prev,
+        // ...prev,
         ...newlySelected
       ]));
     };

@@ -175,6 +175,18 @@ const DataTableContext = ({children}) => {
           }
         };
       }
+      if(items.name === 'GeneratedMedia'){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          // type: 'dateTime',
+          width: ColumnWidthMap[items.name] ?? 150,
+          valueGetter: (params) => {
+            const count = params?.row?.GeneratedMedia?.length
+            return `${count} Media Items`
+          }
+        };
+      }
       if(ColumnHeadersMap[items.name]){
         return {
           field: items.name,
