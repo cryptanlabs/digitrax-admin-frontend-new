@@ -13,10 +13,13 @@ const statusFilterOptionsText = {...statusOptionsText, none: 'Clear'}
 const Dashboard = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
-    const {currentDataSet, columnDetails, addToRecentSongs, getData} = useContext(DataTableData);
+    const {currentDataSet, columnDetails, addToRecentSongs, getData, allSelected, setAllSelected} = useContext(DataTableData);
     const [filteredResults, setFilteredResults] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [statusToFilter, setStatusToFilter] = useState('');
+
+    const [rowSelectionModel, setRowSelectionModel] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const navigate = useNavigate();
 
@@ -51,6 +54,33 @@ const Dashboard = () => {
       setFilteredResults(sortedArray);
     };
 
+    const AddSelected = () => {
+      const newlySelected = rowSelectionModel.reduce((acc, id) => {
+        if (selectedIds.includes(id)) {
+          return acc;
+        }
+        setSelectedIds((prev) => ([
+          ...prev,
+          id
+        ]));
+        const result = filteredResults.find(item => item.id === id);
+        if (result) {
+          acc.push(result);
+        }
+        return acc;
+      }, []);
+
+      setAllSelected((prev) => ([
+        ...prev,
+        ...newlySelected
+      ]));
+    };
+
+    useEffect(() => {
+      AddSelected();
+      console.log('STM pages-Dashboard.jsx:81', allSelected); // todo remove dev item
+    }, [rowSelectionModel]);
+
     return (
       <div>
         <div className="w-full mt-4 flex items-center justify-between">
@@ -78,6 +108,21 @@ const Dashboard = () => {
         <div className="w-full h-20 mt-5 flex items-center justify-between ">
           <h1 className="text-xl ml-8 font-medium">Catalog</h1>
           <div className="w-1/5 mr-8 flex items-center justify-center">
+            <Button
+              onClick={() => {getData()}}
+              variant="outlined"
+              startIcon={<RefreshIcon/>}
+              sx={{
+                borderColor: 'gray',
+                color: 'black',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#F5F7F8',
+                },
+              }}
+            >
+              Refresh
+            </Button>
             {showSearch && (
               <SearchBar
                 currentDataSet={currentDataSet}
@@ -107,6 +152,9 @@ const Dashboard = () => {
             rows={filteredResults}
             onRowClick={handleRowClick}
             loading={isLoading}
+            rowSelectionModel={rowSelectionModel}
+            setRowSelectionModel={setRowSelectionModel}
+            checkboxSelection
           />
         </div>
 

@@ -285,7 +285,8 @@ const SongDetailsProvider = ({children}) => {
       updateMediaMetadata,
       removeGeneratedMediaEntry,
       uploadThumbnail,
-      uploadMultipleMediaFiles
+      uploadMultipleMediaFiles,
+      handleNotifyOfError
     }}>
       {children}
       <Snackbar

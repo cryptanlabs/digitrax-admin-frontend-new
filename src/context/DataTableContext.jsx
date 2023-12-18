@@ -57,6 +57,7 @@ const DataTableContext = ({children}) => {
   const [crossClearDataSet, setCrossClearDataSet] = useState([]);
   const [nextTwentyCatalogNumbers, setNextTwentyCatalogNumbers] = useState([]);
 
+  const [allSelected, setAllSelected] = useState([]);
   const getData = async () => {
 
     if(fetchingData) return
@@ -277,7 +278,10 @@ const DataTableContext = ({children}) => {
       columnDetails,
       generatedSets,
       nextTwentyCatalogNumbers,
-      getSongNumbersWithoutRecords
+      getSongNumbersWithoutRecords,
+      allSelected,
+      setAllSelected
+
     }}>
       {children}
     </DataTableData.Provider>
