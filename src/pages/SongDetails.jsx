@@ -24,7 +24,11 @@ import {
 import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {Thumbnail} from '../components/Thumbnail.jsx';
+import JSZip from 'jszip'
+import {base_url} from '../helpers/requests.js';
+import { saveAs } from 'file-saver';
 
+console.log('STM pages-SongDetails.jsx:29', JSZip); // todo remove dev item
 const publishingHeaders = [
   'ISRC',
   'HFA Song Code',
@@ -101,7 +105,8 @@ const SongDetails = () => {
     markCommentRemoved,
     updateMediaMetadata,
     removeGeneratedMediaEntry,
-    uploadThumbnail
+    uploadThumbnail,
+    handleNotifyOfError
   } = useContext(SongDetailsContext);
   const [comments, setComments] = useState([]);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -124,6 +129,8 @@ const SongDetails = () => {
   const [disableLookupRequestButton, setDisableLookupRequestButton] = useState(true);
   const [noSongFoundForCatalogNumber, setNoSongFoundForCatalogNumber] = useState(false);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [loadingMedia, setLoadingMedia] = useState(true);
+  const [buildingExport, setBuildingExport] = useState(false);
 
   const reset = () => {
     setDistributionInformation(() => ({
@@ -221,6 +228,13 @@ const SongDetails = () => {
     getComments();
 
   }, [setBasicInformation]);
+
+  // useEffect(() => {
+  //   if(generatedSets.length > 0){
+  //     setLoadingMedia(false)
+  //   }
+  //   console.log('STM pages-SongDetails.jsx:232', generatedSets.length); // todo remove dev item
+  // }, [generatedSets]);
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -355,11 +369,53 @@ const SongDetails = () => {
     });
   };
 
+  const handleExportAllMedia = async () => {
+    setBuildingExport(true)
+    try {
+      const zip = new JSZip();
+      console.log('STM pages-SongDetails.jsx:359', JSZip); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:359', generatedMedia); // todo remove dev item
+      const promises = [];
+      for (let entry of generatedMedia) {
+        console.log('STM pages-SongDetails.jsx:373', entry); // todo remove dev item
+        const tempPromise = [Promise.resolve(entry), fetch(`${base_url}/fileGetInternal/${entry.requestString}`)];
+        promises.push(Promise.all(tempPromise));
+      }
+
+      const results = await Promise.all(promises);
+
+      console.log('STM pages-SongDetails.jsx:381', results); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:382', results[0]); // todo remove dev item
+
+      for (let result of results) {
+        if(result[1]?.ok){
+
+          zip.file(result[0].location, result[1].arrayBuffer());
+        } else {
+          handleNotifyOfError({message: `Error requesting media file ${result[0].location}`})
+        }
+      }
+
+      zip.generateAsync({type: 'blob'})
+        .then(function (blob) {
+          saveAs(blob, 'hello.zip');
+          setBuildingExport(false);
+        });
+    } catch (e) {
+      setBuildingExport(false)
+      handleNotifyOfError(e)
+    }
+    // fetch(`${base_url}/fileGetInternal/${mediaItem.requestString}`)
+  }
   // const handleUploadThumbnail = async (data) => {
   //
   // }
   // File Upload Handlers
 
+  const refreshMedia = async () => {
+    const songData = await getDetailsForSong(basicInformation.SongNumber);
+    setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia)
+  }
   const uploadMediaMetadataAndRefresh = async (data) => {
     await updateMediaMetadata(data);
     const songData = await getDetailsForSong(basicInformation.SongNumber);
@@ -605,16 +661,60 @@ const SongDetails = () => {
         </div>
       </div>
 
-      <div className="w-full ">
-        <FileAdd
-          buttonOnly
-          songNumber={basicInformation.SongNumber}
-          submit={uploadMediaFileAndRefresh}
-          buckets={generatedSets}
-          hideHandler={() => {
-            setShowFileUpload(false);
-          }}
-        ></FileAdd>
+      <div className="w-full flex flex-row justify-around">
+
+        <div className="w-1/3">
+          <FileAdd
+            buttonOnly
+            songNumber={basicInformation.SongNumber}
+            submit={uploadMediaFileAndRefresh}
+            buckets={generatedSets}
+            hideHandler={() => {
+              setShowFileUpload(false);
+            }}
+          ></FileAdd>
+        </div>
+        <div className="w-1/3">
+          {loadingMedia && <CircularProgress />}
+        </div>
+        <div className="w-1/3">
+          <Button
+            variant="outlined"
+            onClick={handleExportAllMedia}
+            sx={{
+              marginRight: '15px',
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
+              },
+            }}
+          >
+            Export Media
+          </Button>
+        </div>
+        <div className="w-1/3">
+          <Button
+            variant="outlined"
+            onClick={() => {
+              refreshMedia()
+            }}
+            sx={{
+              marginRight: '15px',
+              borderColor: '#00b00e',
+              backgroundColor: '#00b00e',
+              color: 'white',
+              '&:hover': {
+                borderColor: '#F1EFEF',
+                backgroundColor: '#86A789',
+              },
+            }}
+          >
+            Refrech Media
+          </Button>
+        </div>
       </div>
 
       <div className="w-full  mb-20">
@@ -625,6 +725,7 @@ const SongDetails = () => {
         generatedSets={generatedSets}
         generatedMedia={generatedMedia}
         handleRequestDeleteMediaEntry={deleteMediaFileAndRefresh}
+        setIsLoading={setLoadingMedia}
       />
       </div>
     </div>

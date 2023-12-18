@@ -128,6 +128,27 @@ const SongDetailsProvider = ({children}) => {
     return result.data;
   };
 
+  const uploadMultipleMediaFiles = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:132', data); // todo remove dev item
+    // const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'post',
+      url: '/uploadBatch',
+      timeout: 10000,
+      data: data
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+    // getData();
+    // getExistingBuckets()
+    return result.data;
+  };
+
+
+  //
+
   const uploadThumbnail = async (data) => {
     const timeToUpload = Math.ceil(data.get('files').size/200)
     const result = await axiosBaseWithKey(adminDashToken)({
@@ -263,7 +284,9 @@ const SongDetailsProvider = ({children}) => {
       markCommentRemoved,
       updateMediaMetadata,
       removeGeneratedMediaEntry,
-      uploadThumbnail
+      uploadThumbnail,
+      uploadMultipleMediaFiles,
+      handleNotifyOfError
     }}>
       {children}
       <Snackbar

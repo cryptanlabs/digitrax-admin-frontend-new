@@ -2,8 +2,8 @@ import axios from 'axios'
 
 
 
-const base_url =              'https://dev.digitrax.live' //  'http://localhost:3000' //
-const returnLimit =     -1 // 1000; //
+const base_url =          'https://dev.digitrax.live' //     'http://172.20.101.164:3000' //   'http://localhost:3000' //
+const returnLimit =      -1 //1000; //
 const axiosBase =  axios.create({
   baseURL: base_url,
   timeout: 6000

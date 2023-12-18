@@ -57,6 +57,7 @@ const DataTableContext = ({children}) => {
   const [crossClearDataSet, setCrossClearDataSet] = useState([]);
   const [nextTwentyCatalogNumbers, setNextTwentyCatalogNumbers] = useState([]);
 
+  const [allSelected, setAllSelected] = useState([]);
   const getData = async () => {
 
     if(fetchingData) return
@@ -174,6 +175,18 @@ const DataTableContext = ({children}) => {
           }
         };
       }
+      if(items.name === 'GeneratedMedia'){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          // type: 'dateTime',
+          width: ColumnWidthMap[items.name] ?? 150,
+          valueGetter: (params) => {
+            const count = params?.row?.GeneratedMedia?.length
+            return `${count} Media Items`
+          }
+        };
+      }
       if(ColumnHeadersMap[items.name]){
         return {
           field: items.name,
@@ -277,7 +290,10 @@ const DataTableContext = ({children}) => {
       columnDetails,
       generatedSets,
       nextTwentyCatalogNumbers,
-      getSongNumbersWithoutRecords
+      getSongNumbersWithoutRecords,
+      allSelected,
+      setAllSelected
+
     }}>
       {children}
     </DataTableData.Provider>
