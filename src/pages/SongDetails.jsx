@@ -25,7 +25,7 @@ import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {Thumbnail} from '../components/Thumbnail.jsx';
 import JSZip from 'jszip'
-import {base_url} from '../helpers/requests.js';
+import {axiosBase, base_url} from '../helpers/requests.js';
 import { saveAs } from 'file-saver';
 
 console.log('STM pages-SongDetails.jsx:29', JSZip); // todo remove dev item
@@ -379,6 +379,8 @@ const SongDetails = () => {
       for (let entry of generatedMedia) {
         console.log('STM pages-SongDetails.jsx:373', entry); // todo remove dev item
         const tempPromise = [Promise.resolve(entry), fetch(`${base_url}/fileGetInternal/${entry.requestString}`)];
+
+
         promises.push(Promise.all(tempPromise));
       }
 
@@ -388,7 +390,8 @@ const SongDetails = () => {
       console.log('STM pages-SongDetails.jsx:382', results[0]); // todo remove dev item
 
       for (let result of results) {
-        if(result[1]?.ok){
+        console.log('STM pages-SongDetails.jsx:391', result, result[1]?.ok); // todo remove dev item
+        if(result[1]?.status === 200){
 
           zip.file(result[0].location, result[1].arrayBuffer());
         } else {
@@ -398,10 +401,11 @@ const SongDetails = () => {
 
       zip.generateAsync({type: 'blob'})
         .then(function (blob) {
-          saveAs(blob, 'hello.zip');
+          saveAs(blob, `${basicInformation.SongNumber}_All_Media.zip`);
           setBuildingExport(false);
         });
     } catch (e) {
+      console.error(e)
       setBuildingExport(false)
       handleNotifyOfError(e)
     }

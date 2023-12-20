@@ -33,6 +33,7 @@ const columnVisibilityModel = {
   }, {}),
 };
 const StatusDashboard = () => {
+  try {
   const {adminDashToken} = useContext(UserContext);
   const {currentDataSet, columnDetails, addToRecentSongs} = useContext(DataTableData);
   const {
@@ -251,7 +252,7 @@ const StatusDashboard = () => {
 
   const SongStatusEdit = () => {
     return (
-      <div className="w-full flex flex-col mt-10  mb-20">
+      <div className="w-[90%] flex flex-col mt-10  mb-20 ml-10 mr-20">
         <StatusDisplayEdit
           statusData={rowData}
           handleChange={handleChange}
@@ -263,15 +264,15 @@ const StatusDashboard = () => {
             handleRemoveComment={handleRemoveComment}
           />
         </div>
-        <div className="w-full flex flex-col ml-20">
-          <DisplayMediaListing
-            updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
-            uploadMediaFileAndRefresh={uploadMediaFileAndRefresh}
-            SongNumber={rowData.SongNumber}
-            generatedSets={generatedSets}
-            generatedMedia={generatedMedia}
-          />
-        </div>
+        {/*<div className="w-full flex flex-col ml-20">*/}
+        {/*  <DisplayMediaListing*/}
+        {/*    updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}*/}
+        {/*    uploadMediaFileAndRefresh={uploadMediaFileAndRefresh}*/}
+        {/*    SongNumber={rowData.SongNumber}*/}
+        {/*    generatedSets={generatedSets}*/}
+        {/*    generatedMedia={generatedMedia}*/}
+        {/*  />*/}
+        {/*</div>*/}
       </div>
     );
   };
@@ -455,6 +456,13 @@ const StatusDashboard = () => {
       {(showStatusDetails && !createNewReleaseSet) && <SongStatusEdit/>}
     </div>
   );
+
+  } catch (e) {
+    console.error(e);
+    return (
+      <h1 style={{color: 'red', fontWeight: 'bold'}}>Error in 'StatusDashboard' Page Component</h1>
+    );
+  }
 };
 
 export default StatusDashboard;

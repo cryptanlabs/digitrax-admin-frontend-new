@@ -13,7 +13,7 @@ const statusFilterOptionsText = {...statusOptionsText, none: 'Clear'}
 const Dashboard = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
-    const {currentDataSet, columnDetails, addToRecentSongs, getData, allSelected, setAllSelected} = useContext(DataTableData);
+    const {currentDataSet, columnDetails, addToRecentSongs, getData, allSelected, setAllSelected, setupData} = useContext(DataTableData);
     const [filteredResults, setFilteredResults] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [statusToFilter, setStatusToFilter] = useState('');
@@ -32,6 +32,7 @@ const Dashboard = () => {
 
     useEffect(() => {
       console.log('Columns', columns);
+      getData()
     }, []);
 
     const handleRowClick = (params) => {

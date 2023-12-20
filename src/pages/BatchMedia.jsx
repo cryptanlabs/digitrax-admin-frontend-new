@@ -6,6 +6,7 @@ import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import WithFilters from '../components/WithFilter.jsx';
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
 import {FileUpload} from '../components/FileUpload/FileUpload.jsx';
+import {DataTableData} from '../context/DataTableContext.jsx';
 
 export default function BatchMedia () {
   try {
@@ -28,6 +29,13 @@ export default function BatchMedia () {
       uploadThumbnail,
       uploadMultipleMediaFiles
     } = useContext(SongDetailsContext);
+    const {bucketList, getBuckets} = useContext(DataTableData);
+    const [listedBuckets, setListedBuckets] = useState({bucket: [], folder: []});
+
+    useEffect(() => {
+      getBuckets()
+        .then(res => setListedBuckets(res))
+    }, []);
 
     const uploadMediaFileAndRefresh = async (data) => {
       await uploadMediaFile(data);
@@ -42,7 +50,7 @@ export default function BatchMedia () {
           <FileUpload
             buttonOnly
             submit={uploadMediaFileAndRefresh}
-            buckets={generatedSets}
+            buckets={listedBuckets.folder}
             hideHandler={() => {
               setShowFileUpload(false);
             }}

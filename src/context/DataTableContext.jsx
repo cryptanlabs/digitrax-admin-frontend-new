@@ -56,6 +56,7 @@ const DataTableContext = ({children}) => {
   const [recentSongs, setRecentSongs] = useState([]);
   const [crossClearDataSet, setCrossClearDataSet] = useState([]);
   const [nextTwentyCatalogNumbers, setNextTwentyCatalogNumbers] = useState([]);
+  const [bucketList, setBucketList] = useState({bucket: [], folder: []});
 
   const [allSelected, setAllSelected] = useState([]);
   const getData = async () => {
@@ -63,7 +64,9 @@ const DataTableContext = ({children}) => {
     if(fetchingData) return
     setFetchingData(true)
     try {
-      const res = await axios.get(`${base_url}/catalogInternal?orderBy=SongReleaseYear&limit=${returnLimit}&orderDir=desc`);
+      const baseOrdering = 'SongNumber' // 'SongReleaseYear'
+      const baseOrderDirection = 'asc' //'desc'
+      const res = await axios.get(`${base_url}/catalogInternal?orderBy=${baseOrdering}&limit=${returnLimit}&orderDir=${baseOrderDirection}`);
       const lowercaseId = res?.data?.data?.map(item => {
 
         return {id: item.Id, ...item};
@@ -93,6 +96,25 @@ const DataTableContext = ({children}) => {
         setGeneratedSets(buckets);
       });
   }
+
+  const getBuckets = () => {
+    return axiosBase({
+      method: 'get',
+      url: '/getBuckets',
+    })
+      .then(response => {
+        console.log('STM context-DataTableContext.jsx:104', response.data); // todo remove dev item
+        const buckets = response.data?.reduce((acc, cur) => {
+          console.log('STM context-DataTableContext.jsx:106', cur.bucketType); // todo remove dev item
+          acc[cur.bucketType].push(cur.bucketName)
+          return acc
+        }, {bucket: [], folder: []});
+        setBucketList(buckets);
+        return buckets
+      });
+  }
+
+  // getBuckets
 
   const getCrossData = async () => {
 
@@ -183,7 +205,7 @@ const DataTableContext = ({children}) => {
           width: ColumnWidthMap[items.name] ?? 150,
           valueGetter: (params) => {
             const count = params?.row?.GeneratedMedia?.length
-            return `${count} Media Items`
+            return `${count || 0} Media Items`
           }
         };
       }
@@ -234,16 +256,19 @@ const DataTableContext = ({children}) => {
     }
   }
 
+  const setupData = async () => {
+    await getColumnNames()
+      .then(getData)
+      .then(getCrossData)
+      .then(getExistingBuckets)
+      .then(getSongNumbersWithoutRecords)
+  }
+
   useEffect(() => {
-    const setupData = async () => {
-     await getColumnNames()
-          .then(getData)
-          .then(getCrossData)
-          .then(getExistingBuckets)
-          .then(getSongNumbersWithoutRecords)
-    }
+    getColumnNames()
+      .then(getData)
     getPriorRecentSongs()
-    setupData()
+    // setupData()
 
     // getExistingBuckets()
     // getSongNumbersWithoutRecords()
@@ -292,8 +317,10 @@ const DataTableContext = ({children}) => {
       nextTwentyCatalogNumbers,
       getSongNumbersWithoutRecords,
       allSelected,
-      setAllSelected
-
+      setAllSelected,
+      bucketList,
+      getBuckets,
+      setupData
     }}>
       {children}
     </DataTableData.Provider>

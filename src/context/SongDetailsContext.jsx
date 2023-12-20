@@ -22,10 +22,18 @@ const SongDetailsProvider = ({children}) => {
       if(error?.response?.data){
         message = error?.response?.data
       }
-    } else {
+    } else if(error?.message) {
       message = error.message
+    } else if(error?.error){
+      message = error.error
     }
-    setSnackBarMessage(message)
+    console.log('STM context-SongDetailsContext.jsx:28', message); // todo remove dev item
+    if(typeof message === 'string'){
+      setSnackBarMessage(message)
+    } else {
+      setSnackBarMessage('A request or server error occurred')
+    }
+
     setOpenSnackBar(true)
   }
 
@@ -146,7 +154,23 @@ const SongDetailsProvider = ({children}) => {
     return result.data;
   };
 
-
+  const copyMediaFilesToBucket = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:132', data); // todo remove dev item
+    // const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'post',
+      url: '/copyToBucket',
+      timeout: 10000,
+      data: data
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+    // getData();
+    // getExistingBuckets()
+    return result.data;
+  };
   //
 
   const uploadThumbnail = async (data) => {
@@ -286,7 +310,8 @@ const SongDetailsProvider = ({children}) => {
       removeGeneratedMediaEntry,
       uploadThumbnail,
       uploadMultipleMediaFiles,
-      handleNotifyOfError
+      handleNotifyOfError,
+      copyMediaFilesToBucket
     }}>
       {children}
       <Snackbar

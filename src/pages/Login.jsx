@@ -1,4 +1,4 @@
-import {Button, TextField, Typography} from '@mui/material';
+import {Button, TextField, Typography, InputAdornment, IconButton, Input,OutlinedInput } from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
 import {useContext, useEffect, useState} from 'react';
@@ -6,6 +6,8 @@ import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import {isWhiteSpace} from '../helpers/utils.js';
 import {UserContext} from '../context/UserContext.jsx';
 import {useNavigate} from 'react-router-dom';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function Login () {
   try {
@@ -14,6 +16,14 @@ export default function Login () {
     const {loginUser} = useContext(UserContext);
     const navigate = useNavigate();
 
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
 
     const handleLoginUser = async () => {
       if (isWhiteSpace(userName) || isWhiteSpace(password)) {
@@ -53,8 +63,9 @@ console.log('STM pages-Login.jsx:22', userName, password); // todo remove dev it
             </div>
             <div className="flex flex-col mt-5 w-[40%]">
               <Typography sx={{fontWeight: 'bold'}}>Password</Typography>
-              <TextField
+              <OutlinedInput
                 sx={{marginTop: 1}}
+                type={showPassword ? 'text' : 'password'}
                 hiddenLabel
                 name="Name"
                 value={password}
@@ -62,6 +73,16 @@ console.log('STM pages-Login.jsx:22', userName, password); // todo remove dev it
                   setPassword(e.target.value);
                 }}
                 variant="outlined"
+                endAdornment={
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    // edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                }
               />
             </div>
             <div className="w-[90%] flex mt-10 items-center justify-center">

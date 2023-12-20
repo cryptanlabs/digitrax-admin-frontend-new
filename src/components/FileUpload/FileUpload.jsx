@@ -89,6 +89,10 @@ export function FileUpload({
         }
     }, []);
 
+    useEffect(() => {
+        setLocalGeneratedSets(buckets);
+    }, [buckets]);
+
     const handleSnackBarOpen = (message) => {
         setSnackBarMessage(message)
         setOpenSnackBar(true)
@@ -198,9 +202,14 @@ export function FileUpload({
             //     );
             // }
 
+            // todo NEED TO DENOTE AS A FOLDER BUCKET
             formData.append(
                 'bucketName',
                 bucketName
+            );
+            formData.append(
+              'bucketType',
+              'folder'
             );
             for(let file of selectedFiles){
                 console.log('STM FileUpload-FileUpload.jsx:203', file); // todo remove dev item
