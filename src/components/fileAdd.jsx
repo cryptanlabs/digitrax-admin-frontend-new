@@ -26,6 +26,7 @@ export function FileAdd({
                             header,
                             songNumber,
                             preSetBucketTo,
+                            isFolderBucket,
                             buckets = [],
                             submit = () => {
                             },
@@ -70,6 +71,7 @@ export function FileAdd({
     const [bucketToAdd, setBucketsToAdd] = useState([])
 
 
+    console.log('STM components-fileAdd.jsx:74', isFolderBucket); // todo remove dev item
     // Form Data For Upload
     const formData = new FormData();
 
@@ -633,7 +635,12 @@ export function FileAdd({
             >
                 <div
                     className={`mt-10 flex flex-row border-2 justify-between ${mediaObjects?.length > 0 ? 'rounded-t-lg' : 'rounded-lg'}  border-gray-300 p-5`}>
-                    <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
+                    <div className="flex flex-row justify-start">
+                        <Typography sx={{fontWeight: 'bold', marginRight: '10px'}}>{`${isFolderBucket ? 'Folder:' : 'Bucket:'}`}</Typography>
+                        <Typography sx={{fontWeight: 'bold'}}>{header}</Typography>
+                    </div>
+
+
                     <Button
                         variant="outlined"
                         onClick={() => {

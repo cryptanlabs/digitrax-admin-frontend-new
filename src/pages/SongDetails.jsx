@@ -132,6 +132,29 @@ const SongDetails = () => {
   const [loadingMedia, setLoadingMedia] = useState(true);
   const [buildingExport, setBuildingExport] = useState(false);
 
+  const [generatedGroups, setGeneratedGroups] = useState({});
+  const [generatedCount, setGeneratedCount] = useState(0);
+
+  const regenerateMediaMap = (generatedMedia) => {
+    console.log('STM pages-SongDetails.jsx:139', generatedMedia); // todo remove dev item
+    // setIsLoading(true)
+    const bucketGroups = generatedMedia.reduce((acc, cur) => {
+      acc[cur['bucket']] = [];
+      return acc;
+    }, {});
+
+    const generatedGroupsLocal = generatedMedia.reduce((acc, cur) => {
+      if (bucketGroups[cur?.bucket]) {
+        bucketGroups[cur?.bucket].push(cur);
+        setGeneratedCount(1 + generatedCount);
+      }
+      return bucketGroups;
+    }, bucketGroups);
+    console.log('STM pages-SongDetails.jsx:152', generatedGroupsLocal); // todo remove dev item
+    setGeneratedGroups(generatedGroupsLocal);
+    setLoadingMedia(false)
+  };
+
   const reset = () => {
     setDistributionInformation(() => ({
       statusInformationDefault
@@ -153,6 +176,7 @@ const SongDetails = () => {
   }
   const setup = async (rowData) => {
     setGeneratedMedia(rowData.GeneratedMedia);
+    regenerateMediaMap(rowData.GeneratedMedia)
 
     setDistributionInformation(() => ({
       ...getDistributionInfoFromSongData(rowData)
@@ -730,6 +754,7 @@ const SongDetails = () => {
         generatedMedia={generatedMedia}
         handleRequestDeleteMediaEntry={deleteMediaFileAndRefresh}
         setIsLoading={setLoadingMedia}
+        generatedGroupsExternal={generatedGroups}
       />
       </div>
     </div>

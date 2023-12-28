@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useMemo } from 'react';
 import {FileAdd} from './fileAdd.jsx';
 
 
@@ -7,23 +7,38 @@ export default function DisplayMediaListing ({
                                                songNumber,
                                                generatedSets = [],
                                                generatedMedia = [],
+                                               // generatedGroupsExternal = {},
                                                updateGeneratedMediaMetadata = () => {
                                                },
                                                submit = () => {
                                                },
                                                handleRequestDeleteMediaEntry = () => {
                                                },
-                                               setIsLoading = () => {}
-
+                                               setIsLoading = () => {},
+                                               isLoading = true
                                              }) {
   try {
     const [generatedGroups, setGeneratedGroups] = useState({});
+    const [displayBuckets, setDisplayBuckets] = useState([]);
     const [generatedCount, setGeneratedCount] = useState(0);
+    const [bucketTypeMap, setBucketTypeMap] = useState({});
     const [willRegenerate, setWillRegenerate] = useState(false);
 
-    const regenerateMediaMap = (generatedMedia) => {
-      // setIsLoading(true)
-      const bucketGroups = generatedSets.reduce((acc, cur) => {
+    const regenerateMediaMap = (generatedMedia, generatedSets) => {
+
+      const assignedBuckets = generatedMedia.reduce((acc, cur) => {
+        acc.buckets[cur['bucket']] = [];
+        acc.bucketType[cur['bucket']] = cur['isFolderBucket'];
+        return acc;
+      }, {buckets: {}, bucketType: {}});
+
+      setBucketTypeMap(assignedBuckets.bucketType)
+      console.log('STM components-DisplayMediaListing.jsx:36', assignedBuckets.bucketType); // todo remove dev item
+      const localDisplayBuckets = [...generatedSets, ...Object.keys(assignedBuckets.buckets)]
+
+      setDisplayBuckets(localDisplayBuckets)
+
+      const bucketGroups = localDisplayBuckets.reduce((acc, cur) => {
         acc[cur] = [];
         return acc;
       }, {});
@@ -36,59 +51,24 @@ export default function DisplayMediaListing ({
         return bucketGroups;
       }, bucketGroups);
       setGeneratedGroups(generatedGroupsLocal);
-      // console.log('STM components-DisplayMediaListing.jsx:41',  Object.keys(generatedGroupsLocal).length, generatedMedia?.length , generatedCount); // todo remove dev item
-      console.log('STM components-DisplayMediaListing.jsx:43',  Object.keys(generatedGroups).length, generatedMedia?.length , generatedCount); // todo remove dev item
-      if(Object.keys(generatedGroupsLocal).length !== 0 && generatedMedia?.length !== 0 && generatedCount === 0){
-        // if(!willRegenerate){
-        //   setWillRegenerate(true)
-        //   console.log('STM components-DisplayMediaListing.jsx:43', generatedSets); // todo remove dev item
-          console.log('STM components-DisplayMediaListing.jsx:43',  Object.keys(generatedGroupsLocal).length, generatedMedia?.length , generatedCount); // todo remove dev item
-        //   setTimeout(() => {
-        //     console.log('STM components-DisplayMediaListing.jsx:46', "REGENERATIONG----------------------"); // todo remove dev item
-        //     regenerateMediaMap(generatedMedia)
-        //
-        //   }, 30000)
-        // }
-        //
-        // setIsLoading(true)
-      } else {
-        // setIsLoading(false)
-      }
-
-      if(Object.keys(generatedGroupsLocal).length === 0){
-        console.log('STM components-DisplayMediaListing.jsx:59', Object.keys(generatedGroupsLocal).length); // todo remove dev item
-        // setIsLoading(true)
-      }
-
     };
+
 
     if (!newSong) {
       useEffect(() => {
-        regenerateMediaMap(generatedMedia);
-      }, [generatedMedia]);
-
-      useEffect(() => {
-        console.log('STM components-DisplayMediaListing.jsx:69', Object.keys(generatedGroups).length); // todo remove dev item
-        if(Object.keys(generatedGroups).length === 0 && generatedMedia?.length !== 0){
-          setIsLoading(true)
-        } else {
-          setIsLoading(false)
-        }
-
-        setTimeout(() => {
-          setIsLoading(false)
-        }, 20000)
-      }, [generatedGroups, generatedMedia]);
+        regenerateMediaMap(generatedMedia, generatedSets);
+      }, []);
     } else {
       useEffect(() => {
         regenerateMediaMap(generatedMedia);
       }, []);
+
     }
 
 
     return (
       <div className="w-full mt-10 ">
-        {generatedSets.map((generatedSet, index) => (
+        {displayBuckets.map((generatedSet, index) => (
           <>
             <FileAdd
               newSong
@@ -97,6 +77,7 @@ export default function DisplayMediaListing ({
               songNumber={songNumber}
               submit={submit}
               preSetBucketTo={generatedSet}
+              isFolderBucket={bucketTypeMap[generatedSet]}
               header={generatedSet}
               mediaObjects={generatedGroups[generatedSet]}
               handleRequestDeleteMediaEntry={handleRequestDeleteMediaEntry}
