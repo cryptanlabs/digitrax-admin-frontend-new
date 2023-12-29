@@ -13,13 +13,14 @@ const statusFilterOptionsText = {...statusOptionsText, none: 'Clear'}
 const Dashboard = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
-    const {currentDataSet, columnDetails, addToRecentSongs, getData, allSelected, setAllSelected, setupData} = useContext(DataTableData);
+    const {currentDataSet, columnDetails, addToRecentSongs, getData, allSelected, setAllSelected, getColumnNames} = useContext(DataTableData);
     const [filteredResults, setFilteredResults] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [statusToFilter, setStatusToFilter] = useState('');
 
     const [rowSelectionModel, setRowSelectionModel] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
+    const [columns, setColumns] = useState([]);
 
     const navigate = useNavigate();
 
@@ -28,12 +29,15 @@ const Dashboard = () => {
       setFilteredResults(currentDataSet);
     }, [currentDataSet]);
 
-    const columns = columnDetails;
+    useEffect(() => {
+      console.log('getData');
+      getData()
+    }, []);
 
     useEffect(() => {
       console.log('Columns', columns);
-      getData()
-    }, []);
+      setColumns(columnDetails)
+    }, [columnDetails]);
 
     const handleRowClick = (params) => {
       const rowData = params.row;
@@ -54,6 +58,13 @@ const Dashboard = () => {
       })
       setFilteredResults(sortedArray);
     };
+
+    const refresh = () => {
+      getColumnNames()
+        .then(() => {
+          getData()
+        })
+    }
 
     const AddSelected = () => {
       const newlySelected = rowSelectionModel.reduce((acc, id) => {
@@ -90,7 +101,7 @@ const Dashboard = () => {
           </h1>
           <div className="flex items-center px-2 w-1/6 justify-between mr-3">
             <Button
-                onClick={() => {getData()}}
+                onClick={() => {refresh()}}
                 variant="outlined"
                 startIcon={<RefreshIcon/>}
                 sx={{
@@ -110,7 +121,7 @@ const Dashboard = () => {
           <h1 className="text-xl ml-8 font-medium">Catalog</h1>
           <div className="w-1/5 mr-8 flex items-center justify-center">
             <Button
-              onClick={() => {getData()}}
+              onClick={() => {refresh()}}
               variant="outlined"
               startIcon={<RefreshIcon/>}
               sx={{

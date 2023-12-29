@@ -263,6 +263,20 @@ const SongDetailsProvider = ({children}) => {
       });
   }
 
+  const getGenres = async () => {
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'get',
+      timeout: 30000,
+      url: '/getGeneres',
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+
+    return result.data.result;
+  }
+
   // getCrossClearForSong
   // removePublisher
 
@@ -311,7 +325,8 @@ const SongDetailsProvider = ({children}) => {
       uploadThumbnail,
       uploadMultipleMediaFiles,
       handleNotifyOfError,
-      copyMediaFilesToBucket
+      copyMediaFilesToBucket,
+      getGenres
     }}>
       {children}
       <Snackbar

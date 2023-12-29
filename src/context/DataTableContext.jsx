@@ -103,7 +103,6 @@ const DataTableContext = ({children}) => {
       url: '/getBuckets',
     })
       .then(response => {
-        console.log('STM context-DataTableContext.jsx:104', response.data); // todo remove dev item
         const buckets = response.data?.reduce((acc, cur) => {
           console.log('STM context-DataTableContext.jsx:106', cur.bucketType); // todo remove dev item
           acc[cur.bucketType].push(cur.bucketName)
@@ -300,6 +299,7 @@ const DataTableContext = ({children}) => {
     <DataTableData.Provider value={{
       allDataRefresh,
       getData,
+      getColumnNames,
       getCrossData,
       getExistingBuckets,
       crossClearDataSet,

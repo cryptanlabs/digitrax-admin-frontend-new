@@ -121,12 +121,6 @@ export function PublisherInfoDisplay({setSongPublishers, songNumber, songPublish
             <Typography sx={{ fontSize: 10 }}>Save</Typography>
             <IconButton
               onClick={() => {
-                console.log('STM components-PublisherInfoDisplay.jsx:79', {
-                  SongNumber: songNumber,
-                  PublisherAdmin: publisherAdmin,
-                  SubPublisherDetails: subPublisherDetails,
-                  Share: share
-                }); // todo remove dev item
                 saveNewPublisher({
                   SongNumber: songNumber,
                   PublisherAdmin: publisherAdmin,

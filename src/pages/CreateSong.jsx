@@ -83,7 +83,8 @@ const CreateSong = () => {
       getDetailsForSong,
       createComment,
       getCommentsForSong,
-      uploadThumbnail
+      uploadThumbnail,
+      getGenres
     } =
       useContext(SongDetailsContext);
     const {addToRecentSongs, getData, nextTwentyCatalogNumbers, getSongNumbersWithoutRecords} = useContext(DataTableData);
@@ -107,6 +108,7 @@ const CreateSong = () => {
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
     const [statusData, setStatusData] = useState({...statusInformationDefault, Status: 'Status1'});
+    const [genres, setGenres] = useState([]);
 
     const [SaveProgress, setSaveProgress] = useState([]);
 
@@ -136,6 +138,11 @@ const CreateSong = () => {
       }
       setupNextCatalogNumbers()
 
+    }, []);
+
+    useEffect(() => {
+      getGenres()
+        .then(res => setGenres(res))
     }, []);
 
     useEffect(() => {

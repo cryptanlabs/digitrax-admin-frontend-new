@@ -60,7 +60,7 @@ export default function DisplayMediaListing ({
       }, []);
     } else {
       useEffect(() => {
-        regenerateMediaMap(generatedMedia);
+        regenerateMediaMap(generatedMedia, generatedSets);
       }, []);
 
     }
