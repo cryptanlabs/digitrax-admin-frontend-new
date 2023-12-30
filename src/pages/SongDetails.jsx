@@ -106,7 +106,8 @@ const SongDetails = () => {
     updateMediaMetadata,
     removeGeneratedMediaEntry,
     uploadThumbnail,
-    handleNotifyOfError
+    handleNotifyOfError,
+    genres
   } = useContext(SongDetailsContext);
   const [comments, setComments] = useState([]);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -150,6 +151,7 @@ const SongDetails = () => {
       }
       return bucketGroups;
     }, bucketGroups);
+
     console.log('STM pages-SongDetails.jsx:152', generatedGroupsLocal); // todo remove dev item
     setGeneratedGroups(generatedGroupsLocal);
     setLoadingMedia(false)
@@ -198,6 +200,8 @@ const SongDetails = () => {
 
     setSongPublishers(rowData.SongPublisher ?? []);
     getCommentsForSong();
+
+    console.log('STM pages-SongDetails.jsx:204', distributionInformation); // todo remove dev item
   };
 
   const setupBySongNumber = (songNumber) => {
@@ -336,6 +340,7 @@ const SongDetails = () => {
   const handleDistributionEdit = async () => {
     const withSongNumber = {...distributionInformation, SongNumber: basicInformation.SongNumber};
 
+    console.log('STM pages-SongDetails.jsx:341', withSongNumber); // todo remove dev item
     const updatedDetails = await updateSong(withSongNumber);
     setDistributionInformation((prev) => ({
       ...prev,
@@ -511,6 +516,7 @@ const SongDetails = () => {
       <BasicSongInfoDisplay
         handleChange={handleChange}
         basicInformation={basicInformation}
+        genres={genres}
       />
 
       <div className="w-full mt-10 flex items-center justify-center">

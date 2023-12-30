@@ -1,4 +1,4 @@
-import {Box, Button, TextField, Typography} from '@mui/material';
+import {Box, Button, MenuItem, Select, TextField, Typography} from '@mui/material';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha.js';
 import {useEffect, useState} from 'react';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -6,14 +6,33 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
-export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, nextCatNumberToSuggest}) {
+export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, genres, nextCatNumberToSuggest}) {
 
   const [showNextSuggestion, setShowNextSuggestion] = useState(true);
+    const [primaryGenresWithExisting, setPrimaryGenresWithExisting] = useState([]);
+    const [subgenresWithExisting, setSubgenresWithExisting] = useState([]);
   const SetNextCat = () => {
     handleChange({target: {name: 'SongNumber', value: nextCatNumberToSuggest?.toString()?.padStart(5, '0')}})
     setShowNextSuggestion(false)
   }
 
+    useEffect(() => {
+
+        if(basicInformation.Genre !== ''){
+          const tempSet = new Set([basicInformation.Genre, ...genres.filter(item => item.Type === 'Primary').map(item => item.Genre)])
+            setPrimaryGenresWithExisting(Array.from(tempSet))
+        } else {
+            setPrimaryGenresWithExisting([...genres.filter(item => item.Type === 'Primary').map(item => item.Genre)])
+        }
+
+        if(basicInformation.SubGenre !== ''){
+            const tempSet = new Set([basicInformation.SubGenre, ...genres.filter(item => item.Type === 'Subgenre').map(item => item.Genre)])
+            setSubgenresWithExisting(Array.from(tempSet))
+        } else {
+            setSubgenresWithExisting([...genres.filter(item => item.Type === 'Subgenre').map(item => item.Genre)])
+        }
+
+    }, [genres]);
 
 
   return (
@@ -98,19 +117,45 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'row',
+                justifyContent: 'space-between',
               width: '50%'
             }}
           >
-            <Typography sx={{fontWeight: 'bold'}}>Release Scheduled For</Typography>
-            <DatePicker
-              sx={{ marginTop: 1 }}
-              name="ReleaseScheduledFor"
-              value={basicInformation.ReleaseScheduledFor || dayjs()}
-              onChange={(val) => {
-                handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
-              }}
-            />
+              <Box
+                  sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      width: '48%'
+                  }}
+              >
+                  <Typography sx={{fontWeight: 'bold'}}>Release Scheduled For</Typography>
+                  <DatePicker
+                      sx={{ marginTop: 1 }}
+                      name="ReleaseScheduledFor"
+                      value={basicInformation.ReleaseScheduledFor || dayjs()}
+                      onChange={(val) => {
+                          handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
+                      }}
+                  />
+              </Box>
+              <Box
+                  sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      width: '48%'
+                  }}
+              >
+                  <Typography sx={{fontWeight: 'bold'}}>Date Added</Typography>
+                  <DatePicker
+                      sx={{ marginTop: 1 }}
+                      name="ReleaseScheduledFor"
+                      value={basicInformation.ReleaseScheduledFor || dayjs()}
+                      onChange={(val) => {
+                          handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
+                      }}
+                  />
+              </Box>
           </Box>
         </Box>
 
@@ -147,13 +192,13 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
               width: '50%'
             }}
           >
-            <Typography sx={{ fontWeight: "bold" }}>Artist</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>In The Style Of Artist</Typography>
             <TextField
               name="Artist"
               onChange={handleChange}
               sx={{ marginTop: 1 }}
               hiddenLabel
-              value={basicInformation.Artist}
+              value={basicInformation.InTheStyleOfArtist}
               variant="outlined"
             />
           </Box>
@@ -176,14 +221,25 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
             }}
           >
             <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              name="Genre"
-              value={basicInformation.Genre}
-              onChange={handleChange}
-              variant="outlined"
-            />
+            {/*<TextField*/}
+            {/*  sx={{ marginTop: 1 }}*/}
+            {/*  hiddenLabel*/}
+            {/*  name="Genre"*/}
+            {/*  value={basicInformation.Genre}*/}
+            {/*  onChange={handleChange}*/}
+            {/*  variant="outlined"*/}
+            {/*/>*/}
+              {primaryGenresWithExisting?.length === 0 && <Typography sx={{ fontSize: '10px' }}>Genres Loading</Typography>}
+              <Select
+                  sx={{marginTop: 1}}
+                  name="Genre"
+                  value={basicInformation.Genre}
+                  onChange={handleChange}
+              >
+                  {primaryGenresWithExisting.map((value, index) => (
+                      <MenuItem key={index} value={value}>{value}</MenuItem>
+                  ))}
+              </Select>
           </Box>
           <Box
             sx={{
@@ -193,17 +249,54 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, n
             }}
           >
             <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
-            <TextField
-              sx={{ marginTop: 1 }}
-              hiddenLabel
-              name="SubGenre"
-              onChange={handleChange}
-              value={basicInformation.SubGenre}
-              variant="outlined"
-            />
+            {/*<TextField*/}
+            {/*  sx={{ marginTop: 1 }}*/}
+            {/*  hiddenLabel*/}
+            {/*  name="SubGenre"*/}
+            {/*  onChange={handleChange}*/}
+            {/*  value={basicInformation.SubGenre}*/}
+            {/*  variant="outlined"*/}
+            {/*/>*/}
+              {subgenresWithExisting?.length === 0 && <Typography sx={{ fontSize: '10px' }}>SubGenres Loading</Typography>}
+              <Select
+                  sx={{marginTop: 1}}
+                  name="Genre"
+                  value={basicInformation.Genre}
+                  onChange={handleChange}
+              >
+                  {subgenresWithExisting.map((value, index) => (
+                      <MenuItem key={index} value={value.Genre}>{value.Genre}</MenuItem>
+                  ))}
+              </Select>
           </Box>
         </Box>
-
+          {/* row 4: writer(s) */}
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                gap: 2
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%'
+                }}
+            >
+                <Typography sx={{ fontWeight: "bold" }}>Writer(s)</Typography>
+                <TextField
+                    sx={{ marginTop: 1 }}
+                    hiddenLabel
+                    name="Genre"
+                    value={basicInformation.Writer}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Box>
+        </Box>
         {/* row 4: bar intro + key + duration + mixes + mix rendered + release year */}
         <Box
         sx={{

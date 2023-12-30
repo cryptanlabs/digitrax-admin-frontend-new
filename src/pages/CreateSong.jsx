@@ -43,33 +43,33 @@ const publishingHeadersMappedToColumn = {
 
 
 
-const defaultLicensingInformationState = {
-  ISRCCAMixVocal: "",
-  HFASongCode: "",
-  MechanicalRegistrationNumberA: "",
-  MechanicalRegistrationNumberD: "",
-  Writer: "",
-}
-
-const defaultBasicInfoState = {
-  Title: "",
-  Artist: "",
-  Genre: "",
-  SongNumber: "",
-  SubGenre: "",
-  BarIntro: "",
-  SongKey: "",
-  Duration: "",
-  Mixes: "",
-  MixRendered: "",
-  SongReleaseYear: "",
-  Description: "",
-  ISRCCAMixVocal: "",
-  HFASongCode: "",
-  MechanicalRegistrationNumberA: "",
-  MechanicalRegistrationNumberD: "",
-  Writer: "",
-}
+// const defaultLicensingInformationState = {
+//   ISRCCAMixVocal: "",
+//   HFASongCode: "",
+//   MechanicalRegistrationNumberA: "",
+//   MechanicalRegistrationNumberD: "",
+//   Writer: "",
+// }
+//
+// const defaultBasicInfoState = {
+//   Title: "",
+//   Artist: "",
+//   Genre: "",
+//   SongNumber: "",
+//   SubGenre: "",
+//   BarIntro: "",
+//   SongKey: "",
+//   Duration: "",
+//   Mixes: "",
+//   MixRendered: "",
+//   SongReleaseYear: "",
+//   Description: "",
+//   ISRCCAMixVocal: "",
+//   HFASongCode: "",
+//   MechanicalRegistrationNumberA: "",
+//   MechanicalRegistrationNumberD: "",
+//   Writer: "",
+// }
 
 const CreateSong = () => {
 
@@ -84,7 +84,8 @@ const CreateSong = () => {
       createComment,
       getCommentsForSong,
       uploadThumbnail,
-      getGenres
+      getGenres,
+      genres
     } =
       useContext(SongDetailsContext);
     const {addToRecentSongs, getData, nextTwentyCatalogNumbers, getSongNumbersWithoutRecords} = useContext(DataTableData);
@@ -108,7 +109,7 @@ const CreateSong = () => {
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
     const [statusData, setStatusData] = useState({...statusInformationDefault, Status: 'Status1'});
-    const [genres, setGenres] = useState([]);
+    // const [genres, setGenres] = useState([]);
 
     const [SaveProgress, setSaveProgress] = useState([]);
 
@@ -140,10 +141,10 @@ const CreateSong = () => {
 
     }, []);
 
-    useEffect(() => {
-      getGenres()
-        .then(res => setGenres(res))
-    }, []);
+    // useEffect(() => {
+    //   getGenres()
+    //     .then(res => setGenres(res))
+    // }, []);
 
     useEffect(() => {
       return () => {
@@ -351,7 +352,7 @@ const CreateSong = () => {
         }
 
         setLicensingInformation(licensingInformationDefault);
-        setBasicInformation(defaultBasicInfoState);
+        setBasicInformation(basicInformationDefault);
         setFilesStagedForUpload({});
         incrementNextCatalogNumberSuggestion();
         console.log(basicInformation);
@@ -402,6 +403,7 @@ const CreateSong = () => {
           handleChange={handleChange}
           basicInformation={basicInformation}
           nextCatNumberToSuggest={nextCatSuggest}
+          genres={genres}
         />
 
         {/* THIRD SECTION: LICENSING INFORMATION VIEW/EDIT */}

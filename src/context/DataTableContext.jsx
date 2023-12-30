@@ -1,6 +1,6 @@
 import {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {axiosBase, base_url, returnLimit} from '../helpers/requests.js';
+import {axiosBase, axiosBaseWithKey, base_url, returnLimit} from '../helpers/requests.js';
 import {ColumnHeadersMap, ColumnWidthMap, statusOptionsText} from '../helpers/constants.js';
 import {isWhiteSpace} from '../helpers/utils.js';
 import dayjs from 'dayjs';
@@ -57,6 +57,7 @@ const DataTableContext = ({children}) => {
   const [crossClearDataSet, setCrossClearDataSet] = useState([]);
   const [nextTwentyCatalogNumbers, setNextTwentyCatalogNumbers] = useState([]);
   const [bucketList, setBucketList] = useState({bucket: [], folder: []});
+  const [genres, setGenres] = useState([]);
 
   const [allSelected, setAllSelected] = useState([]);
   const getData = async () => {
@@ -111,6 +112,16 @@ const DataTableContext = ({children}) => {
         setBucketList(buckets);
         return buckets
       });
+  }
+
+  const getGenres = async () => {
+    const result = await axiosBase({
+      method: 'get',
+      timeout: 30000,
+      url: '/getGenres',
+    })
+    console.log('STM context-DataTableContext.jsx:123', result); // todo remove dev item
+    setGenres(result.data)
   }
 
   // getBuckets
@@ -260,12 +271,14 @@ const DataTableContext = ({children}) => {
       .then(getData)
       .then(getCrossData)
       .then(getExistingBuckets)
+      .then(getGenres)
       .then(getSongNumbersWithoutRecords)
   }
 
   useEffect(() => {
     getColumnNames()
       .then(getData)
+        .then(getGenres)
     getPriorRecentSongs()
     // setupData()
 
@@ -320,7 +333,9 @@ const DataTableContext = ({children}) => {
       setAllSelected,
       bucketList,
       getBuckets,
-      setupData
+      setupData,
+      getGenres,
+      genres
     }}>
       {children}
     </DataTableData.Provider>

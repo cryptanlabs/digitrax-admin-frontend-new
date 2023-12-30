@@ -2,18 +2,19 @@ import {MenuItem, Select, TextField, Typography} from '@mui/material';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
 
-export default function WithFilters ({field, fieldType, queryFieldModifiers, setQueryFieldModifiers, queryFields, setQueryFields}) {
+export default function WithFilters ({label, field, fieldType, queryFieldModifiers, setQueryFieldModifiers, queryFields, setQueryFields}) {
   // const fieldType = availableFields[field]
   const isNumeric = ['Int', 'Decimal'].includes(fieldType)
   const isBoolean = fieldType === "Boolean";
   const isDate = fieldType === 'DateTime'
+    const isEnum = fieldType === 'Enum'
 
 
 
   if(isBoolean){
     return (
       <div className="flex flex-col ml-20 mt-2 w-[15%]">
-        <Typography sx={{fontWeight: 'bold'}}>{field}</Typography>
+        <Typography sx={{fontWeight: 'bold'}}>{label || field}</Typography>
         <Select
           sx={{marginTop: 1}}
           name={field}
@@ -31,7 +32,7 @@ export default function WithFilters ({field, fieldType, queryFieldModifiers, set
   if(isDate){
     return (
       <div className="flex flex-col ml-20 mt-2 w-[15%]">
-        <Typography sx={{fontWeight: 'bold'}}>{field}</Typography>
+        <Typography sx={{fontWeight: 'bold'}}>{label || field}</Typography>
         <div className="flex flex-row">
           <Select
             sx={{marginTop: 1}}
@@ -49,7 +50,6 @@ export default function WithFilters ({field, fieldType, queryFieldModifiers, set
             onChange={(val) => {setQueryFields({target: {value: val, name: field}})}}
           />
         </div>
-
       </div>
     )
   }
@@ -57,7 +57,7 @@ export default function WithFilters ({field, fieldType, queryFieldModifiers, set
 
   return (
     <div className="flex flex-col ml-20 mt-2 w-[15%]">
-      <Typography sx={{fontWeight: 'bold'}}>{field}</Typography>
+      <Typography sx={{fontWeight: 'bold'}}>{label || field}</Typography>
       <div className="flex flex-row">
         {isNumeric && <Select
           sx={{marginTop: 1}}

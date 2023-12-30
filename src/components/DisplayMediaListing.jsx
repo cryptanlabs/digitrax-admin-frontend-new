@@ -50,6 +50,7 @@ export default function DisplayMediaListing ({
         }
         return bucketGroups;
       }, bucketGroups);
+      console.log('STM components-DisplayMediaListing.jsx:53', generatedGroupsLocal); // todo remove dev item
       setGeneratedGroups(generatedGroupsLocal);
     };
 

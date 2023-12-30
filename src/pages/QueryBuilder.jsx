@@ -83,6 +83,7 @@ export default function QueryBuilder () {
         const available = Object.keys(modelDetails[value]);
         setAvailableFields(modelDetails[value]);
         setQueryFields(modelDetailsClean[value]);
+        console.log('STM pages-QueryBuilder.jsx:86', modelDetails[value]); // todo remove dev item
       }
 
       setSelectedTable(value);

@@ -21,11 +21,12 @@ export const dropDownOptionSets = {
   booleanOptions,
   statusOptions
 }
-export const dropDownColumns = ["ClearedforKaraoke", "ClearedForTV", "Kod", "Vevo", "VirtualDj", "KaraokeCloudApi", "Status"]
+export const dropDownColumns = ["ClearedforKaraoke", "ClearedForKr38r", "ClearedForTV", "Kod", "Vevo", "VirtualDj", "KaraokeCloudApi", "Status"]
 
 
 export const dropDownOptionMap = {
   ClearedforKaraoke: "booleanOptions",
+  ClearedForKr38r:  "booleanOptions",
   ClearedForTV: "booleanOptions",
   Kod: "booleanOptions",
   Vevo: "booleanOptions",
@@ -72,11 +73,12 @@ export const ColumnWidthMap = {
 // Dashboard Default states
 export const statusInformationDefault = {
   ClearedforKaraoke: false,
-  ClearedForTV: false,
-  Kod: false,
-  Vevo: false,
-  VirtualDj: false,
-  KaraokeCloudApi: false,
+  ClearedForKr38r: false,
+  // ClearedForTV: false,
+  // Kod: false,
+  // Vevo: false,
+  // VirtualDj: false,
+  // KaraokeCloudApi: false,
 }
 
 export const licensingInformationDefault = {
@@ -84,7 +86,7 @@ export const licensingInformationDefault = {
   HFASongCode: "",
   MechanicalRegistrationNumberA: "",
   MechanicalRegistrationNumberD: "",
-  Writer: "",
+  // Writer: "",
   ISRCCCMixKaraoke: "",
   ISRCCDMixInstrumental: "",
   ISRCAAMixVocal: "",
@@ -97,7 +99,7 @@ export const licensingInformationDefault = {
 
 export const basicInformationDefault = {
   Title: "",
-  Artist: "",
+  InTheStyleOfArtist: "",
   Genre: "",
   SongNumber: "",
   SubGenre: "",
@@ -108,7 +110,9 @@ export const basicInformationDefault = {
   MixRendered: "",
   SongReleaseYear: "",
   Description: "",
-  ReleaseScheduledFor: dayjs()
+  ReleaseScheduledFor: dayjs(),
+  DateAdded: dayjs(),
+  Writer: "",
 }
 
 // Fields hidden on Status Management Dashboard

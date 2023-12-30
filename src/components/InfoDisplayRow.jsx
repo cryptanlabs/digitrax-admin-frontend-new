@@ -9,6 +9,8 @@ import {
 export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => { }, title = '', subTitle = '', multiRow }) {
 
   try {
+
+      console.log('STM components-InfoDisplayRow.jsx:13', infoToDisplay); // todo remove dev item
     let infoToDisplayLocal = {};
     if (multiRow) {
       if (Array.isArray(infoToDisplay) && infoToDisplay?.length > 0) {
@@ -20,6 +22,7 @@ export function InfoDisplayRow ({infoToDisplay, headerMap, handleChange = () => 
       infoToDisplayLocal = infoToDisplay;
     }
 
+    console.log('STM components-InfoDisplayRow.jsx:25', infoToDisplayLocal); // todo remove dev item
     const calculateWidths = Math.floor(200 / Object.keys(infoToDisplayLocal)?.length);
 
 

@@ -12,7 +12,7 @@ export const SongDetailsContext = createContext(undefined);
 const SongDetailsProvider = ({children}) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState('');
-  const {getData, generatedSets, getExistingBuckets} = useContext(DataTableData);
+  const {getData, generatedSets = [], genres = [], getGenres, getExistingBuckets} = useContext(DataTableData);
   const {user, adminDashToken} = useContext(UserContext);
 
 
@@ -263,19 +263,19 @@ const SongDetailsProvider = ({children}) => {
       });
   }
 
-  const getGenres = async () => {
-    const result = await axiosBaseWithKey(adminDashToken)({
-      method: 'get',
-      timeout: 30000,
-      url: '/getGeneres',
-    })
-      .catch(error => {
-        console.error(error);
-        handleNotifyOfError(error)
-      });
-
-    return result.data.result;
-  }
+  // const getGenres = async () => {
+  //   const result = await axiosBaseWithKey(adminDashToken)({
+  //     method: 'get',
+  //     timeout: 30000,
+  //     url: '/getGeneres',
+  //   })
+  //     .catch(error => {
+  //       console.error(error);
+  //       handleNotifyOfError(error)
+  //     });
+  //
+  //   return result.data.result;
+  // }
 
   // getCrossClearForSong
   // removePublisher
@@ -326,7 +326,8 @@ const SongDetailsProvider = ({children}) => {
       uploadMultipleMediaFiles,
       handleNotifyOfError,
       copyMediaFilesToBucket,
-      getGenres
+      getGenres,
+      genres
     }}>
       {children}
       <Snackbar

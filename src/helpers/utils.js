@@ -5,10 +5,11 @@ import * as csv from 'postcss';
 const getDistributionInfoFromSongData = (rowData) => {
   return {
     ClearedforKaraoke: rowData.ClearedforKaraoke,
-    ClearedForTV: rowData.ClearedForTV,
-    Kod: rowData.Kod,
-    VirtualDj: rowData.VirtualDj,
-    KaraokeCloudApi: rowData.KaraokeCloudApi,
+    ClearedForKr38r: rowData.ClearedForKr38r
+    // ClearedForTV: rowData.ClearedForTV,
+    // Kod: rowData.Kod,
+    // VirtualDj: rowData.VirtualDj,
+    // KaraokeCloudApi: rowData.KaraokeCloudApi,
   }
 }
 
@@ -27,7 +28,7 @@ const getStatusInfoFromSongData = (rowData) => {
 const getBasicInfoFromSongData = (rowData) => {
   return {
     Title: rowData.Title,
-    Artist: rowData.Artist,
+    InTheStyleOfArtist: rowData.InTheStyleOfArtist,
     Genre: rowData.Genre,
     SongNumber: rowData.SongNumber,
     SubGenre: rowData.SubGenre,
@@ -38,7 +39,9 @@ const getBasicInfoFromSongData = (rowData) => {
     MixRendered: rowData.MixRendered,
     SongReleaseYear: rowData.SongReleaseYear,
     Description: rowData.Description,
+    Writer: rowData.Writer,
     ReleaseScheduledFor: dayjs(rowData.ReleaseScheduledFor),
+    DateAdded: dayjs(rowData.DateAdded)
   }
 }
 
@@ -56,7 +59,7 @@ const getLicensingInfoFromSongData = (rowData) => {
     MechanicalRegistrationNumberA: rowData.MechanicalRegistrationNumberA,
     MechanicalRegistrationNumberD: rowData.MechanicalRegistrationNumberD,
     MechanicalRegistrationNumberC: rowData.MechanicalRegistrationNumberC,
-    Writer: rowData.Writer,
+    // Writer: rowData.Writer,
   }
 }
 
