@@ -174,11 +174,10 @@ const SongDetailsProvider = ({children}) => {
   //
 
   const uploadThumbnail = async (data) => {
-    const timeToUpload = Math.ceil(data.get('files').size/200)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/uploadThumbnail',
-      timeout: timeToUpload,
+      timeout: 30000,
       data: data
     })
         .catch(error => {
