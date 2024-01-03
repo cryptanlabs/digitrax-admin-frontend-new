@@ -28,6 +28,7 @@ import JSZip from 'jszip'
 import {axiosBase, base_url} from '../helpers/requests.js';
 import { saveAs } from 'file-saver';
 import {SimpleDialog} from '../components/SimpleDialog.jsx';
+import dayjs from 'dayjs';
 
 console.log('STM pages-SongDetails.jsx:29', JSZip); // todo remove dev item
 const publishingHeaders = [
@@ -108,6 +109,7 @@ const SongDetails = () => {
     removeGeneratedMediaEntry,
     uploadThumbnail,
     handleNotifyOfError,
+    addStatusChange,
     genres,
     addGenre
   } = useContext(SongDetailsContext);
@@ -191,7 +193,7 @@ const SongDetails = () => {
     }));
 
     setStatusData(() => ({
-      ...{...statusInformationDefault, Status: 'Status1'}
+      ...{...statusInformationDefault, Status: 'Status1', StatusComment: ''}
     }));
 
     setLicensingInformation(() => ({
@@ -379,14 +381,28 @@ const SongDetails = () => {
   };
 
   const handleStatusEdit = async () => {
-    const withSongNumber = {...statusData};
+    const withSongNumber =
+      {
+        ...statusData,
+        SongNumber: basicInformation.SongNumber,
+        StatusUpdatedAt: dayjs()
+      };
+    try {
 
-    const updatedDetails = await updateSong(withSongNumber);
-    setStatusData((prev) => ({
-      ...prev,
-      ...getStatusInfoFromSongData(updatedDetails)
-    }));
-    console.log(updatedDetails);
+
+      console.log('STM pages-SongDetails.jsx:389', withSongNumber); // todo remove dev item
+      const updatedDetails = await updateSong(withSongNumber);
+      setStatusData((prev) => ({
+        ...prev,
+        ...getStatusInfoFromSongData(updatedDetails)
+      }));
+      console.log(updatedDetails);
+    } catch (e) {
+      console.error(e)
+    }
+
+    addStatusChange(withSongNumber)
+
   };
 
   const handleSaveNewPublisher = async (data) => {

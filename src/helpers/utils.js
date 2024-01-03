@@ -17,8 +17,7 @@ const getStatusInfoFromSongData = (rowData) => {
     return {
     SongNumber: rowData.SongNumber,
     Status: rowData.Status,
-    Title: rowData.Title,
-    Artist: rowData.Artist,
+    StatusComment: rowData.StatusComment,
     ReleaseScheduledFor: dayjs(rowData.ReleaseScheduledFor),
     StatusUpdatedAt: dayjs(rowData.StatusUpdatedAt)
   }

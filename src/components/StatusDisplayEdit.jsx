@@ -56,6 +56,51 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
               </Box>
             )}
           </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '50%',
+            }}
+          >
+            <Typography sx={{fontWeight: 'bold'}}>Comment On Status Change</Typography>
+            <TextField
+              sx={{marginTop: 1}}
+              hiddenLabel
+              multiline
+              rows={2}
+              name="StatusComment"
+              value={statusData.StatusComment}
+              onChange={handleChange}
+              variant="outlined"
+            />
+            {/*<Box*/}
+            {/*  sx={{*/}
+            {/*    display: 'flex',*/}
+            {/*    width: '100%',*/}
+            {/*    justifyContent: 'flex-end'*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  <Button*/}
+            {/*    variant="outlined"*/}
+            {/*    onClick={() => {*/}
+            {/*      handleCreateComment(newComment);*/}
+            {/*      setNewComment('');*/}
+            {/*    }}*/}
+            {/*    sx={{*/}
+            {/*      borderColor: '#00b00e',*/}
+            {/*      backgroundColor: '#00b00e',*/}
+            {/*      color: 'white',*/}
+            {/*      '&:hover': {*/}
+            {/*        borderColor: '#F1EFEF',*/}
+            {/*        backgroundColor: '#86A789',*/}
+            {/*      },*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    Save Comment*/}
+            {/*  </Button>*/}
+            {/*</Box>*/}
+          </Box>
         </Box>
         {!newSong && (
           <Box

@@ -246,7 +246,23 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
     await getGenres()
     return result.data;
   };
-  // addGenre
+  // addStatusChange
+
+  const addStatusChange = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:252', data); // todo remove dev item
+
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'post',
+      url: '/addStatusChange',
+      data: {...data, StatusUpdatedBy: user.UserName}
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+    console.log('STM context-SongDetailsContext.jsx:262', result.data); // todo remove dev item
+    return result.data;
+  };
 
   const getCrossClearForSong = async (SongNumber) => {
     const result = await axiosBase({
@@ -343,6 +359,7 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
       handleNotifyOfError,
       copyMediaFilesToBucket,
       addGenre,
+      addStatusChange,
       getGenres,
       genres
     }}>
