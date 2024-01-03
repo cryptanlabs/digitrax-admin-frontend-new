@@ -21,6 +21,7 @@ import {
 } from '../helpers/constants.js';
 import {CommentDisplay} from '../components/CommentDisplay.jsx';
 import {Thumbnail} from '../components/Thumbnail.jsx';
+import {SimpleDialog} from '../components/SimpleDialog.jsx';
 
 const publishingHeaders = [
   "ISRC",
@@ -85,7 +86,8 @@ const CreateSong = () => {
       getCommentsForSong,
       uploadThumbnail,
       getGenres,
-      genres
+      genres,
+      addGenre
     } =
       useContext(SongDetailsContext);
     const {addToRecentSongs, getData, nextTwentyCatalogNumbers, getSongNumbersWithoutRecords} = useContext(DataTableData);
@@ -109,9 +111,34 @@ const CreateSong = () => {
     const [nextCatNumbersToSuggest, setNextCatNumbersToSuggest] = useState([]);
     const [nextCatSuggest, setNextCatSuggest] = useState(undefined);
     const [statusData, setStatusData] = useState({...statusInformationDefault, Status: 'Status1'});
+
+    const [openGenreDialog, setOpenGenreDialog] = useState(false);
+    const [openGenreDialogType, setOpenGenreDialogType] = useState(null);
+    const [newGenreOrSub, setNewGenreOrSub] = useState('');
     // const [genres, setGenres] = useState([]);
 
     const [SaveProgress, setSaveProgress] = useState([]);
+
+    const handleDialogOpen = async (val) => {
+      console.log('STM pages-CreateSong.jsx:123', 'handleDialogOpen'); // todo remove dev item
+      if(!val){
+        setOpenGenreDialog(!openGenreDialog)
+      }
+      if(val === 'Primary' || val === 'Subgenre'){
+        setOpenGenreDialogType(val)
+        setOpenGenreDialog(!openGenreDialog)
+        return;
+      }
+
+      console.log('STM pages-SongDetails.jsx:145', val); // todo remove dev item
+      setOpenGenreDialog(!openGenreDialog)
+      if(newGenreOrSub !== '' && openGenreDialogType !== ''){
+        await addGenre({Genre: newGenreOrSub, Type: openGenreDialogType})
+        setOpenGenreDialogType('')
+        setNewGenreOrSub('')
+      }
+
+    }
 
     const reset = () => {
       setLicensingInformation(licensingInformationDefault);
@@ -404,6 +431,7 @@ const CreateSong = () => {
           basicInformation={basicInformation}
           nextCatNumberToSuggest={nextCatSuggest}
           genres={genres}
+          handleDialogOpen={handleDialogOpen}
         />
 
         {/* THIRD SECTION: LICENSING INFORMATION VIEW/EDIT */}
@@ -583,6 +611,19 @@ const CreateSong = () => {
             <Typography key={index}>{messageEntry}</Typography>
           ))}
         </div>
+        <SimpleDialog open={openGenreDialog} onClose={handleDialogOpen} title={`${openGenreDialogType === 'SubGenre' ? 'Add SubGenre' : 'Add Genre'}`}>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="New Genre"
+            type="text"
+            value={newGenreOrSub}
+            onChange={(e) => {setNewGenreOrSub(e.target.value)}}
+            fullWidth
+            variant="standard"
+          />
+        </SimpleDialog>
       </Box>
     );
   } catch (e) {

@@ -232,6 +232,23 @@ const SongDetailsProvider = ({children}) => {
     return result.data;
   };
 
+  const addGenre = async (data) => {
+    console.log('STM context-SongDetailsContext.jsx:236', data); // todo remove dev item
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'post',
+      url: '/addGenre',
+      data: data
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remove dev item
+    await getGenres()
+    return result.data;
+  };
+  // addGenre
+
   const getCrossClearForSong = async (SongNumber) => {
     const result = await axiosBase({
       method: 'get',
@@ -326,6 +343,7 @@ const SongDetailsProvider = ({children}) => {
       uploadMultipleMediaFiles,
       handleNotifyOfError,
       copyMediaFilesToBucket,
+      addGenre,
       getGenres,
       genres
     }}>

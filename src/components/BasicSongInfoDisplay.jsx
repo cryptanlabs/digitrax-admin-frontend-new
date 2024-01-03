@@ -5,19 +5,26 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import {SimpleDialog} from './SimpleDialog.jsx';
 
-export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, genres, nextCatNumberToSuggest}) {
+export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, genres, nextCatNumberToSuggest, handleDialogOpen = () => {}, handleDialogClose = () => {}}) {
 
   const [showNextSuggestion, setShowNextSuggestion] = useState(true);
     const [primaryGenresWithExisting, setPrimaryGenresWithExisting] = useState([]);
     const [subgenresWithExisting, setSubgenresWithExisting] = useState([]);
+  // const [openGenreDialog, setOpenGenreDialog] = useState(false);
+  //
+  //
+  // const handleDialogOpen = () => {
+  //   setOpenGenreDialog(!openGenreDialog)
+  // }
   const SetNextCat = () => {
     handleChange({target: {name: 'SongNumber', value: nextCatNumberToSuggest?.toString()?.padStart(5, '0')}})
     setShowNextSuggestion(false)
   }
 
     useEffect(() => {
-
+console.log('STM components-BasicSongInfoDisplay.jsx:27', genres); // todo remove dev item
         if(basicInformation.Genre !== ''){
           const tempSet = new Set([basicInformation.Genre, ...genres.filter(item => item.Type === 'Primary').map(item => item.Genre)])
             setPrimaryGenresWithExisting(Array.from(tempSet))
@@ -29,7 +36,9 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, g
             const tempSet = new Set([basicInformation.SubGenre, ...genres.filter(item => item.Type === 'Subgenre').map(item => item.Genre)])
             setSubgenresWithExisting(Array.from(tempSet))
         } else {
-            setSubgenresWithExisting([...genres.filter(item => item.Type === 'Subgenre').map(item => item.Genre)])
+          const tempSub = [...genres.filter(item => item.Type === 'Subgenre').map(item => item.Genre)]
+          console.log('STM components-BasicSongInfoDisplay.jsx:40', tempSub); // todo remove dev item
+            setSubgenresWithExisting(tempSub)
         }
 
     }, [genres]);
@@ -220,26 +229,54 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, g
               width: '50%'
             }}
           >
-            <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
-            {/*<TextField*/}
-            {/*  sx={{ marginTop: 1 }}*/}
-            {/*  hiddenLabel*/}
-            {/*  name="Genre"*/}
-            {/*  value={basicInformation.Genre}*/}
-            {/*  onChange={handleChange}*/}
-            {/*  variant="outlined"*/}
-            {/*/>*/}
-              {primaryGenresWithExisting?.length === 0 && <Typography sx={{ fontSize: '10px' }}>Genres Loading</Typography>}
-              <Select
-                  sx={{marginTop: 1}}
-                  name="Genre"
-                  value={basicInformation.Genre}
-                  onChange={handleChange}
+
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '90%',
+                justifyContent: 'space-between',
+                verticalAlign: 'middle',
+                // gap: 2
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
-                  {primaryGenresWithExisting.map((value, index) => (
-                      <MenuItem key={index} value={value}>{value}</MenuItem>
-                  ))}
-              </Select>
+                <Typography sx={{ fontWeight: "bold" }}>Genre</Typography>
+                {primaryGenresWithExisting?.length === 0 && <Typography sx={{ fontSize: '10px' }}>Genres Loading</Typography>}
+              </Box>
+              <Button
+                variant="outlined"
+                onClick={() => {handleDialogOpen('Primary')}}
+                style={{marginBottom: '0px'}}
+                sx={{
+                  ml: 1,
+
+                  height: '16px',
+                  borderColor: 'gray',
+                  color: 'black',
+                  '&:hover': {
+                    borderColor: '#F1EFEF',
+                    backgroundColor: '#F5F7F8',
+                  },
+                }} >
+                Add Genre
+              </Button>
+            </Box>
+            <Select
+              sx={{marginTop: 1, width: '100%',}}
+              name="Genre"
+              value={basicInformation.Genre}
+              onChange={handleChange}
+            >
+              {primaryGenresWithExisting.map((value, index) => (
+                <MenuItem key={index} value={value}>{value}</MenuItem>
+              ))}
+            </Select>
           </Box>
           <Box
             sx={{
@@ -248,24 +285,52 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, g
               width: '50%'
             }}
           >
-            <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
-            {/*<TextField*/}
-            {/*  sx={{ marginTop: 1 }}*/}
-            {/*  hiddenLabel*/}
-            {/*  name="SubGenre"*/}
-            {/*  onChange={handleChange}*/}
-            {/*  value={basicInformation.SubGenre}*/}
-            {/*  variant="outlined"*/}
-            {/*/>*/}
-              {subgenresWithExisting?.length === 0 && <Typography sx={{ fontSize: '10px' }}>SubGenres Loading</Typography>}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '90%',
+                justifyContent: 'space-between',
+                verticalAlign: 'middle',
+                // gap: 2
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Typography sx={{ fontWeight: "bold" }}>SubGenre</Typography>
+                {subgenresWithExisting?.length === 0 && <Typography sx={{ fontSize: '10px' }}>SubGenres Loading</Typography>}
+              </Box>
+              <Button
+                variant="outlined"
+                onClick={() => {handleDialogOpen('Subgenre')}}
+                style={{marginBottom: '0px'}}
+                sx={{
+                  ml: 1,
+
+                  height: '16px',
+                  borderColor: 'gray',
+                  color: 'black',
+                  '&:hover': {
+                    borderColor: '#F1EFEF',
+                    backgroundColor: '#F5F7F8',
+                  },
+                }} >
+                Add SubGenre
+              </Button>
+            </Box>
+
               <Select
                   sx={{marginTop: 1}}
-                  name="Genre"
-                  value={basicInformation.Genre}
+                  name="SubGenre"
+                  value={basicInformation.SubGenre}
                   onChange={handleChange}
               >
                   {subgenresWithExisting.map((value, index) => (
-                      <MenuItem key={index} value={value.Genre}>{value.Genre}</MenuItem>
+                      <MenuItem key={index} value={value}>{value}</MenuItem>
                   ))}
               </Select>
           </Box>

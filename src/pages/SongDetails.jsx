@@ -27,6 +27,7 @@ import {Thumbnail} from '../components/Thumbnail.jsx';
 import JSZip from 'jszip'
 import {axiosBase, base_url} from '../helpers/requests.js';
 import { saveAs } from 'file-saver';
+import {SimpleDialog} from '../components/SimpleDialog.jsx';
 
 console.log('STM pages-SongDetails.jsx:29', JSZip); // todo remove dev item
 const publishingHeaders = [
@@ -107,7 +108,8 @@ const SongDetails = () => {
     removeGeneratedMediaEntry,
     uploadThumbnail,
     handleNotifyOfError,
-    genres
+    genres,
+    addGenre
   } = useContext(SongDetailsContext);
   const [comments, setComments] = useState([]);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -136,6 +138,31 @@ const SongDetails = () => {
   const [generatedGroups, setGeneratedGroups] = useState({});
   const [generatedCount, setGeneratedCount] = useState(0);
 
+  const [openGenreDialog, setOpenGenreDialog] = useState(false);
+  const [openGenreDialogType, setOpenGenreDialogType] = useState(null);
+  const [newGenreOrSub, setNewGenreOrSub] = useState('');
+
+
+  const handleDialogOpen = async (val) => {
+    if(!val){
+      setOpenGenreDialog(!openGenreDialog)
+    }
+    if(val === 'Primary' || val === 'Subgenre'){
+      setOpenGenreDialogType(val)
+      setOpenGenreDialog(!openGenreDialog)
+      return;
+    }
+
+    console.log('STM pages-SongDetails.jsx:145', val); // todo remove dev item
+    setOpenGenreDialog(!openGenreDialog)
+    if(newGenreOrSub !== '' && openGenreDialogType !== ''){
+      await addGenre({Genre: newGenreOrSub, Type: openGenreDialogType})
+      setOpenGenreDialogType('')
+      setNewGenreOrSub('')
+    }
+
+  }
+
   const regenerateMediaMap = (generatedMedia) => {
     console.log('STM pages-SongDetails.jsx:139', generatedMedia); // todo remove dev item
     // setIsLoading(true)
@@ -143,6 +170,7 @@ const SongDetails = () => {
       acc[cur['bucket']] = [];
       return acc;
     }, {});
+
 
     const generatedGroupsLocal = generatedMedia.reduce((acc, cur) => {
       if (bucketGroups[cur?.bucket]) {
@@ -173,6 +201,7 @@ const SongDetails = () => {
     setBasicInformation(() => ({
       ...basicInformationDefault
     }));
+
     setThumbnailInformation({})
     setComments([])
   }
@@ -517,6 +546,7 @@ const SongDetails = () => {
         handleChange={handleChange}
         basicInformation={basicInformation}
         genres={genres}
+        handleDialogOpen={handleDialogOpen}
       />
 
       <div className="w-full mt-10 flex items-center justify-center">
@@ -763,6 +793,19 @@ const SongDetails = () => {
         generatedGroupsExternal={generatedGroups}
       />
       </div>
+      <SimpleDialog open={openGenreDialog} onClose={handleDialogOpen} title={`${openGenreDialogType === 'SubGenre' ? 'Add SubGenre' : 'Add Genre'}`}>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="New Genre"
+          type="text"
+          value={newGenreOrSub}
+          onChange={(e) => {setNewGenreOrSub(e.target.value)}}
+          fullWidth
+          variant="standard"
+        />
+      </SimpleDialog>
     </div>
   );
 };
