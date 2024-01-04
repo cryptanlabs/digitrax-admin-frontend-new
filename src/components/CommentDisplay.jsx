@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 
 
 export function CommentDisplay ({
+                                  newSong,
                                   comments = [],
                                   handleCreateComment = () => {},
                                   handleRemoveComment = () => {}
@@ -173,7 +174,7 @@ export function CommentDisplay ({
               },
             }}
           >
-            Save Comment
+            {`${newSong ? 'Add' : 'Save'} Comment`}
           </Button>
         </Box>
       </Box>

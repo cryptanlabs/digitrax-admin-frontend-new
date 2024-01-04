@@ -530,6 +530,7 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
           subTitle="Update the status information here"
           infoToDisplay={distributionInformation}
           handleChange={handleDistributionChange}
+          headerMap={{ClearedforKaraoke: 'Cleared for Karaoke', ClearedForKr38r: 'Cleared for Kr38r'}}
           useDropDown
         />
 
@@ -547,6 +548,7 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
         <div className="w-full border border-gray-200">
         </div>
         <CommentDisplay
+          newSong
           comments={comments}
           handleCreateComment={handleCreateComment}
         />

@@ -26,14 +26,6 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
 
     }, [thumbnailObject]);
 
-    // useEffect(() => {
-    //     if(newSong){
-    //         setImageSource('')
-    //     } else {
-    //         setImageSource(`${base_url}/thumbnail/${songNumber}`)
-    //     }
-    //
-    // }, [songNumber]);
 
     useEffect(() => {
         if(newSong){
@@ -113,12 +105,13 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                         alignContent: 'center'
                     }}
                 >
-                    <img src={imageSource} height="200px" width="200px"/>
+                  {imageSource && <img src={imageSource} height="200px" width="200px"/>}
                 </Box>
                 <Box
                     sx={{
                         display: 'flex',
                         height: '100%',
+                        marginLeft: '20px',
                         // width: '50%',
                         justifyContent: 'center',
                         alignContent: 'center'
@@ -171,7 +164,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                             },
                         }}
                     >
-                        Select Thumbnail
+                      {`${!selectedFile ? 'Select' : 'Change'} Thumbnail`}
                     </Button>)}
                     <input
                         type="file"

@@ -6,10 +6,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const songPublisherHeaders = [
   // "Id",
-  'PublisherAdmin',
+  'Publisher Admin',
   // "PublisherDatabaseId",
   // "SongNumber",
-  'SubPublisherDetails',
+  'SubPublisher Details',
   'Share',
 ];
 
@@ -160,6 +160,12 @@ const NewPublisherRow = ({songNumber, saveNewPublisher, setAddNewPublisher,}) =>
   const [publisherAdmin, setPublisherAdmin] = useState('');
   const [subPublisherDetails, setSubPublisherDetails] = useState('');
   const [share, setShare] = useState('');
+  const [shareNotNumeric, setShareNotNumeric] = useState(false);
+
+  const updateShare = (val) => {
+    setShareNotNumeric(!isFinite(val))
+    setShare(val)
+  }
 
   return (
     <Box
@@ -216,11 +222,13 @@ const NewPublisherRow = ({songNumber, saveNewPublisher, setAddNewPublisher,}) =>
       >
         <TextField
           sx={{marginTop: 1, width: '90%'}}
+          error={shareNotNumeric}
           size="small"
           hiddenLabel
           variant="outlined"
           value={share}
-          onChange={e => setShare(e.target.value)}
+          onChange={e => updateShare(e.target.value)}
+          helperText={`${shareNotNumeric ? "Not a number" : ''}`}
         />
       </Box>
       <Box

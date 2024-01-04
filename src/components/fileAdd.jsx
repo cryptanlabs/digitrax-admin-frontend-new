@@ -86,7 +86,7 @@ export function FileAdd({
 
     useEffect(() => {
         setLocalGeneratedSets(buckets);
-    }, []);
+    }, [buckets]);
 
     const handleSnackBarOpen = (message) => {
         setSnackBarMessage(message)

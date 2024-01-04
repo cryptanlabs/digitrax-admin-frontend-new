@@ -30,7 +30,6 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
             }}
           >
             <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
-            <Typography sx={{fontWeight: 'bold'}}>{statusData.Status}</Typography>
             <Select
               sx={{marginTop: 1}}
               name="Status"
