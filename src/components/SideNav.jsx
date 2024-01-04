@@ -19,12 +19,12 @@ import {UserContext} from '../context/UserContext.jsx';
 
 const drawerWidth = 240;
 
-const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Export", "Query Builder", "Users", "Status Dashboard", "Batch Upload", "Lookup Song Details", "Batch Media"]
+const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Files To Buckets", "Query Builder", "Users", "Status Dashboard", "Batch Upload", "Lookup Song Details", "Batch Media"]
 const externalNav = ["Home", "Dashboard"]
 
 export default function SideNav() {
   const navigate = useNavigate();
-  const { recentSongs } = useContext(DataTableData);
+  const { recentSongs, backgroundStatus } = useContext(DataTableData);
   const {userType, logoutUser, loggedIn} = useContext(UserContext);
 
 
@@ -51,8 +51,13 @@ export default function SideNav() {
         anchor="left"
       >
         <Box>
-          <Toolbar>
+          <Toolbar
+            sx={{
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
             <img src="/digitrax.png" alt="Digitrax" width="500" height="600"/>
+            {backgroundStatus && <Typography sx={{color: '#a45d31'}}>Processing</Typography>}
           </Toolbar>
           <List>
             {(userType === 'internal' ? internalNav : externalNav).map((text, index) => (

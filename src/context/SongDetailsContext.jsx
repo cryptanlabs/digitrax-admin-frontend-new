@@ -12,7 +12,7 @@ export const SongDetailsContext = createContext(undefined);
 const SongDetailsProvider = ({children}) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState('');
-  const {getData, generatedSets = [], genres = [], getGenres, bucketList = {bucket: [], folder: []}, getBuckets} = useContext(DataTableData);
+  const {setBackgroundStatus, getData, generatedSets = [], genres = [], getGenres, bucketList = {bucket: [], folder: []}, getBuckets} = useContext(DataTableData);
   const {user, adminDashToken} = useContext(UserContext);
 
 
@@ -43,6 +43,7 @@ const SongDetailsProvider = ({children}) => {
   }
 
   const updateSong = async (data) => {
+    setBackgroundStatus(true)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateSong',
@@ -57,6 +58,7 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const updateMediaMetadata = async (data) => {
+    setBackgroundStatus(true)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateGeneratedMediaMetaData',
@@ -120,7 +122,8 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadMediaFile = async (data) => {
-    const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
+    setBackgroundStatus(true)
+    const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/100)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/upload',
@@ -131,18 +134,20 @@ const SongDetailsProvider = ({children}) => {
         console.error(error);
         handleNotifyOfError(error)
       });
+    setBackgroundStatus(false)
     // getData();
     // getExistingBuckets()
     return result.data;
   };
 
   const uploadMultipleMediaFiles = async (data) => {
+    setBackgroundStatus(true)
     console.log('STM context-SongDetailsContext.jsx:132', data); // todo remove dev item
     // const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/uploadBatch',
-      timeout: 10000,
+      timeout: 30000,
       data: data
     })
       .catch(error => {
@@ -151,22 +156,25 @@ const SongDetailsProvider = ({children}) => {
       });
     // getData();
     // getExistingBuckets()
+    setBackgroundStatus(false)
     return result.data;
   };
 
   const copyMediaFilesToBucket = async (data) => {
+    setBackgroundStatus(true)
     console.log('STM context-SongDetailsContext.jsx:132', data); // todo remove dev item
     // const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/copyToBucket',
-      timeout: 10000,
+      timeout: 20000,
       data: data
     })
       .catch(error => {
         console.error(error);
         handleNotifyOfError(error)
       });
+    setBackgroundStatus(false)
     // getData();
     // getExistingBuckets()
     return result.data;
@@ -174,6 +182,7 @@ const SongDetailsProvider = ({children}) => {
   //
 
   const uploadThumbnail = async (data) => {
+    setBackgroundStatus(true)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/uploadThumbnail',
@@ -186,10 +195,12 @@ const SongDetailsProvider = ({children}) => {
         });
     // getData();
     // getExistingBuckets()
+    setBackgroundStatus(false)
     return result.data;
   };
 
   const addSong = async (data) => {
+    setBackgroundStatus(true)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       url: '/addSong',
@@ -199,7 +210,7 @@ const SongDetailsProvider = ({children}) => {
         console.error(error);
         handleNotifyOfError(error)
       });
-
+    setBackgroundStatus(false)
     return result.data;
   };
 
@@ -265,6 +276,7 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
   };
 
   const getCrossClearForSong = async (SongNumber) => {
+    setBackgroundStatus(true)
     const result = await axiosBase({
       method: 'get',
       url: '/getCrossClearForSong',
@@ -276,7 +288,7 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
         console.error(error);
         handleNotifyOfError(error)
       });
-
+    setBackgroundStatus(false)
     return result.data.result;
   };
 
@@ -316,9 +328,12 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
 
   const getDetailsForSong = async (SongNumber) => {
     try {
+      setBackgroundStatus(true)
       const result = await axios.get(`${base_url}/catalogInternal?SongNumber=${SongNumber}`);
+      setBackgroundStatus(false)
       return result.data.data[0];
     } catch (error) {
+      setBackgroundStatus(false)
       console.error(error)
       handleNotifyOfError(error)
     }

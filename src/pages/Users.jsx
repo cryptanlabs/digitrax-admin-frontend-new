@@ -47,6 +47,10 @@ export default function Users () {
     const [showRegisteredApiUser, setShowRegisteredApiUser] = useState(false);
     const [newApiUser, setNewApiUser] = useState(newApiUserDefault);
     const [createdApiUser, setCreatedApiUser] = useState(newApiUserDefault);
+    const [userDetails, setUserDetails] = useState('');
+    const [viewUserDetails, setViewUserDetails] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
     const getAllRegisteredUsers = async () => {
       const result = await axiosBase({
@@ -96,6 +100,52 @@ export default function Users () {
       await getAllRegisteredUsers();
     };
 
+    const showUserDetails = (details) => {
+      setRowSelectionModel([details.id])
+      setUserDetails(details.row)
+    }
+
+    const updateRowSelectionModel = (val) => {
+      if(val.length > 0){
+        const newVal = val[val.length - 1]
+        setRowSelectionModel([newVal])
+        const found = registeredApiUsers.find(item => item.id === newVal)
+        if(found){
+          setUserDetails(found)
+        }
+      } else {
+        setRowSelectionModel(val)
+        setViewUserDetails(false)
+        setUserDetails({})
+      }
+
+
+    }
+    const resetPassword = async () => {
+      const data = {
+        UserId: userDetails.UserId,
+        Password: newPassword
+      }
+
+      if(newPassword !== ''){
+        const result = await axiosBaseWithKey(adminDashToken)({
+          method: 'post',
+          url: '/resetPassword',
+          data: data
+        })
+          .catch(error => {
+            console.log(error);
+          });
+        if(result.status === 200){
+          setRowSelectionModel([])
+          setViewUserDetails(false)
+          setUserDetails({})
+        }
+        console.log('STM pages-Users.jsx:140', result); // todo remove dev item
+
+      }
+
+    }
 
     return (
       <>
@@ -210,6 +260,85 @@ export default function Users () {
                 </Button>
               </div>
             </div>}
+            <div className="w-[90%] flex mt-10 items-center justify-end">
+              {rowSelectionModel?.length > 0 && <Button
+                variant="outlined"
+                onClick={() => {
+                  setViewUserDetails(!viewUserDetails);
+                }}
+                sx={{
+                  marginRight: '15px',
+                  borderColor: '#00b00e',
+                  backgroundColor: '#00b00e',
+                  color: 'white',
+                  '&:hover': {
+                    borderColor: '#F1EFEF',
+                    backgroundColor: '#86A789',
+                  },
+                }}
+              >
+                {`${!viewUserDetails ? 'Reset Password' : 'Close Reset Password'}`}
+              </Button>}
+            </div>
+            {viewUserDetails && <div className="w-full flex flex-col mt-2 flex">
+              <div className="w-full flex flex-row mt-2 flex">
+                <div className="flex flex-col ml-20 w-[40%]">
+                  <Typography sx={{fontWeight: 'bold'}}>Name</Typography>
+                  <TextField
+                    sx={{marginTop: 1}}
+                    hiddenLabel
+                    name="Name"
+                    value={userDetails.Name}
+                    variant="outlined"
+                  />
+                </div>
+                <div className="flex flex-col ml-20 w-[40%]">
+                  <Typography sx={{fontWeight: 'bold'}}>UserName</Typography>
+                  <TextField
+                    sx={{marginTop: 1}}
+                    hiddenLabel
+                    name="UserName"
+                    value={userDetails.UserName}
+                    variant="outlined"
+                  />
+                </div>
+              </div>
+              <div className="w-full flex flex-row mt-10 flex">
+                <div className="flex flex-col ml-20 w-[40%]">
+                  <Typography sx={{fontWeight: 'bold'}}>New Password</Typography>
+                  <TextField
+                    sx={{marginTop: 1}}
+                    hiddenLabel
+                    name="Password"
+                    value={newPassword}
+                    onChange={(e) => {setNewPassword(e.target.value)}}
+                    variant="outlined"
+                  />
+                </div>
+                <div className="flex flex-col ml-20 w-[40%]">
+                  <Button
+                    variant="outlined"
+                    onClick={resetPassword}
+                    sx={{
+                      marginRight: '15px',
+                      borderColor: '#00b00e',
+                      backgroundColor: '#00b00e',
+                      color: 'white',
+                      '&:hover': {
+                        borderColor: '#F1EFEF',
+                        backgroundColor: '#86A789',
+                      },
+                    }}
+                  >
+                    reset password
+                  </Button>
+                </div>
+
+              </div>
+              <div className="w-[90%] flex mt-10 items-center justify-end">
+
+              </div>
+            </div>}
             {/* POST REGISTRATION DETAILS DISPLAY */}
             {showRegisteredApiUser &&
               <div className="w-full flex flex-col mt-10 flex">
@@ -265,6 +394,10 @@ export default function Users () {
               <SimpleDataGrid
                 columns={columns}
                 rows={registeredApiUsers}
+                onRowClick={showUserDetails}
+                rowSelectionModel={rowSelectionModel}
+                setRowSelectionModel={updateRowSelectionModel}
+                checkboxSelection
               />
             </div>
           </div>

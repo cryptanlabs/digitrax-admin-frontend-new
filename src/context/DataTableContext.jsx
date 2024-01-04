@@ -41,6 +41,7 @@ const excludeFields = [
 ];
 
 const DataTableContext = ({children}) => {
+  const [backgroundStatus, setBackgroundStatus] = useState(true);
   const [fetchingData, setFetchingData] = useState(false);
   const [fetchingCrossClear, setFetchingCrossClear] = useState(false);
   const [generatedSets, setGeneratedSets] = useState([]);
@@ -64,6 +65,7 @@ const DataTableContext = ({children}) => {
 
     if(fetchingData) return
     setFetchingData(true)
+    setBackgroundStatus(true)
     try {
       const baseOrdering = 'SongNumber' // 'SongReleaseYear'
       const baseOrderDirection = 'asc' //'desc'
@@ -79,9 +81,11 @@ const DataTableContext = ({children}) => {
 
       console.log('Result:', res);
       setFetchingData(false)
+      setBackgroundStatus(false)
     } catch (e) {
       console.error(e)
       setFetchingData(false)
+      setBackgroundStatus(false)
     }
 
 
@@ -130,6 +134,7 @@ const DataTableContext = ({children}) => {
 
     if(!fetchingCrossClear){
       try {
+        setBackgroundStatus(true)
         setFetchingCrossClear(true);
         const res = await axios.get(`${base_url}/getCrossClear`);
         const lowercaseId = res?.data?.result?.map(item => {
@@ -140,9 +145,11 @@ const DataTableContext = ({children}) => {
 
         console.log('Result getCrossData:', res);
         setFetchingCrossClear(false);
+        setBackgroundStatus(false)
       } catch (e) {
         console.error(e)
         setFetchingCrossClear(false);
+        setBackgroundStatus(false)
       }
     }
 
@@ -253,8 +260,10 @@ const DataTableContext = ({children}) => {
   };
 
   const getSongNumbersWithoutRecords = async () => {
+    setBackgroundStatus(true)
     const res = await axios.get(`${base_url}/getAvailableSongNumbers`);
     setNextTwentyCatalogNumbers(res.data.slice(0,20))
+    setBackgroundStatus(false)
     return res.data.slice(0,20)
     // getAvailableSongNumbers
   }
@@ -310,6 +319,8 @@ const DataTableContext = ({children}) => {
 
   return (
     <DataTableData.Provider value={{
+      backgroundStatus,
+      setBackgroundStatus,
       allDataRefresh,
       getData,
       getColumnNames,

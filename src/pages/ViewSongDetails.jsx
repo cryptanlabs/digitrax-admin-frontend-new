@@ -405,16 +405,16 @@ export default function ViewSongDetails () {
           </div>
         </div>
         <div className="w-full flex-row justify-start mt-10 flex">
-          <WithFilters
-              key={'123'}
-              label="Catalog ID #"
-              field="SongNumber"
-              fieldType="String"
-              queryFields={queryFields}
-              setQueryFields={handleQueryChange}
-              queryFieldModifiers={queryFieldModifiers}
-              setQueryFieldModifiers={handleQueryFieldModifiers}
-          />
+          {/*<WithFilters*/}
+          {/*    key={'123'}*/}
+          {/*    label="Catalog ID #"*/}
+          {/*    field="SongNumber"*/}
+          {/*    fieldType="String"*/}
+          {/*    queryFields={queryFields}*/}
+          {/*    setQueryFields={handleQueryChange}*/}
+          {/*    queryFieldModifiers={queryFieldModifiers}*/}
+          {/*    setQueryFieldModifiers={handleQueryFieldModifiers}*/}
+          {/*/>*/}
           <div className="flex flex-col ml-20 mt-10">
             <Button
               disabled={disableRequestButton}
