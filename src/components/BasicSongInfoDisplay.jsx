@@ -203,7 +203,7 @@ console.log('STM components-BasicSongInfoDisplay.jsx:27', genres); // todo remov
           >
             <Typography sx={{ fontWeight: "bold" }}>In The Style Of Artist</Typography>
             <TextField
-              name="Artist"
+              name="InTheStyleOfArtist"
               onChange={handleChange}
               sx={{ marginTop: 1 }}
               hiddenLabel
@@ -355,7 +355,7 @@ console.log('STM components-BasicSongInfoDisplay.jsx:27', genres); // todo remov
                 <TextField
                     sx={{ marginTop: 1 }}
                     hiddenLabel
-                    name="Genre"
+                    name="Writer"
                     value={basicInformation.Writer}
                     onChange={handleChange}
                     variant="outlined"

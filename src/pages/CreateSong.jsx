@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from 'react-router-dom';
 import { Box, Button, Typography, TextField } from "@mui/material";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -75,6 +75,7 @@ const publishingHeadersMappedToColumn = {
 const CreateSong = () => {
 
   try {
+    const navigate = useNavigate();
     const location = useLocation();
     const {
       generatedSets,
@@ -115,9 +116,13 @@ const CreateSong = () => {
     const [openGenreDialog, setOpenGenreDialog] = useState(false);
     const [openGenreDialogType, setOpenGenreDialogType] = useState(null);
     const [newGenreOrSub, setNewGenreOrSub] = useState('');
+
     // const [genres, setGenres] = useState([]);
 
     const [SaveProgress, setSaveProgress] = useState([]);
+
+    const [newSongNumber, setNewSongNumber] = useState('');
+    const [songAdded, setSongAdded] = useState(false);
 
     const handleDialogOpen = async (val) => {
       console.log('STM pages-CreateSong.jsx:123', 'handleDialogOpen'); // todo remove dev item
@@ -229,6 +234,10 @@ const CreateSong = () => {
       setPublishersForUpload([...publishersForUpload, data]);
     };
 
+    const updatePublishers = (data) => {
+      setPublishersForUpload([...data]);
+    };
+
     const handleThumbnailChange = (data) => {
       console.log('STM pages-CreateSong.jsx:195', data); // todo remove dev item
       console.log('STM pages-CreateSong.jsx:196', data.get('files')); // todo remove dev item
@@ -305,8 +314,8 @@ const CreateSong = () => {
           ...distributionInformation,
           Status: 'Status1'
         };
-        await addSong(newSongData);
-
+        const addSongResponse = await addSong(newSongData);
+console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev item
         addProgressItem('Create Song Metadata Entry Complete');
 
         addToRecentSongs(SongNumber);
@@ -387,6 +396,8 @@ const CreateSong = () => {
         await getData();
         addProgressItem('Refreshing Local Song Data Complete');
         addProgressItem('New Song Creation Complete');
+        setNewSongNumber(SongNumber)
+        setSongAdded(true)
       } catch (e) {
         console.error(e)
         addProgressItem('New Song Creation Error');
@@ -465,26 +476,42 @@ const CreateSong = () => {
               gap: 1
             }}
           >
-            {Object.keys(licensingInformation).map((header, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  width: '20%',
-                }}
-              >
-                <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
-                <TextField
-                  size="small"
-                  hiddenLabel
-                  name={header.key}
-                  onChange={handleLicensingChange}
-                  value={licensingInformation[header.key]}
-                  variant="outlined"
-                />
-              </Box>
-            ))}
+            {/*<div className="w-full mt-10 flex flex-row flex-wrap">*/}
+              {Object.keys(licensingInformation).map((header, index) => (
+                <div key={index} className="flex flex-col ml-5 w-[20%]">
+                  <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>
+
+                  <TextField
+                    size="small"
+                    hiddenLabel
+                    name={header}
+                    onChange={handleLicensingChange}
+                    value={licensingInformation[header]}
+                    variant="outlined"
+                  />
+                </div>
+              ))}
+            {/*</div>*/}
+            {/*{Object.keys(licensingInformation).map((header, index) => (*/}
+            {/*  <Box*/}
+            {/*    key={index}*/}
+            {/*    sx={{*/}
+            {/*      display: 'flex',*/}
+            {/*      flexDirection: 'column',*/}
+            {/*      width: '20%',*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    <Typography sx={{ fontWeight: "bold" }}>{publishingColumnMappedToHeaders[header]}</Typography>*/}
+            {/*    <TextField*/}
+            {/*      size="small"*/}
+            {/*      hiddenLabel*/}
+            {/*      name={header}*/}
+            {/*      onChange={handleLicensingChange}*/}
+            {/*      value={licensingInformation[header.key]}*/}
+            {/*      variant="outlined"*/}
+            {/*    />*/}
+            {/*  </Box>*/}
+            {/*))}*/}
           </Box>
         </Box>
 
@@ -509,7 +536,7 @@ const CreateSong = () => {
           songNumber={basicInformation.SongNumber}
           saveNewPublisher={savePublisher}
           songPublishers={publishersForUpload}
-          setSongPublishers={setPublishersForUpload}
+          setSongPublishers={updatePublishers}
         />
 
         {/* SIXTH SECTION: COMMENTS */}
@@ -610,6 +637,10 @@ const CreateSong = () => {
           {SaveProgress.map((messageEntry, index) => (
             <Typography key={index}>{messageEntry}</Typography>
           ))}
+          {songAdded && <Button
+          onClick={() => {navigate(`/songdata/${newSongNumber}`, { state: { SongNumber: newSongNumber } })}}>
+            Go To Created Song
+          </Button>}
         </div>
         <SimpleDialog open={openGenreDialog} onClose={handleDialogOpen} title={`${openGenreDialogType === 'SubGenre' ? 'Add SubGenre' : 'Add Genre'}`}>
           <TextField

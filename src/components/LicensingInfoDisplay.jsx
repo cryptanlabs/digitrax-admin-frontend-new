@@ -32,6 +32,7 @@ export function LicensingInfoDisplay({publishingHeaders, licensingInfoDisplay, h
                 key={index}
                 className="w-[20%] h-full flex items-center justify-center border-r border-gray-400 "
               >
+                <span>{header.key}</span>
                 <TextField
                   sx={{marginTop: 1, width: '90%'}}
                   size="small"
