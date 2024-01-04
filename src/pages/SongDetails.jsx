@@ -96,6 +96,7 @@ const SongDetails = () => {
   const routeParams = useParams();
   const {
     generatedSets,
+    bucketList,
     addPublisher,
     removePublisher,
     getCrossClearForSong,
@@ -138,6 +139,8 @@ const SongDetails = () => {
   const [buildingExport, setBuildingExport] = useState(false);
 
   const [generatedGroups, setGeneratedGroups] = useState({});
+  const [displayBuckets, setDisplayBuckets] = useState([]);
+  const [bucketTypeMap, setBucketTypeMap] = useState({});
   const [generatedCount, setGeneratedCount] = useState(0);
 
   const [openGenreDialog, setOpenGenreDialog] = useState(false);
@@ -168,6 +171,25 @@ const SongDetails = () => {
   const regenerateMediaMap = (generatedMedia) => {
     console.log('STM pages-SongDetails.jsx:139', generatedMedia); // todo remove dev item
     // setIsLoading(true)
+    const assignedBucketFolders = (bucketList?.folder || []).reduce((acc, cur) => {
+      acc[cur] = true;
+      return acc;
+    }, {});
+
+    const assignedBucketBuckets = (bucketList?.bucket || []).reduce((acc, cur) => {
+      acc[cur] = false;
+      return acc;
+    }, {});
+
+
+    console.log('STM components-DisplayMediaListing.jsx:35', {...assignedBucketBuckets, ...assignedBucketFolders}); // todo remove dev item
+    setBucketTypeMap({...assignedBucketBuckets, ...assignedBucketFolders})
+    // console.log('STM components-DisplayMediaListing.jsx:36', assignedBuckets.bucketType); // todo remove dev item
+    const localDisplayBuckets = [...generatedSets, ...Object.keys({...assignedBucketBuckets, ...assignedBucketFolders})]
+
+    setDisplayBuckets(localDisplayBuckets)
+
+
     const bucketGroups = generatedMedia.reduce((acc, cur) => {
       acc[cur['bucket']] = [];
       return acc;
@@ -230,7 +252,9 @@ const SongDetails = () => {
     setThumbnailInformation(rowData?.Thumbnail ?? {})
 
     setSongPublishers(rowData.SongPublisher ?? []);
-    getCommentsForSong();
+
+    const retrievedComments = await getCommentsForSong(rowData.SongNumber);
+    setComments(retrievedComments)
 
     console.log('STM pages-SongDetails.jsx:204', distributionInformation); // todo remove dev item
   };
@@ -739,25 +763,10 @@ const SongDetails = () => {
         <div className="flex flex-col">
           <Typography sx={{fontWeight: 'bold', fontSize: '30px'}}>Media</Typography>
         </div>
-      </div>
-
-      <div className="w-full flex flex-row justify-around">
-
-        <div className="w-1/3">
-          <FileAdd
-            buttonOnly
-            songNumber={basicInformation.SongNumber}
-            submit={uploadMediaFileAndRefresh}
-            buckets={generatedSets}
-            hideHandler={() => {
-              setShowFileUpload(false);
-            }}
-          ></FileAdd>
-        </div>
         <div className="w-1/3">
           {loadingMedia && <CircularProgress />}
         </div>
-        <div className="w-1/3">
+        <div className="w-1/3 mt-3">
           <Button
             variant="outlined"
             onClick={handleExportAllMedia}
@@ -775,7 +784,7 @@ const SongDetails = () => {
             Export Media
           </Button>
         </div>
-        <div className="w-1/3">
+        <div className="w-1/3 mt-3">
           <Button
             variant="outlined"
             onClick={() => {
@@ -797,6 +806,20 @@ const SongDetails = () => {
         </div>
       </div>
 
+      <div className="w-full flex flex-row justify-start">
+
+        <FileAdd
+          buttonOnly
+          songNumber={basicInformation.SongNumber}
+          submit={uploadMediaFileAndRefresh}
+          buckets={bucketList?.folder || []}
+          hideHandler={() => {
+            setShowFileUpload(false);
+          }}
+        ></FileAdd>
+
+      </div>
+
       <div className="w-full  mb-20">
       <DisplayMediaListing
         updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
@@ -807,6 +830,8 @@ const SongDetails = () => {
         handleRequestDeleteMediaEntry={deleteMediaFileAndRefresh}
         setIsLoading={setLoadingMedia}
         generatedGroupsExternal={generatedGroups}
+        displayBucketsExternal={displayBuckets}
+        bucketTypeMapExternal={bucketTypeMap}
       />
       </div>
       <SimpleDialog open={openGenreDialog} onClose={handleDialogOpen} title={`${openGenreDialogType === 'SubGenre' ? 'Add SubGenre' : 'Add Genre'}`}>

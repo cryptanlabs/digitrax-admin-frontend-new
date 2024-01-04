@@ -4,6 +4,7 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
 export default function StatusDisplayEdit({newSong, handleChange = () => {}, statusData = {}, handleSave = () => {}}) {
 
+  console.log('STM components-StatusDisplayEdit.jsx:7', statusOptionsText[statusData.Status]); // todo remove dev item
   try {
     return (
       <Box
@@ -29,11 +30,12 @@ export default function StatusDisplayEdit({newSong, handleChange = () => {}, sta
             }}
           >
             <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
+            <Typography sx={{fontWeight: 'bold'}}>{statusData.Status}</Typography>
             <Select
               sx={{marginTop: 1}}
               name="Status"
-              value={statusData.Status}
-              onChange={handleChange}
+              value={statusData.Status || 'Status1'}
+              onChange={(e) => {handleChange(e)}}
             >
               {statusOptions.map((value, index) => (
                 <MenuItem key={index} value={value}>{statusOptionsText[value]}</MenuItem>
