@@ -18,6 +18,8 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
     const [availableColumnHeaders, setAvailableColumnHeaders] = useState([]);
     const [invalidUpload, setInvalidUpload] = useState(false);
     const [columnToUpdate, setColumnToUpdate] = useState('');
+    const [dataToUpdateColumn, setDataToUpdateColumn] = useState('');
+    const [songNumberColumn, setSongNumberColumn] = useState('');
     const formData = new FormData();
 
     const [reviewing, setReviewing] = useState(false);
@@ -92,9 +94,9 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
           return item;
         });
 
-        if (Object.keys(result.data[0])?.length > 3) {
-          setInvalidUpload(true);
-        } else {
+        // if (Object.keys(result.data[0])?.length > 3) {
+        //   setInvalidUpload(true);
+        // } else {
           setColumnHeaders(Object.keys(result.data[0]));
 
           const columnsTemp = Object.keys(result.data[0]).map((item, index) => {
@@ -107,22 +109,32 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
           setRowData(rowsTemp);
           setColumns(columnsTemp);
           setReviewing(true);
-        }
+        // }
 
         return result.data;
       }
 
     };
 
-    const handleFileSubmit = async () => {
+    const prepareForSubmit = () => {
+      const holding = rowData.reduce((acc, cur) => {
+        acc.push({SongNumber: cur[songNumberColumn], [columnToUpdate]: cur[dataToUpdateColumn]})
+        return acc
+      }, [])
+
+      handleFileSubmit(holding)
+    }
+    const handleFileSubmit = async (inputData) => {
       setProcessing(true);
 
       const valueType = modelDetails[columnToUpdate];
       const isNumeric = ['Int', 'Decimal'].includes(valueType);
+      console.log('STM components-UploadSingleColumn.jsx:138', isNumeric); // todo remove dev item
 
-      for (let i = 0; i < rowData.length; i += 100) {
-        const rowSlice = rowData.slice(i, i + 100);
+      for (let i = 0; i < inputData.length; i += 100) {
+        const rowSlice = inputData.slice(i, i + 100);
 
+        console.log('STM components-UploadSingleColumn.jsx:138', rowSlice); // todo remove dev item
         const result = await axiosBaseWithKey(adminDashToken)({
           method: 'post',
           url: '/catalogUpdateMany',
@@ -175,7 +187,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
         <div className="w-full mt-4 flex flex-col items-center justify-between">
           <div className="w-full mt-4 flex flex-col justify-start">
             <h1 className="text-4xl ml-10 font-medium">
-              UpLoad (In progress)
+              Update/Upload a Single Column (In progress)
             </h1>
             <div className="w-[90%] flex flex-row ml-20 items-center justify-between">
               <div className="flex flex-col ml-20">
@@ -201,7 +213,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
                   {reviewing && <Button
                     variant="outlined"
                     disabled={completed}
-                    onClick={handleFileSubmit}
+                    onClick={prepareForSubmit}
                     sx={{
                       marginTop: '30px',
                       borderColor: 'gray',
@@ -245,6 +257,34 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
                     <Typography sx={{fontWeight: 'bold'}}>only two columns permitted</Typography>}
                 </div>
               </div>
+            </div>
+            <div className="w-[90%] flex flex-row ml-20 items-center justify-between">
+              <div className="flex flex-col ml-20 w-[40%]">
+                <Typography sx={{fontWeight: 'bold'}}>Column with digitraxId or Cat #</Typography>
+                <Select
+                  sx={{marginTop: 1}}
+                  name="Status"
+                  value={songNumberColumn}
+                  onChange={(e) => setSongNumberColumn(e.target.value)}
+                >
+                  {columnHeaders.filter(item => !(item === 'id' || item === 'Id')).map((value, index) => (
+                    <MenuItem key={index} value={value}>{value}</MenuItem>
+                  ))}
+                </Select>
+              </div>
+              <div className="flex flex-col ml-20 w-[40%]">
+                <Typography sx={{fontWeight: 'bold'}}>Update from Column</Typography>
+                <Select
+                  sx={{marginTop: 1}}
+                  name="Status"
+                  value={dataToUpdateColumn}
+                  onChange={(e) => setDataToUpdateColumn(e.target.value)}
+                >
+                  {columnHeaders.filter(item => !(item === 'id' || item === 'Id')).map((value, index) => (
+                    <MenuItem key={index} value={value}>{value}</MenuItem>
+                  ))}
+                </Select>
+              </div>
               <div className="flex flex-col ml-20 w-[40%]">
                 <Typography sx={{fontWeight: 'bold'}}>Column To Update</Typography>
                 <Select
@@ -253,7 +293,7 @@ export default function UploadOrUpdateSingleColumn ({columnNames = []}) {
                   value={columnToUpdate}
                   onChange={(e) => setColumnToUpdate(e.target.value)}
                 >
-                  {columnNames.map((value, index) => (
+                  {columnNames.filter(item => !(item === 'id' || item === 'Id')).map((value, index) => (
                     <MenuItem key={index} value={value}>{value}</MenuItem>
                   ))}
                 </Select>
