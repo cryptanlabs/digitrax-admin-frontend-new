@@ -35,7 +35,8 @@ export function FileAdd({
                             mediaObjects = [],
                             filesStagedForUpload = [],
                             handleRequestDeleteMediaEntry = () => {
-                            }
+                            },
+                            getBuckets = () => {}
                         }) {
     // notifications
     const [uploadingProgress, setUploadingProgress] = useState(false);
@@ -83,6 +84,10 @@ export function FileAdd({
             setLocalGeneratedSets(buckets);
         }
     }, []);
+
+    useEffect(() => {
+        setLocalGeneratedSets(buckets);
+    }, [buckets]);
 
     const handleSnackBarOpen = (message) => {
         setSnackBarMessage(message)
@@ -605,7 +610,8 @@ export function FileAdd({
                   <Button
                     variant="outlined"
                     onClick={() => {
-                        setShowFileUpload(true);
+                        getBuckets()
+                        if(songNumber) setShowFileUpload(true);
                     }}
                     sx={{
                         marginRight: '15px',
@@ -620,7 +626,7 @@ export function FileAdd({
                   >
                       Add Media
                   </Button>
-
+                  {!songNumber && <span>Missing Song Number</span>}
               </div>
           </div>
         );
@@ -781,26 +787,26 @@ export function FileAdd({
                             <div className="flex-col">
                                 {bucketNameEnterSelectElem()}
                             </div>
-                            <div className="flex-col ml-8">
-                                {/*{bucketAddOptions.map((item, idx) => (*/}
-                                {/*  <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}
-                                {/*      <Checkbox name={item} onChange={handleBucketSelectChange}/>*/}
-                                {/*      <span style={{paddingTop: '9px'}}>{item}</span>*/}
-                                {/*  </div>*/}
-                                {/*))}*/}
-                                <Select
-                                  multiple
-                                  sx={{marginTop: 1}}
-                                  value={bucketToAdd}
-                                  onChange={handleBucketSelectChange}
-                                >
-                                    {bucketAddOptions.map((value, index) => (
-                                      <MenuItem key={index} value={value}>{value}</MenuItem>
-                                    ))}
-                                </Select>
+                            {/*<div className="flex-col ml-8">*/}
+                            {/*    {bucketAddOptions.map((item, idx) => (*/}
+                            {/*      <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}
+                            {/*          <Checkbox name={item} onChange={handleBucketSelectChange}/>*/}
+                            {/*          <span style={{paddingTop: '9px'}}>{item}</span>*/}
+                            {/*      </div>*/}
+                            {/*    ))}*/}
+                            {/*    <Select*/}
+                            {/*      multiple*/}
+                            {/*      sx={{marginTop: 1}}*/}
+                            {/*      value={bucketToAdd}*/}
+                            {/*      onChange={handleBucketSelectChange}*/}
+                            {/*    >*/}
+                            {/*        {bucketAddOptions.map((value, index) => (*/}
+                            {/*          <MenuItem key={index} value={value}>{value}</MenuItem>*/}
+                            {/*        ))}*/}
+                            {/*    </Select>*/}
 
 
-                            </div>
+                            {/*</div>*/}
                             {/*<div className="flex-col ml-8">*/}
                             {/*    {bucketAddOptions.map((item, idx) => (*/}
                             {/*      <div key={`${idx}-${item}`} className="flex flex-row  w-52">*/}

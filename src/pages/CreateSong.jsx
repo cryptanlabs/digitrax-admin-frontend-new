@@ -79,6 +79,8 @@ const CreateSong = () => {
     const location = useLocation();
     const {
       generatedSets,
+      bucketList,
+      getBuckets,
       addSong,
       addPublisher,
       uploadMediaFile,
@@ -124,6 +126,45 @@ const CreateSong = () => {
     const [newSongNumber, setNewSongNumber] = useState('');
     const [songAdded, setSongAdded] = useState(false);
 
+
+
+    useEffect(() => {
+            const setupNextCatalogNumbers = async () => {
+        setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
+        await getSongNumbersWithoutRecords()
+            .then(res => {
+              const nextNum = res?.shift()?.toString()?.padStart(5, '0')
+              setNextCatNumbersToSuggest(res)
+              setNextCatSuggest(nextNum)
+            })
+      }
+      setupNextCatalogNumbers()
+console.log('STM pages-CreateSong.jsx:174', bucketList); // todo remove dev item
+    }, []);
+
+    useEffect(() => {
+      console.log('STM pages-CreateSong.jsx:413', bucketList); // todo remove dev item
+    }, [bucketList]);
+
+    useEffect(() => {
+      return () => {
+        const detailsInOrder = publishingHeaders.map((val) => {
+          return {
+            key: publishingHeadersMappedToColumn[val],
+            value: licensingInformation[publishingHeadersMappedToColumn[val]],
+          };
+        });
+
+        setLicensingInfoDisplay(detailsInOrder);
+      };
+    }, [licensingInformation]);
+
+    useEffect(() => {
+      console.log(basicInformation);
+
+    }, [basicInformation]);
+
+
     const handleDialogOpen = async (val) => {
       console.log('STM pages-CreateSong.jsx:123', 'handleDialogOpen'); // todo remove dev item
       if(!val){
@@ -158,39 +199,6 @@ const CreateSong = () => {
       setStatusData({...statusInformationDefault, Status: 'Status1'})
       setSaveProgress([])
     }
-
-    useEffect(() => {
-            const setupNextCatalogNumbers = async () => {
-        setNextCatNumbersToSuggest(nextTwentyCatalogNumbers)
-        await getSongNumbersWithoutRecords()
-            .then(res => {
-              const nextNum = res?.shift()?.toString()?.padStart(5, '0')
-              setNextCatNumbersToSuggest(res)
-              setNextCatSuggest(nextNum)
-            })
-      }
-      setupNextCatalogNumbers()
-
-    }, []);
-
-    // useEffect(() => {
-    //   getGenres()
-    //     .then(res => setGenres(res))
-    // }, []);
-
-    useEffect(() => {
-      return () => {
-        const detailsInOrder = publishingHeaders.map((val) => {
-          return {
-            key: publishingHeadersMappedToColumn[val],
-            value: licensingInformation[publishingHeadersMappedToColumn[val]],
-          };
-        });
-
-        setLicensingInfoDisplay(detailsInOrder);
-      };
-    }, [licensingInformation]);
-
     const handleChange = (e) => {
       const {name, value} = e.target;
       setBasicInformation((prev) => ({
@@ -407,10 +415,6 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
     };
 
 
-    useEffect(() => {
-      console.log(basicInformation);
-    }, [basicInformation]);
-
     return (
       <Box
         sx={{
@@ -575,9 +579,10 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
           <FileAdd
             newSong
             buttonOnly
+            getBuckets={getBuckets}
             songNumber={basicInformation.SongNumber}
             submit={uploadMediaFileAndForCreateSong}
-            buckets={generatedSets}
+            buckets={bucketList?.folder || []}
             hideHandler={() => {
               setShowFileUpload(false);
             }}
@@ -586,7 +591,7 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
             newSong
             songNumber={basicInformation.SongNumber}
             submit={uploadMediaFileAndForCreateSong}
-            generatedSets={generatedSets}
+            generatedSets={bucketList?.folder || []}
           />
         </Box>
 

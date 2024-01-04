@@ -12,7 +12,7 @@ export const SongDetailsContext = createContext(undefined);
 const SongDetailsProvider = ({children}) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState('');
-  const {getData, generatedSets = [], genres = [], getGenres, getExistingBuckets} = useContext(DataTableData);
+  const {getData, generatedSets = [], genres = [], getGenres, bucketList = {bucket: [], folder: []}, getBuckets} = useContext(DataTableData);
   const {user, adminDashToken} = useContext(UserContext);
 
 
@@ -342,6 +342,8 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
   return (
     <SongDetailsContext.Provider value={{
       generatedSets,
+      getBuckets,
+      bucketList,
       addPublisher,
       addSong,
       removePublisher,
