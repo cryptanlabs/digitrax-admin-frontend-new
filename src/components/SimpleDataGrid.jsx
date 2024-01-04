@@ -153,7 +153,7 @@ export function SimpleDataGrid ({
               },
             },
           }}
-          pageSizeOptions={[5]}
+          pageSizeOptions={[5, 10, 20, 40, 60, 100]}
 
           disableRowSelectionOnClick
           {...propObject}
