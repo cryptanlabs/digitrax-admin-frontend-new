@@ -21,6 +21,7 @@ import Upload from './pages/Upload.jsx';
 import ViewSongDetails from './pages/ViewSongDetails.jsx';
 import BatchMedia from './pages/BatchMedia.jsx';
 import ExportDashboard from './pages/ExportDashboard.jsx';
+import UsageDashboard from './pages/UsageDashboard.jsx';
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
                     <Route element={<InternalOnly/>}>
                       <Route path="/viewSongDetails" element={<ViewSongDetails />} />
                       <Route path="/crossDashboard" element={<CrossDashboard/>}/>
+                      <Route path="/usage" element={<UsageDashboard/>}/>
                       <Route path="/createsong" element={<CreateSong/>}/>
                       <Route path="/reports" element={<ExportDashboard/>}/>
 

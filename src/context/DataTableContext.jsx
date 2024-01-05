@@ -203,6 +203,13 @@ const DataTableContext = ({children}) => {
           }
         }
       }
+      if(items.name === 'ApiKey'){
+        return {
+          field: items.name,
+          headerName: items.name,
+          width: 300,
+        }
+      }
       if(items.type === 'DateTime'){
         return {
           field: items.name,
@@ -257,6 +264,12 @@ const DataTableContext = ({children}) => {
     const [columns2CrossClear, columnCrossClear] = getColumnNamesAndHeaderDetails(3, res.data?.datamodel, {width: 250})
     setCrossColumnNames(columnCrossClear)
     setCrossColumnDetails(columns2CrossClear)
+  };
+
+  const getColumnNamesFor = async (tableName) => {
+    const res = await axios.get(`${base_url}/columnNames`);
+
+    return getColumnNamesAndHeaderDetails(tableName, res.data?.datamodel)
   };
 
   const getSongNumbersWithoutRecords = async () => {
@@ -346,7 +359,8 @@ const DataTableContext = ({children}) => {
       getBuckets,
       setupData,
       getGenres,
-      genres
+      genres,
+      getColumnNamesFor
     }}>
       {children}
     </DataTableData.Provider>

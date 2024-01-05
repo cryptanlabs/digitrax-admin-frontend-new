@@ -19,7 +19,7 @@ import {UserContext} from '../context/UserContext.jsx';
 
 const drawerWidth = 240;
 
-const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Files To Buckets", "Query Builder", "Users", "Status Dashboard", "Batch Upload", "Lookup Song Details", "Batch Media"]
+const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Files To Buckets", "Query Builder", "Users", "Status Dashboard", "Batch Upload", "Lookup Song Details", "Batch Media", "Usage"]
 const externalNav = ["Home", "Dashboard"]
 
 export default function SideNav() {
@@ -87,6 +87,8 @@ export default function SideNav() {
                         return "/viewSongDetails";
                       case 9:
                         return "/batchMedia"
+                      case 10:
+                        return "/usage"
                       default:
                         return "/";
                     }
@@ -116,6 +118,8 @@ export default function SideNav() {
                           case 8:
                             return <BarChartIcon/>;
                           case 9:
+                            return <BarChartIcon/>;
+                          case 10:
                             return <BarChartIcon/>;
                           // case 4:
                           //   return <AccountCircleIcon />;

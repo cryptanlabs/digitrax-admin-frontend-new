@@ -307,24 +307,19 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
       });
   }
 
-  // const getGenres = async () => {
-  //   const result = await axiosBaseWithKey(adminDashToken)({
-  //     method: 'get',
-  //     timeout: 30000,
-  //     url: '/getGeneres',
-  //   })
-  //     .catch(error => {
-  //       console.error(error);
-  //       handleNotifyOfError(error)
-  //     });
-  //
-  //   return result.data.result;
-  // }
-
-  // getCrossClearForSong
-  // removePublisher
-
-  // addPublisher
+  const getUsage = async () => {
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'get',
+      timeout: 30000,
+      url: '/getUsage'
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+    console.log('STM context-SongDetailsContext.jsx:320', result); // todo remove dev item
+    return result.data;
+  }
 
   const getDetailsForSong = async (SongNumber) => {
     try {
@@ -377,6 +372,7 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
       copyMediaFilesToBucket,
       addGenre,
       addStatusChange,
+      getUsage,
       getGenres,
       genres
     }}>
