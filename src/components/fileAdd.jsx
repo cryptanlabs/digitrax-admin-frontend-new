@@ -71,7 +71,6 @@ export function FileAdd({
     const [bucketAddOptions, setBucketAddOptions] = useState(['bucketOne', 'bucketTwo', 'bucketThree'])
     const [bucketToAdd, setBucketsToAdd] = useState([])
 
-
     // Form Data For Upload
     const formData = new FormData();
 
@@ -79,14 +78,14 @@ export function FileAdd({
         if (preSetBucketTo) {
             setBucketName(preSetBucketTo);
         }
-        if (localGeneratedSets.length === 0) {
-            setLocalGeneratedSets(buckets);
-        }
+        // if (localGeneratedSets.length === 0) {
+        //     setLocalGeneratedSets(buckets);
+        // }
     }, []);
 
-    useEffect(() => {
-        setLocalGeneratedSets(buckets);
-    }, [buckets]);
+    // useEffect(() => {
+    //     setLocalGeneratedSets(buckets);
+    // }, [buckets]);
 
     const handleSnackBarOpen = (message) => {
         setSnackBarMessage(message)
@@ -149,7 +148,12 @@ export function FileAdd({
         try {
             setUploadingProgress(true);
             addNewBucketToList(bucketName);
-            message = `${currentFileName} to ${bucketName}`
+            if(!newSong){
+                message = `${currentFileName} to ${bucketName}`
+            } else {
+                message = `${currentFileName} for upload to ${bucketName}`
+            }
+
             if (fileNameChanged) {
                 formData.append(
                     bucketName,
@@ -185,7 +189,6 @@ export function FileAdd({
                     'description',
                     description
                 );
-
             }
 
 
@@ -199,7 +202,11 @@ export function FileAdd({
 
             await submit(formData);
             addNewBucketToList(bucketName);
-            handleSnackBarOpen(`Uploaded ${message}`)
+            if(!newSong){
+                handleSnackBarOpen(`Uploaded ${message}`)
+            } else {
+                handleSnackBarOpen(`Prepared ${message}`)
+            }
         } catch (e) {
             console.error(e)
             setUploadError(true)

@@ -31,7 +31,7 @@ const Dashboard = () => {
 
     useEffect(() => {
       console.log('getData');
-      getData()
+      // getData()
     }, []);
 
     useEffect(() => {

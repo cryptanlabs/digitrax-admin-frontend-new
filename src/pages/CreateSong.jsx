@@ -42,36 +42,6 @@ const publishingHeadersMappedToColumn = {
 };
 
 
-
-
-// const defaultLicensingInformationState = {
-//   ISRCCAMixVocal: "",
-//   HFASongCode: "",
-//   MechanicalRegistrationNumberA: "",
-//   MechanicalRegistrationNumberD: "",
-//   Writer: "",
-// }
-//
-// const defaultBasicInfoState = {
-//   Title: "",
-//   Artist: "",
-//   Genre: "",
-//   SongNumber: "",
-//   SubGenre: "",
-//   BarIntro: "",
-//   SongKey: "",
-//   Duration: "",
-//   Mixes: "",
-//   MixRendered: "",
-//   SongReleaseYear: "",
-//   Description: "",
-//   ISRCCAMixVocal: "",
-//   HFASongCode: "",
-//   MechanicalRegistrationNumberA: "",
-//   MechanicalRegistrationNumberD: "",
-//   Writer: "",
-// }
-
 const CreateSong = () => {
 
   try {
@@ -277,7 +247,7 @@ console.log('STM pages-CreateSong.jsx:174', bucketList); // todo remove dev item
       }));
     };
 
-    const uploadMediaFileAndForCreateSong = async (data) => {
+    const stageMediaFileForCreateSong = async (data) => {
 
       setGeneratedMediaForUpload([...generatedMediaForUpload, data]);
       let bucketName = ''
@@ -583,7 +553,7 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
             buttonOnly
             getBuckets={getBuckets}
             songNumber={basicInformation.SongNumber}
-            submit={uploadMediaFileAndForCreateSong}
+            submit={stageMediaFileForCreateSong}
             buckets={bucketList?.folder || []}
             hideHandler={() => {
               setShowFileUpload(false);
@@ -592,7 +562,7 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
           <DisplayMediaListing
             newSong
             songNumber={basicInformation.SongNumber}
-            submit={uploadMediaFileAndForCreateSong}
+            submit={stageMediaFileForCreateSong}
             generatedSets={bucketList?.folder || []}
           />
         </Box>

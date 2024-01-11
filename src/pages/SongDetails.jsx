@@ -97,6 +97,7 @@ const SongDetails = () => {
   const {
     generatedSets,
     bucketList,
+    getBuckets,
     addPublisher,
     removePublisher,
     getCrossClearForSong,
@@ -168,21 +169,43 @@ const SongDetails = () => {
 
   }
 
-  const regenerateMediaMap = (generatedMedia) => {
+  const regenerateMediaMap = async (generatedMedia) => {
     console.log('STM pages-SongDetails.jsx:139', generatedMedia); // todo remove dev item
+    console.log('STM pages-SongDetails.jsx:173', bucketList); // todo remove dev item
+    let localBucketList = bucketList
+
+
+
+    generatedMedia = generatedMedia.map(item => {
+      if(item?.bucket === '720all'){
+        item.bucket = '720-motion-background-mp4-video'
+        item.generatedSet = '720-motion-background-mp4-video'
+      }
+      if(item?.bucket === '720-blk-background'){
+        item.bucket = '720-no-background-mp4-video'
+        item.generatedSet = '720-no-background-mp4-video'
+      }
+      return item
+    })
+
+
+    if(localBucketList?.folder?.length === 0 || localBucketList?.bucket?.length === 0){
+      localBucketList = await getBuckets()
+    }
     // setIsLoading(true)
-    const assignedBucketFolders = (bucketList?.folder || []).reduce((acc, cur) => {
+    // if(bucketList?.folder)
+    const assignedBucketFolders = (localBucketList?.folder || []).reduce((acc, cur) => {
       acc[cur] = true;
       return acc;
     }, {});
 
-    const assignedBucketBuckets = (bucketList?.bucket || []).reduce((acc, cur) => {
+    const assignedBucketBuckets = (localBucketList?.bucket || []).reduce((acc, cur) => {
       acc[cur] = false;
       return acc;
     }, {});
 
 
-    console.log('STM components-DisplayMediaListing.jsx:35', {...assignedBucketBuckets, ...assignedBucketFolders}); // todo remove dev item
+
     setBucketTypeMap({...assignedBucketBuckets, ...assignedBucketFolders})
     // console.log('STM components-DisplayMediaListing.jsx:36', assignedBuckets.bucketType); // todo remove dev item
     const localDisplayBuckets = [...generatedSets, ...Object.keys({...assignedBucketBuckets, ...assignedBucketFolders})]
@@ -231,7 +254,7 @@ const SongDetails = () => {
   }
   const setup = async (rowData) => {
     setGeneratedMedia(rowData.GeneratedMedia);
-    regenerateMediaMap(rowData.GeneratedMedia)
+
 
     setDistributionInformation(() => ({
       ...getDistributionInfoFromSongData(rowData)
@@ -255,6 +278,7 @@ const SongDetails = () => {
 
     const retrievedComments = await getCommentsForSong(rowData.SongNumber);
     setComments(retrievedComments)
+    await regenerateMediaMap(rowData.GeneratedMedia)
 
     console.log('STM pages-SongDetails.jsx:204', distributionInformation); // todo remove dev item
   };
@@ -801,7 +825,7 @@ const SongDetails = () => {
               },
             }}
           >
-            Refrech Media
+            ReFetch Media
           </Button>
         </div>
       </div>
@@ -821,6 +845,7 @@ const SongDetails = () => {
       </div>
 
       <div className="w-full  mb-20">
+
       <DisplayMediaListing
         updateGeneratedMediaMetadata={uploadMediaMetadataAndRefresh}
         submit={uploadMediaFileAndRefresh}

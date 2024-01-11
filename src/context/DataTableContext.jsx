@@ -109,7 +109,6 @@ const DataTableContext = ({children}) => {
     })
       .then(response => {
         const buckets = response.data?.reduce((acc, cur) => {
-          console.log('STM context-DataTableContext.jsx:106', cur.bucketType); // todo remove dev item
           acc[cur.bucketType].push(cur.bucketName)
           return acc
         }, {bucket: [], folder: []});
@@ -249,7 +248,36 @@ const DataTableContext = ({children}) => {
       };
     });
 
-    return [computedColumnDetails, computedColumnNames]
+    const cols = [
+      'SongNumber',
+      'Title',
+      'InTheStyleOfArtist',
+      'Genre',
+      'SubGenre',
+      'SongReleaseYear',
+      'DateAdded',
+      'ReleaseScheduledFor',
+      'CrossIdA',
+      'CrossIdC',
+      'CrossIdD'
+    ]
+
+    const sortedComputedColumnDetails = computedColumnDetails.sort((a,b,) => {
+      const includesA = cols.includes(a.field)
+      const includesB = cols.includes(b.field)
+      if(includesA && !includesB){
+        return -1;
+      }
+      if(includesB && !includesA){
+        return 1;
+      }
+      if(includesB && includesA){
+        return cols.indexOf(a.field) - cols.indexOf(b.field)
+      }
+      return 0
+    })
+
+    return [sortedComputedColumnDetails, computedColumnNames]
   }
 
   const getColumnNames = async () => {
@@ -295,6 +323,7 @@ const DataTableContext = ({children}) => {
       .then(getExistingBuckets)
       .then(getGenres)
       .then(getSongNumbersWithoutRecords)
+      .then(getBuckets)
   }
 
   useEffect(() => {

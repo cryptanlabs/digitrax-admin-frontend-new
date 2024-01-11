@@ -4,7 +4,6 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
 export default function StatusDisplayEdit({newSong, handleChange = () => {}, statusData = {}, handleSave = () => {}}) {
 
-  console.log('STM components-StatusDisplayEdit.jsx:7', statusOptionsText[statusData.Status]); // todo remove dev item
   try {
     return (
       <Box
