@@ -78,9 +78,9 @@ export function FileAdd({
         if (preSetBucketTo) {
             setBucketName(preSetBucketTo);
         }
-        // if (localGeneratedSets.length === 0) {
-        //     setLocalGeneratedSets(buckets);
-        // }
+        if (localGeneratedSets.length === 0) {
+            setLocalGeneratedSets(buckets);
+        }
     }, []);
 
     // useEffect(() => {
@@ -248,6 +248,16 @@ export function FileAdd({
             console.error(e);
         }
     };
+
+    const handleAutoFileNameChange = () => {
+        if(currentFileName !== ''){
+            const newFileName = currentFileName.replace(/^\w*/, `C${songNumber}`)
+            console.log('STM components-fileAdd.jsx:255', newFileName); // todo remove dev item
+            setCurrentFileName(newFileName)
+            setFileNameChanged(true);
+            setDifferentFilename(false)
+        }
+    }
 
     const handleChckboxChange = (e) => {
         const {checked} = e.target;
@@ -756,6 +766,7 @@ export function FileAdd({
                                 onChange={handleFileNameChange}
                                 variant="outlined"
                             />
+                            <Button onClick={handleAutoFileNameChange}>Auto-Change</Button>
                         </div>
                     </div>}
                     <div className={`flex-none mt-2 ${changeFilename ? '' : 'ml-56'}`}>

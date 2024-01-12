@@ -7,6 +7,7 @@ const CrossDashboard = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
     const {
+      getCrossData,
       currentDataSet,
       crossClearDataSet,
       crossColumnDetails,
@@ -15,9 +16,13 @@ const CrossDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+      getCrossData()
+    }, []);
+    useEffect(() => {
       if (currentDataSet?.length > 0) {
         setIsLoading(false);
       }
+      console.log('STM pages-CrossDashboard.jsx:21', crossClearDataSet); // todo remove dev item
       setFilteredResults(crossClearDataSet);
     }, [crossClearDataSet]);
 

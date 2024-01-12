@@ -140,6 +140,7 @@ const DataTableContext = ({children}) => {
 
           return {id: item.Id, ...item};
         });
+        console.log('STM context-DataTableContext.jsx:143', lowercaseId); // todo remove dev item
         setCrossClearDataSet(lowercaseId);
 
         console.log('Result getCrossData:', res);
