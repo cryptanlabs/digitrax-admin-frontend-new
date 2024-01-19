@@ -1,7 +1,7 @@
 import {Button, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
 import {axiosBase, base_url} from '../helpers/requests.js';
-import {useContext, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import ApiUsers from './ApiUsers.jsx';
 import Users from './Users.jsx';
@@ -12,11 +12,15 @@ import {DataTableData} from '../context/DataTableContext.jsx';
 export default function Upload () {
   const {columnNames} = useContext(DataTableData);
   const [isBatchUpload, setIsBatchUpload] = useState(true);
+  const [sortedColumnNames, setSortedColumnNames] = useState([]);
 
   const showOtherTypeOfUpload = () => {
     setIsBatchUpload(!isBatchUpload)
   }
 
+  useEffect(() => {
+    setSortedColumnNames(columnNames.sort())
+  }, []);
   return (
     <>
       <div className="w-full flex ">
@@ -55,8 +59,8 @@ export default function Upload () {
           </Button>
         </div>
       </div>
-      {isBatchUpload && <UploadBatch/>}
-      {!isBatchUpload && <UploadOrUpdateSingleColumn columnNames={columnNames}/>}
+      {isBatchUpload && <UploadBatch columnNames={sortedColumnNames}/>}
+      {!isBatchUpload && <UploadOrUpdateSingleColumn columnNames={sortedColumnNames}/>}
     </>
   );
 }

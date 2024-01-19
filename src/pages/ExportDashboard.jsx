@@ -37,7 +37,8 @@ const ExportDashboard = () => {
 
     const {
       handleNotifyOfError,
-      copyMediaFilesToBucket
+      copyMediaFilesToBucket,
+      createBucket: createS3Bucket
     } = useContext(SongDetailsContext);
     const [localRowSet, setLocalRowSet] = useState([]);
     const [filteredResults, setFilteredResults] = useState([]);
@@ -135,6 +136,7 @@ const ExportDashboard = () => {
     const AddSelected = () => {
       const newlySelected = rowSelectionModel.reduce((acc, id) => {
         const result = filteredResults?.find(item => item.id === id);
+        console.log('STM pages-ExportDashboard.jsx:138', result); // todo remove dev item
         if (result) {
           const selectedMedia = result?.GeneratedMedia?.find(item => item.bucket === selectedFolder);
           if(selectedMedia){
@@ -172,9 +174,18 @@ const ExportDashboard = () => {
 
     }
 
-    const createBucket = (e) => {
-      console.log('STM pages-ExportDashboard.jsx:138', e); // todo remove dev item
-      // /createBucket
+    const createBucket = async (e) => {
+      await createS3Bucket({bucketName: newBucket, bucketType: 'bucket'})
+      const res = await getBuckets()
+      setListedBuckets(res)
+      setNewBucket('')
+    }
+
+    const createFolder = async (e) => {
+      await createS3Bucket({bucketName: newFolder, bucketType: 'folder'})
+      const res = await getBuckets()
+      setListedBuckets(res)
+      setNewFolder('')
     }
 
     const resetSelection = () => {
@@ -351,18 +362,37 @@ const ExportDashboard = () => {
                 />
                 <Typography sx={{fontWeight: 'bold'}}>Create New Folder</Typography>
               </div>
-              {newFolderChecked && (<div className="flex flex-col w-[60%] mt-3">
-
-                <Typography sx={{ fontWeight: "bold" }}>New Folder</Typography>
-                <TextField
-                  name="Title"
-                  onChange={(e) => {setNewFolder(e.target.value)}}
-                  sx={{ marginTop: 1 }}
-                  hiddenLabel
-                  value={newFolder}
-                  variant="outlined"
-                />
-              </div>)}
+              {newFolderChecked && (
+                <div className="flex flex-col w-[60%] mt-3">
+                  <div className="flex flex-col w-full">
+                    <Typography sx={{ fontWeight: "bold" }}>New Folder</Typography>
+                    <div className="flex flex-row">
+                      <TextField
+                        name="Title"
+                        onChange={(e) => {setNewFolder(e.target.value)}}
+                        sx={{ marginTop: 1, width: '100%' }}
+                        hiddenLabel
+                        value={newFolder}
+                        variant="outlined"
+                      />
+                      <Button
+                        disabled={newFolder === ''}
+                        onClick={createFolder}
+                        variant="outlined"
+                        sx={{
+                          marginTop: '6px',
+                          borderColor: '#2437a2',
+                          backgroundColor: '#2437a2',
+                          color: 'white',
+                          '&:hover': {
+                            borderColor: '#F1EFEF',
+                            backgroundColor: '#5969ab',
+                          }}}
+                      >Create</Button>
+                    </div>
+                  </div>
+              </div>
+              )}
             </div>
             <div className="flex flex-col w-[50%]">
               <div className="flex flex-row  items-center">
@@ -373,18 +403,37 @@ const ExportDashboard = () => {
                 />
                 <Typography sx={{fontWeight: 'bold'}}>Create New Bucket</Typography>
               </div>
-              {newBucketChecked && (<div className="flex flex-col w-[60%] mt-3">
-
-                <Typography sx={{ fontWeight: "bold" }}>New Bucket</Typography>
-                <TextField
-                  name="Title"
-                  onChange={(e) => {setNewBucket(e.target.value)}}
-                  sx={{ marginTop: 1 }}
-                  hiddenLabel
-                  value={newBucket}
-                  variant="outlined"
-                />
-              </div>)}
+              {newBucketChecked && (
+                <div className="flex flex-col w-[60%] mt-3">
+                  <div className="flex flex-col w-full">
+                    <Typography sx={{ fontWeight: "bold" }}>New Bucket</Typography>
+                    <div className="flex flex-row">
+                      <TextField
+                        name="Title"
+                        onChange={(e) => {setNewBucket(e.target.value)}}
+                        sx={{ marginTop: 1, width: '100%' }}
+                        hiddenLabel
+                        value={newBucket}
+                        variant="outlined"
+                      />
+                      <Button
+                        disabled={newBucket === ''}
+                        onClick={createBucket}
+                        variant="outlined"
+                        sx={{
+                          marginTop: '6px',
+                          borderColor: '#2437a2',
+                          backgroundColor: '#2437a2',
+                          color: 'white',
+                          '&:hover': {
+                            borderColor: '#F1EFEF',
+                            backgroundColor: '#5969ab',
+                          },
+                        }}>Create</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
         </div>
@@ -428,7 +477,7 @@ const ExportDashboard = () => {
             <h1 className="text-l ml-8 font-medium mr-2">Row contains {selectedRowMediaDetails?.length} associated media files:</h1>
 
           </li>
-          {selectedRowMediaDetails.map((item, key) => (
+          {(selectedRowMediaDetails || []).map((item, key) => (
             <li key={key}>
               <ul className=" mt-3 border-b-2 border-slate-300 ">
                 <li className="flex flex-row items-end">

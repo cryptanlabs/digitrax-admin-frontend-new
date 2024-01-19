@@ -179,6 +179,26 @@ const SongDetailsProvider = ({children}) => {
     // getExistingBuckets()
     return result.data;
   };
+
+  const createBucket = async (data) => {
+    setBackgroundStatus(true)
+    console.log('STM context-SongDetailsContext.jsx:132', data); // todo remove dev item
+    // const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/200)
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'post',
+      url: '/createBucket',
+      timeout: 20000,
+      data: data
+    })
+      .catch(error => {
+        console.error(error);
+        handleNotifyOfError(error)
+      });
+    setBackgroundStatus(false)
+    // getData();
+    // getExistingBuckets()
+    return result.data;
+  };
   //
 
   const uploadThumbnail = async (data) => {
@@ -370,6 +390,7 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
       uploadMultipleMediaFiles,
       handleNotifyOfError,
       copyMediaFilesToBucket,
+      createBucket,
       addGenre,
       addStatusChange,
       getUsage,

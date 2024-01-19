@@ -78,7 +78,7 @@ const reduceCrossInfoForSong = (crossData) => {
 
 function addIdForDataTable(data){
   return data.map((item, index) => {
-    item.id = index
+    item.id = index + 1
     return item
   })
 }
