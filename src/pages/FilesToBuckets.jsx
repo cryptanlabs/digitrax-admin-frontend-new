@@ -22,7 +22,7 @@ const buckets = [
   'black',
   'green'
 ]
-const ExportDashboard = () => {
+const FilesToBuckets = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
     const {adminDashToken} = useContext(UserContext);
@@ -66,6 +66,7 @@ const ExportDashboard = () => {
 
     const [processing, setProcessing] = useState(false);
     const [statusToFilter, setStatusToFilter] = useState('');
+    const [moveComplete, setMoveComplete] = useState(false);
 
 
     const resetFilterKey = 'RESET FILTER'
@@ -96,23 +97,32 @@ const ExportDashboard = () => {
 
     useEffect(() => {
       AddSelected()
-      console.log('STM pages-ExportDashboard.jsx:75', rowSelectionModel); // todo remove dev item
+      console.log('STM pages-FilesToBuckets.jsx:75', rowSelectionModel); // todo remove dev item
     }, [rowSelectionModel]);
 
 
+    const reset = () => {
+      // setLocalRowSet(allSelected)
+      // setFilteredResults(allSelected)
+      setRowSelectionModel([]);
+      setSelectedDate('')
+      setSelectedBucket('')
+      setSelectedFolder('')
+      setSelectedFolder('RESET FILTER')
+    }
 
     const onRowClick = (data) => {
-      console.log('STM pages-ExportDashboard.jsx:72', data); // todo remove dev item
+      console.log('STM pages-FilesToBuckets.jsx:72', data); // todo remove dev item
       setSelectedRowMediaDetails(data?.row?.GeneratedMedia)
     }
     const getBucketsAndMedia = () => {
       const generatedMedia = allSelected.map(item => {
-        console.log('STM pages-ExportDashboard.jsx:46', item); // todo remove dev item
+        console.log('STM pages-FilesToBuckets.jsx:46', item); // todo remove dev item
         return item.GeneratedMedia
       })
 
       const collected = generatedMedia.reduce((acc, cur) => {
-        console.log('STM pages-ExportDashboard.jsx:50', cur); // todo remove dev item
+        console.log('STM pages-FilesToBuckets.jsx:50', cur); // todo remove dev item
         for(let item of cur){
           // if(item.isFolderBucket){}
           if(acc[item.bucket]){
@@ -130,13 +140,13 @@ const ExportDashboard = () => {
         [resetFilterKey, ...Object.keys(collected)]
       ))
       setCollectedFolders(collected)
-      console.log('STM pages-ExportDashboard.jsx:64', collected); // todo remove dev item
+      console.log('STM pages-FilesToBuckets.jsx:64', collected); // todo remove dev item
     }
 
     const AddSelected = () => {
       const newlySelected = rowSelectionModel.reduce((acc, id) => {
         const result = filteredResults?.find(item => item.id === id);
-        console.log('STM pages-ExportDashboard.jsx:138', result); // todo remove dev item
+        console.log('STM pages-FilesToBuckets.jsx:138', result); // todo remove dev item
         if (result) {
           const selectedMedia = result?.GeneratedMedia?.find(item => item.bucket === selectedFolder);
           if(selectedMedia){
@@ -160,16 +170,25 @@ const ExportDashboard = () => {
       // todo test if this check still holds if no valid bucket entries are present
       if((selectedFolder !== '' && selectedFolder !== resetFilterKey) && selectedBucket !== '' && requestStringsForCopy?.length > 0) {
 
-// console.log('STM pages-ExportDashboard.jsx:141', {
-//   currentFolderBucketName: selectedFolder,
-//   newBucketName: selectedBucket,
-//   requestStringsForCopy
-// }); // todo remove dev item
-        await copyMediaFilesToBucket({
+console.log('STM pages-FilesToBuckets.jsx:141', {
+  currentFolderBucketName: selectedFolder,
+  newBucketName: selectedBucket,
+  requestStringsForCopy
+}); // todo remove dev item
+        const result = await copyMediaFilesToBucket({
           currentFolderBucketName: selectedFolder,
           newBucketName: selectedBucket,
           requestStringsForCopy
         })
+
+        if(result?.message === 'ok'){
+          reset()
+          setMoveComplete(true)
+          setTimeout(() => {
+            setMoveComplete(false)
+          }, 15000)
+        }
+        console.log('STM pages-FilesToBuckets.jsx:174', result); // todo remove dev item
       }
 
     }
@@ -222,7 +241,7 @@ const ExportDashboard = () => {
           });
 
         const data = result.data.data;
-        console.log('STM pages-ExportDashboard.jsx:209', result); // todo remove dev item
+        console.log('STM pages-FilesToBuckets.jsx:209', result); // todo remove dev item
         setFilteredResults(addIdForDataTable(data));
       }
     };
@@ -241,6 +260,8 @@ const ExportDashboard = () => {
       // })
       // setFilteredResults(sortedArray);
     };
+
+
 
     return (
       <div>
@@ -348,7 +369,21 @@ const ExportDashboard = () => {
               </Select>
 
             </div>
-            <Button onClick={submitMediaToCopy}>SUBMIT</Button>
+            <Button
+              disabled={!(((selectedFolder !== '' && selectedFolder !== resetFilterKey) && selectedBucket !== '' && localSelected?.length > 0))}
+              onClick={submitMediaToCopy}
+              sx={{
+                // marginRight: '15px',
+                borderColor: '#00b00e',
+                backgroundColor: '#00b00e',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#86A789',
+                },
+              }}>
+              SUBMIT
+            </Button>
           </div>
 
           {/* CREATE NEW FOLDER OR BUCKET OPTION */}
@@ -457,7 +492,7 @@ const ExportDashboard = () => {
           </div>
           <div className="w-[60%] ml-8 mb-2">
             {collectedFolderList?.length === 1 && <Typography sx={{color: 'red'}} >No Media Files Associated With Present Song Entries</Typography>}
-
+            {moveComplete && <Typography sx={{color: 'blue'}} >Media Files Moved</Typography>}
           </div>
         </div>
 
@@ -511,4 +546,4 @@ const ExportDashboard = () => {
   }
 };
 
-export default ExportDashboard;
+export default FilesToBuckets;

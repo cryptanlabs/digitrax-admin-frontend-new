@@ -13,20 +13,9 @@ export default function BatchMedia () {
     const [modelDetails, setModelDetails] = useState({});
     const [showFileUpload, setShowFileUpload] = useState(false);
     const [generatedMedia, setGeneratedMedia] = useState([]);
+    const [songsNotCreated, setSongsNotCreated] = useState([]);
     const {
-      generatedSets,
-      addPublisher,
-      removePublisher,
-      getCrossClearForSong,
-      getDetailsForSong,
-      uploadMediaFile,
-      updateSong,
-      createComment,
-      getCommentsForSong,
-      markCommentRemoved,
-      updateMediaMetadata,
-      removeGeneratedMediaEntry,
-      uploadThumbnail,
+
       uploadMultipleMediaFiles
     } = useContext(SongDetailsContext);
     const {bucketList, getBuckets} = useContext(DataTableData);
@@ -38,11 +27,22 @@ export default function BatchMedia () {
     }, []);
 
     const uploadMediaFileAndRefresh = async (data) => {
-      await uploadMediaFile(data);
+      console.log('STM pages-BatchMedia.jsx:41', data); // todo remove dev item
+      // await uploadMediaFile(data);
       // const songData = await getDetailsForSong(basicInformation.SongNumber);
       // setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
       //
     };
+
+    const handleUploadMultipleMediaFiles = async (data) => {
+      setSongsNotCreated([])
+      const result = await uploadMultipleMediaFiles(data)
+      if(result?.songNumberDoesNotExist){
+        setSongsNotCreated(result.songNumberDoesNotExist)
+      }
+      console.log('STM pages-BatchMedia.jsx:50', result); // todo remove dev item
+      // songNumberDoesNotExist
+    }
 
     return (
       <>
@@ -54,8 +54,14 @@ export default function BatchMedia () {
             hideHandler={() => {
               setShowFileUpload(false);
             }}
-            uploadMultipleMediaFiles={uploadMultipleMediaFiles}
+            uploadMultipleMediaFiles={handleUploadMultipleMediaFiles}
           ></FileUpload>
+
+        </div>
+        <div className="w-[90%] mt-4 ml-20">
+          {songsNotCreated.map((song, idx) => (
+            <Typography key={idx} sx={{color: 'red'}} >No Catalog Entry For {song}</Typography>
+          ))}
         </div>
       </>
     );

@@ -12,7 +12,7 @@ import {DataTableData} from '../context/DataTableContext.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
 import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
-import {getStatusInfoFromSongData} from '../helpers/utils.js';
+import {getStatusInfoFromSongData, isWhiteSpace} from '../helpers/utils.js';
 import {
   basicInformationDefault,
   licensingInformationDefault,
@@ -74,7 +74,7 @@ const CreateSong = () => {
 
     const [distributionInformation, setDistributionInformation] = useState(statusInformationDefault);
 
-    const [basicInformation, setBasicInformation] = useState(basicInformationDefault);
+    const [basicInformation, setBasicInformation] = useState({...basicInformationDefault});
 
     const [thumbnailInformation, setThumbnailInformation] = useState({});
     const [thumbnailInformationForUpload, setThumbnailInformationForUpload] = useState(null);
@@ -90,6 +90,7 @@ const CreateSong = () => {
     const [newGenreOrSub, setNewGenreOrSub] = useState('');
 
     // const [genres, setGenres] = useState([]);
+    const [bucketTypeMap, setBucketTypeMap] = useState({});
 
     const [SaveProgress, setSaveProgress] = useState([]);
 
@@ -112,9 +113,33 @@ const CreateSong = () => {
 console.log('STM pages-CreateSong.jsx:174', bucketList); // todo remove dev item
     }, []);
 
+    const generateBucketMap = async () => {
+      let localBucketList = {bucket: [], folder: []};
+      if(localBucketList?.folder?.length === 0 || localBucketList?.bucket?.length === 0){
+        localBucketList = await getBuckets()
+      }
+      // setIsLoading(true)
+      // if(bucketList?.folder)
+      const assignedBucketFolders = (localBucketList?.folder || []).reduce((acc, cur) => {
+        acc[cur] = true;
+        return acc;
+      }, {});
+
+      const assignedBucketBuckets = (localBucketList?.bucket || []).reduce((acc, cur) => {
+        acc[cur] = false;
+        return acc;
+      }, {});
+
+
+      setBucketTypeMap({...assignedBucketBuckets, ...assignedBucketFolders})
+    }
     useEffect(() => {
-      console.log('STM pages-CreateSong.jsx:413', bucketList); // todo remove dev item
-    }, [bucketList]);
+      setTimeout(() => {
+        generateBucketMap();
+      }, 1000)
+
+    }, []);
+
 
     useEffect(() => {
       return () => {
@@ -279,7 +304,7 @@ console.log('STM pages-CreateSong.jsx:174', bucketList); // todo remove dev item
       try {
         const SongNumber = basicInformation.SongNumber;
 
-        if (!SongNumber) {
+        if (!SongNumber || SongNumber.length <= 4) {
           return;
         }
 
@@ -552,7 +577,7 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
             newSong
             buttonOnly
             getBuckets={getBuckets}
-            songNumber={basicInformation.SongNumber}
+            songNumber={isWhiteSpace(basicInformation.SongNumber) ? '0' : basicInformation.SongNumber}
             submit={stageMediaFileForCreateSong}
             buckets={bucketList?.folder || []}
             hideHandler={() => {
@@ -561,9 +586,11 @@ console.log('STM pages-CreateSong.jsx:309', addSongResponse); // todo remove dev
           />
           <DisplayMediaListing
             newSong
-            songNumber={basicInformation.SongNumber}
+            songNumber={isWhiteSpace(basicInformation.SongNumber) ? '0' : basicInformation.SongNumber}
             submit={stageMediaFileForCreateSong}
             generatedSets={bucketList?.folder || []}
+            bucketTypeMapExternal={bucketTypeMap}
+
           />
         </Box>
 

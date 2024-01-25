@@ -2,6 +2,7 @@ import React, {useEffect, useState, useContext} from 'react';
 import {useLocation, useParams} from 'react-router-dom';
 import {Button, Typography, TextField, CircularProgress} from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {SongDetailsContext} from '../context/SongDetailsContext';
 import {FileAdd} from '../components/fileAdd.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
@@ -176,17 +177,17 @@ const SongDetails = () => {
 
 
 
-    generatedMedia = generatedMedia.map(item => {
-      if(item?.bucket === '720all'){
-        item.bucket = '720-motion-background-mp4-video'
-        item.generatedSet = '720-motion-background-mp4-video'
-      }
-      if(item?.bucket === '720-blk-background'){
-        item.bucket = '720-no-background-mp4-video'
-        item.generatedSet = '720-no-background-mp4-video'
-      }
-      return item
-    })
+    // generatedMedia = generatedMedia.map(item => {
+    //   if(item?.bucket === '720all'){
+    //     item.bucket = '720-motion-background-mp4-video'
+    //     item.generatedSet = '720-motion-background-mp4-video'
+    //   }
+    //   if(item?.bucket === '720-blk-background'){
+    //     item.bucket = '720-no-background-mp4-video'
+    //     item.generatedSet = '720-no-background-mp4-video'
+    //   }
+    //   return item
+    // })
 
 
     if(localBucketList?.folder?.length === 0 || localBucketList?.bucket?.length === 0){
@@ -336,12 +337,10 @@ const SongDetails = () => {
 
   }, [setBasicInformation]);
 
-  // useEffect(() => {
-  //   if(generatedSets.length > 0){
-  //     setLoadingMedia(false)
-  //   }
-  //   console.log('STM pages-SongDetails.jsx:232', generatedSets.length); // todo remove dev item
-  // }, [generatedSets]);
+  const handleRefreshData = () => {
+    reset()
+    setupBySongNumber(routeParams.SongNumber)
+  }
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -566,6 +565,24 @@ const SongDetails = () => {
         {loadingDetails && (<div>
           <CircularProgress />
         </div>)}
+        <Button
+          variant="outlined"
+          startIcon={<RefreshIcon/>}
+          onClick={handleRefreshData}
+          sx={{
+            marginTop: 1,
+            borderColor: 'gray',
+            // backgroundColor: '#00b00e',
+            marginLeft: '15px',
+            color: 'gray',
+            '&:hover': {
+              borderColor: '#F1EFEF',
+              backgroundColor: '#86A789',
+            },
+          }}
+        >
+          Refresh
+        </Button>
         <div className="flex w-1/3  justify-center">
           <div className="flex flex-col ml-20">
             <Typography sx={{ fontWeight: "bold" }}>Lookup Catalog ID #</Typography>

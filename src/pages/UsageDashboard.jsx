@@ -68,7 +68,7 @@ const UsageDashboard = () => {
           });
 
         const data = result.data.data;
-        console.log('STM pages-ExportDashboard.jsx:209', result); // todo remove dev item
+        console.log('STM pages-FilesToBuckets.jsx:209', result); // todo remove dev item
         setReturnedResults(addIdForDataTable(data));
 
       }

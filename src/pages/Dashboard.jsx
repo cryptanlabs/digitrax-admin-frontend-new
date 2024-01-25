@@ -117,24 +117,26 @@ const Dashboard = () => {
             </Button>
           </div>
         </div>
+
+        {/*navigate(`/songdata/${params.row.SongNumber}`, {state: {rowData}});*/}
         <div className="w-full h-20 mt-5 flex items-center justify-between ">
           <h1 className="text-xl ml-8 font-medium">Catalog</h1>
           <div className="w-1/5 mr-8 flex items-center justify-center">
-            <Button
-              onClick={() => {refresh()}}
-              variant="outlined"
-              startIcon={<RefreshIcon/>}
-              sx={{
-                borderColor: 'gray',
-                color: 'black',
-                '&:hover': {
-                  borderColor: '#F1EFEF',
-                  backgroundColor: '#F5F7F8',
-                },
-              }}
-            >
-              Refresh
-            </Button>
+            {/*<Button*/}
+            {/*  onClick={() => {refresh()}}*/}
+            {/*  variant="outlined"*/}
+            {/*  startIcon={<RefreshIcon/>}*/}
+            {/*  sx={{*/}
+            {/*    borderColor: 'gray',*/}
+            {/*    color: 'black',*/}
+            {/*    '&:hover': {*/}
+            {/*      borderColor: '#F1EFEF',*/}
+            {/*      backgroundColor: '#F5F7F8',*/}
+            {/*    },*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  Open File to Bucket For Selected*/}
+            {/*</Button>*/}
             {showSearch && (
               <SearchBar
                 currentDataSet={currentDataSet}
@@ -169,6 +171,22 @@ const Dashboard = () => {
             checkboxSelection
           />
         </div>
+        <Button
+          disabled={allSelected?.length === 0}
+          onClick={() => {navigate(`/filesToBuckets`)}}
+          variant="outlined"
+          sx={{
+            marginLeft: '40px',
+            borderColor: 'gray',
+            color: 'black',
+            '&:hover': {
+              borderColor: '#F1EFEF',
+              backgroundColor: '#F5F7F8',
+            },
+          }}
+        >
+          Open File to Bucket Page For Selected
+        </Button>
 
       </div>
     );

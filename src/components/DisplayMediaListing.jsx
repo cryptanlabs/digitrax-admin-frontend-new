@@ -16,6 +16,7 @@ export default function DisplayMediaListing ({
                                                },
                                                handleRequestDeleteMediaEntry = () => {
                                                },
+                                               getBuckets = () => {},
                                                setIsLoading = () => {},
                                                isLoading = true
                                              }) {
@@ -26,6 +27,7 @@ export default function DisplayMediaListing ({
     const [bucketTypeMap, setBucketTypeMap] = useState({});
     const [willRegenerate, setWillRegenerate] = useState(false);
 
+    // console.log('STM components-DisplayMediaListing.jsx:29', bucketTypeMapExternal); // todo remove dev item
     const regenerateMediaMap = (generatedMedia, generatedSets) => {
 
       const assignedBuckets = generatedMedia.reduce((acc, cur) => {
@@ -52,6 +54,8 @@ export default function DisplayMediaListing ({
         return bucketGroups;
       }, bucketGroups);
       setGeneratedGroups(generatedGroupsLocal);
+      console.log('STM components-DisplayMediaListing.jsx:57', bucketTypeMapExternal); // todo remove dev item
+      setBucketTypeMap(bucketTypeMapExternal);
     };
 
 
@@ -74,10 +78,15 @@ export default function DisplayMediaListing ({
         setBucketTypeMap(bucketTypeMapExternal)
         console.log('STM components-DisplayMediaListing.jsx:78', displayBucketsExternal); // todo remove dev item
       }, [bucketTypeMapExternal]);
+
     } else {
       useEffect(() => {
         regenerateMediaMap(generatedMedia, generatedSets);
       }, []);
+      useEffect(() => {
+        setBucketTypeMap(bucketTypeMapExternal)
+        console.log('STM components-DisplayMediaListing.jsx:78', displayBucketsExternal); // todo remove dev item
+      }, [bucketTypeMapExternal]);
 
     }
 
@@ -87,7 +96,7 @@ export default function DisplayMediaListing ({
         {displayBuckets.map((generatedSet, index) => (
           <>
             <FileAdd
-              newSong
+              newSong={newSong}
               key={`${generatedSet}-${index}`}
               handleMetadataChange={updateGeneratedMediaMetadata}
               songNumber={songNumber}

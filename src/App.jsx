@@ -20,7 +20,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Upload from './pages/Upload.jsx';
 import ViewSongDetails from './pages/ViewSongDetails.jsx';
 import BatchMedia from './pages/BatchMedia.jsx';
-import ExportDashboard from './pages/ExportDashboard.jsx';
+import FilesToBuckets from './pages/FilesToBuckets.jsx';
 import UsageDashboard from './pages/UsageDashboard.jsx';
 
 const App = () => {
@@ -44,7 +44,7 @@ const App = () => {
                       <Route path="/crossDashboard" element={<CrossDashboard/>}/>
                       <Route path="/usage" element={<UsageDashboard/>}/>
                       <Route path="/createsong" element={<CreateSong/>}/>
-                      <Route path="/reports" element={<ExportDashboard/>}/>
+                      <Route path="/filesToBuckets" element={<FilesToBuckets/>}/>
 
                       <Route path="/batchMedia" element={<BatchMedia />} />
                       <Route path="/queryBuilder" element={<QueryBuilder/>}/>

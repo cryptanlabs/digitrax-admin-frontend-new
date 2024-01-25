@@ -130,20 +130,7 @@ export function FileUpload({
     };
 
     const handleClosePanel = (isReset = true) => {
-        // submit(formData);
-        setSelectedFiles(null);
-        setUploadEnabled(false);
-        setCreateBucket(false);
-        if(isReset) setShowFileUpload(false);
-        setDifferentFilename(false);
-        setChangeFilename(false);
-        setFileNameChanged(false);
-        setCurrentFileName('');
-        if (preSetBucketTo) {
-            setBucketName(preSetBucketTo);
-        } else {
-            setBucketName('');
-        }
+
 
     };
 
@@ -152,7 +139,10 @@ export function FileUpload({
         console.log('STM FileUpload-FileUpload.jsx:148', submitFile); // todo remove dev item
         let message
         try {
-            setBucketName('demo')
+            if(bucketName === ''){
+                return
+            }
+            // setBucketName('demo')
             setUploadingProgress(true);
             // addNewBucketToList(bucketName);
             message = `${currentFileName} to ${bucketName}`
@@ -201,6 +191,7 @@ export function FileUpload({
             //         videoDimension
             //     );
             // }
+
 
             // todo NEED TO DENOTE AS A FOLDER BUCKET
             formData.append(
@@ -474,7 +465,6 @@ console.log('STM FileUpload-FileUpload.jsx:225', files); // todo remove dev item
                     </div>
                 </div>
                     <div className="flex flex-col mb-2 ml-2">
-                        <Typography sx={{fontWeight: 'light', fontSize: 12}}>{`Catalog #: C${songNumber}`}</Typography>
                         {uploadingProgress && <CircularProgress />}
                         {!uploadingProgress && (<Button
                           variant="outlined"

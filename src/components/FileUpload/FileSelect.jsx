@@ -8,30 +8,30 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
   const {acceptedFiles, getRootProps, getInputProps} = useDropzone({
     getFilesFromEvent: event => myCustomFileGetter(event)
   });
-  function Plugin(props) {
-
-
-    console.log('STM FileUpload-FileUpload.jsx:354', acceptedFiles); // todo remove dev item
-    // const files = acceptedFiles.map(f => (
-    //   <li key={f.name}>
-    //     {f.name}
-    //   </li>
-    // ));
-
-    return (
-      <section className="container" style={{backgroundColor: 'gray', height: '100px'}}
-               onClick={handleFileUploadClick}>
-        <div {...getRootProps({className: 'dropzone'})}>
-          <input {...getInputProps()} />
-          <p>Drag 'n' drop some files here, or click to select files</p>
-        </div>
-        {/*<aside>*/}
-        {/*  <h4>Files</h4>*/}
-        {/*  <ul>{files}</ul>*/}
-        {/*</aside>*/}
-      </section>
-    );
-  }
+  // function Plugin(props) {
+  //
+  //
+  //   console.log('STM FileUpload-FileUpload.jsx:354', acceptedFiles); // todo remove dev item
+  //   // const files = acceptedFiles.map(f => (
+  //   //   <li key={f.name}>
+  //   //     {f.name}
+  //   //   </li>
+  //   // ));
+  //
+  //   return (
+  //     <section className="container" style={{backgroundColor: 'gray', height: '100px'}}
+  //              onClick={handleFileUploadClick}>
+  //       <div {...getRootProps({className: 'dropzone'})}>
+  //         <input {...getInputProps()} />
+  //         <p>Drag 'n' drop some files here, or click to select files</p>
+  //       </div>
+  //       {/*<aside>*/}
+  //       {/*  <h4>Files</h4>*/}
+  //       {/*  <ul>{files}</ul>*/}
+  //       {/*</aside>*/}
+  //     </section>
+  //   );
+  // }
 
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
@@ -51,10 +51,17 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
 
   async function myCustomFileGetter(event) {
     const files = [];
-    const fileList = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+    console.log('STM FileUpload-FileSelect.jsx:54', event); // todo remove dev item
+    let fileList
+    if(Array.isArray(event)){
+      fileList = event
+    } else {
+      fileList= event.dataTransfer ? event.dataTransfer.files : event.target.files;
+    }
+
     console.log('STM FileUpload-FileUpload.jsx:378', event); // todo remove dev item
     for (var i = 0; i < fileList.length; i++) {
-      const file = fileList.item(i);
+      const file = fileList[i]
 
       // Object.defineProperty(file, 'myProp', {
       //   value: true
@@ -66,6 +73,7 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
     return files;
   }
 
+  // onClick={handleFileUploadClick}
   return (
     <>
       <div className="w-full flex flex-col ">
@@ -77,12 +85,20 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
           onChange={handleFileChangeLocal}
           accept="*"
         />
-        <section className="w-full flex flex-col justify-center text-center rounded-lg h-36 bg-gray-200"  onClick={handleFileUploadClick}>
-          <div {...getRootProps({className: 'dropzone'})}>
-            <input {...getInputProps()} />
-            <p>Drag 'n' drop some files here, or click to select files</p>
-          </div>
-        </section>
+        <Button onClick={handleFileUploadClick}
+                variant="outlined"
+                sx={{
+                  marginTop: '30px',
+                  marginLeft: '50px',
+                  borderColor: 'gray',
+                  color: 'white',
+                  height: '60px',
+                  backgroundColor: '#00b00e',
+                  '&:hover': {
+                    borderColor: '#F1EFEF',
+                    backgroundColor: '#F5F7F8',
+                  },
+                }}>Select Files</Button>
         <div className="flex flex-row">
         </div>
       </div>

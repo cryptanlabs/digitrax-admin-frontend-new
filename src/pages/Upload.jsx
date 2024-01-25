@@ -19,7 +19,10 @@ export default function Upload () {
   }
 
   useEffect(() => {
-    setSortedColumnNames(columnNames.sort())
+    if(columnNames){
+      setSortedColumnNames(columnNames.sort())
+    }
+
   }, []);
   return (
     <>

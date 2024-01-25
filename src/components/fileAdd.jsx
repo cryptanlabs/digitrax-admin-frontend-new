@@ -78,9 +78,27 @@ export function FileAdd({
         if (preSetBucketTo) {
             setBucketName(preSetBucketTo);
         }
+        console.log('STM components-fileAdd.jsx:81', buckets); // todo remove dev item
         if (localGeneratedSets.length === 0) {
             setLocalGeneratedSets(buckets);
         }
+
+        setTimeout(() => {
+
+            if(localGeneratedSets?.length === 0){
+
+                const promMaybe = getBuckets()
+                if(promMaybe instanceof Promise){
+                    promMaybe
+                    .then(res => {
+                        setLocalGeneratedSets(res.folder || []);
+                    })
+                }
+                console.log('STM components-fileAdd.jsx:91', promMaybe); // todo remove dev item
+                console.log('STM components-fileAdd.jsx:87', promMaybe instanceof Promise); // todo remove dev item
+
+            }
+        }, 2000)
     }, []);
 
     // useEffect(() => {
@@ -642,7 +660,7 @@ export function FileAdd({
                   >
                       Add Media
                   </Button>
-                  {!songNumber && <span>Missing Song Number</span>}
+                  {(!songNumber || songNumber?.length <= 4) && <span>Missing Song Number</span>}
               </div>
           </div>
         );

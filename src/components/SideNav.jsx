@@ -74,7 +74,7 @@ export default function SideNav() {
                       case 2:
                         return "/createsong";
                       case 3:
-                        return "/reports";
+                        return "/filesToBuckets";
                       case 4:
                         return "/queryBuilder";
                       case 5:
