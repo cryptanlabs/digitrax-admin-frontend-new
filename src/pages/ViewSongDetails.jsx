@@ -5,8 +5,9 @@ import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
 import {DataTableData} from '../context/DataTableContext.jsx';
 import WithFilters from '../components/WithFilter.jsx';
 import {addIdForDataTable, isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
-import {axiosBase} from '../helpers/requests.js';
+import {axiosBase, axiosBaseWithKey} from '../helpers/requests.js';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
+import {UserContext} from '../context/UserContext.jsx';
 
 const catTable = {
   "Id": "Int",
@@ -130,6 +131,7 @@ const labelMapping = {
   "SongCrossId": "SongCrossId",
 }
 export default function ViewSongDetails () {
+  const {adminDashToken} = useContext(UserContext);
   const navigate = useNavigate();
   const [songNumber, setSongNumber] = useState(true);
   const [disableRequestButton, setDisableRequestButton] = useState(true);
@@ -247,7 +249,7 @@ export default function ViewSongDetails () {
   }
 
   const sendQueryAndParseResponse = async (tableName, query) => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'post',
       timeout: 30000,
       url: '/rawQuery',

@@ -59,7 +59,7 @@ export default function ApiUsers () {
     const [createdApiUser, setCreatedApiUser] = useState(newApiUserDefault);
 
     const getAllRegisteredUsers = async () => {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'get',
         url: '/getAPiUsers'
       })

@@ -31,7 +31,7 @@ export default function UploadBatch ({columnNames = []}) {
     let cancelUpload = false;
 
     const getTablesAndColumns = async () => {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'get',
         url: '/columnNames'
       })

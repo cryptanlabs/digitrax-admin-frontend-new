@@ -1,9 +1,10 @@
-import {createContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {axiosBase, axiosBaseWithKey, base_url, returnLimit} from '../helpers/requests.js';
 import {ColumnHeadersMap, ColumnWidthMap, statusOptionsText} from '../helpers/constants.js';
 import {isWhiteSpace} from '../helpers/utils.js';
 import dayjs from 'dayjs';
+import {UserContext} from './UserContext.jsx';
 
 export const DataTableData = createContext(undefined);
 
@@ -61,6 +62,8 @@ const DataTableContext = ({children}) => {
   const [genres, setGenres] = useState([]);
 
   const [allSelected, setAllSelected] = useState([]);
+
+  const {user, adminDashToken, loggedIn} = useContext(UserContext);
   const getData = async () => {
 
     if(fetchingData) return
@@ -69,7 +72,12 @@ const DataTableContext = ({children}) => {
     try {
       const baseOrdering = 'SongNumber' // 'SongReleaseYear'
       const baseOrderDirection = 'asc' //'desc'
-      const res = await axios.get(`${base_url}/catalogInternal?orderBy=${baseOrdering}&limit=${returnLimit}&orderDir=${baseOrderDirection}`);
+      const res = await axiosBaseWithKey(adminDashToken)({
+        method: 'get',
+        url: `/catalogInternal?orderBy=${baseOrdering}&limit=${returnLimit}&orderDir=${baseOrderDirection}`,
+      })
+
+      // (`${base_url}/catalogInternal?orderBy=${baseOrdering}&limit=${returnLimit}&orderDir=${baseOrderDirection}`);
       const lowercaseId = res?.data?.data?.map(item => {
 
         return {id: item.Id, ...item};
@@ -92,7 +100,7 @@ const DataTableContext = ({children}) => {
   };
 
   const getExistingBuckets = () => {
-    axiosBase({
+    axiosBaseWithKey(adminDashToken)({
       method: 'get',
       url: '/getExistingBuckets',
     })
@@ -103,7 +111,7 @@ const DataTableContext = ({children}) => {
   }
 
   const getBuckets = () => {
-    return axiosBase({
+    return axiosBaseWithKey(adminDashToken)({
       method: 'get',
       url: '/getBuckets',
     })
@@ -118,7 +126,7 @@ const DataTableContext = ({children}) => {
   }
 
   const getGenres = async () => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'get',
       timeout: 30000,
       url: '/getGenres',
@@ -135,7 +143,10 @@ const DataTableContext = ({children}) => {
       try {
         setBackgroundStatus(true)
         setFetchingCrossClear(true);
-        const res = await axios.get(`${base_url}/getCrossClear`);
+        const res = await axiosBaseWithKey(adminDashToken)({
+          method: 'get',
+          url: '/getCrossClear',
+        })
         const lowercaseId = res?.data?.result?.map(item => {
 
           return {id: item.Id, ...item};
@@ -282,7 +293,10 @@ const DataTableContext = ({children}) => {
   }
 
   const getColumnNames = async () => {
-    const res = await axios.get(`${base_url}/columnNames`);
+    const res = await axiosBaseWithKey(adminDashToken)({
+      method: 'get',
+      url: '/columnNames',
+    })
     setDataModels(res.data?.datamodel);
 
     const [columns2, columns] = getColumnNamesAndHeaderDetails('SongCatalog', res.data?.datamodel)
@@ -296,14 +310,20 @@ const DataTableContext = ({children}) => {
   };
 
   const getColumnNamesFor = async (tableName) => {
-    const res = await axios.get(`${base_url}/columnNames`);
+    const res = await axiosBaseWithKey(adminDashToken)({
+      method: 'get',
+      url: '/columnNames',
+    })
 
     return getColumnNamesAndHeaderDetails(tableName, res.data?.datamodel)
   };
 
   const getSongNumbersWithoutRecords = async () => {
     setBackgroundStatus(true)
-    const res = await axios.get(`${base_url}/getAvailableSongNumbers`);
+    const res = await axiosBaseWithKey(adminDashToken)({
+      method: 'get',
+      url: '/getAvailableSongNumbers',
+    })
     setNextTwentyCatalogNumbers(res.data.slice(0,20))
     setBackgroundStatus(false)
     return res.data.slice(0,20)
@@ -328,15 +348,19 @@ const DataTableContext = ({children}) => {
   }
 
   useEffect(() => {
-    getColumnNames()
-      .then(getData)
+
+    if(loggedIn){
+      getColumnNames()
+        .then(getData)
         .then(getGenres)
-    getPriorRecentSongs()
+      getPriorRecentSongs()
+    }
+
     // setupData()
 
     // getExistingBuckets()
     // getSongNumbersWithoutRecords()
-  }, []);
+  }, [loggedIn]);
 
 
   const allDataRefresh = () => {

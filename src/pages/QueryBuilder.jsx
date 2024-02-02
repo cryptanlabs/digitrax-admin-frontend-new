@@ -1,12 +1,14 @@
 import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
-import {axiosBase} from '../helpers/requests.js';
-import {useEffect, useState} from 'react';
+import {axiosBase, axiosBaseWithKey} from '../helpers/requests.js';
+import {useContext, useEffect, useState} from 'react';
 import {addIdForDataTable, isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
 import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import WithFilters from '../components/WithFilter.jsx';
+import {UserContext} from '../context/UserContext.jsx';
 
 export default function QueryBuilder () {
   try {
+    const {adminDashToken} = useContext(UserContext);
     const [modelDetails, setModelDetails] = useState({});
     const [modelDetailsClean, setModelDetailsClean] = useState({});
     const [selectedTable, setSelectedTable] = useState('');
@@ -23,7 +25,7 @@ export default function QueryBuilder () {
     const [loadedSavedQuery, setLoadedSavedQuery] = useState({});
 
     const getSavedQueries = async () => {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'get',
         timeout: 30000,
         url: '/getBuiltQueries',
@@ -35,7 +37,7 @@ export default function QueryBuilder () {
     };
 
     const getTablesAndColumns = async () => {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'get',
         url: '/columnNames'
       })
@@ -173,7 +175,7 @@ export default function QueryBuilder () {
     };
 
     const sendQueryAndParseResponse = async (tableName, query) => {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'post',
         timeout: 30000,
         url: '/rawQuery',
@@ -244,7 +246,7 @@ export default function QueryBuilder () {
       }
 
       if(lastQuery.tableName && lastQuery.query){
-        const result = await axiosBase({
+        const result = await axiosBaseWithKey(adminDashToken)({
           method: 'post',
           timeout: 30000,
           url: '/saveBuiltQuery',

@@ -53,7 +53,7 @@ export default function Users () {
     const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
     const getAllRegisteredUsers = async () => {
-      const result = await axiosBase({
+      const result = await axiosBaseWithKey(adminDashToken)({
         method: 'get',
         url: '/getUsers'
       })

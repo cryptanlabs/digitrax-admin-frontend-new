@@ -1,13 +1,15 @@
 import {Button, Typography} from '@mui/material';
 import {ReportButton} from '../components/ReportButton.jsx';
-import {axiosBase, base_url} from '../helpers/requests.js';
-import {useEffect, useRef, useState} from 'react';
+import {axiosBase, axiosBaseWithKey, base_url} from '../helpers/requests.js';
+import {useContext, useEffect, useRef, useState} from 'react';
+import {UserContext} from '../context/UserContext.jsx';
 
 export default function Reports() {
+  const {adminDashToken} = useContext(UserContext);
   const [savedQueries, setSavedQueries] = useState([]);
 
   const getSavedQueries = async () => {
-    const result = await axiosBase({
+    const result = await axiosBaseWithKey(adminDashToken)({
       method: 'get',
       timeout: 30000,
       url: '/getBuiltQueries',
