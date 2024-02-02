@@ -12,13 +12,13 @@ const axiosBaseWithKey = function(key){
   if(key){
     return axios.create({
       baseURL: base_url,
-      timeout: 30000,
+      timeout: 45000,
       headers: {'x-access-token': key},
     })
   }
   return axios.create({
     baseURL: base_url,
-    timeout: 30000
+    timeout: 45000
   })
 }
 
