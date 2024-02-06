@@ -244,6 +244,17 @@ const DataTableContext = ({children}) => {
           }
         };
       }
+      if(items.name === 'SongReleaseYear'){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          // type: 'dateTime',
+          width: ColumnWidthMap[items.name] ?? 150,
+          valueFormatter: (params) => {
+            return params?.row?.SongReleaseYear?.toString()
+          }
+        };
+      }
       if(ColumnHeadersMap[items.name]){
         return {
           field: items.name,
