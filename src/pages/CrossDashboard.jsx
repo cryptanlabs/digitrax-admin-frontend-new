@@ -17,9 +17,12 @@ const CrossDashboard = () => {
 
     useEffect(() => {
       getCrossData()
+        .then(() => {
+          setIsLoading(false);
+        })
     }, []);
     useEffect(() => {
-      if (currentDataSet?.length > 0) {
+      if (crossClearDataSet?.length > 0) {
         setIsLoading(false);
       }
       console.log('STM pages-CrossDashboard.jsx:21', crossClearDataSet); // todo remove dev item
