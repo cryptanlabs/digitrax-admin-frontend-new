@@ -27,10 +27,11 @@ const UserProvider = ({children}) => {
     if(userName && password){
       logInData = {UserName: userName, Password: password}
     } else {
-      const hasToken = window.localStorage.getItem('AdminDashToken')
 
+      const hasToken = window.localStorage.getItem('AdminDashToken')
       if(hasToken){
         logInData = {token: hasToken}
+        setAdminDashToken(hasToken)
       }
     }
     const result = await axiosBase({
@@ -55,6 +56,7 @@ const UserProvider = ({children}) => {
     }
 
     if(result?.data){
+
       setLoggedIn(true)
       setUser(result?.data)
       setUserType(result?.data?.UserType)
