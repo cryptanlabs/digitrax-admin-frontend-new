@@ -234,12 +234,18 @@ const DataTableContext = ({children}) => {
             return (<span>{dayjs(params.value).format('MM/DD/YYYY')} </span>)
           },
           valueGetter: (params) => {
+            if(!params.value){
+              return undefined
+            }
             if(dayjs(params.value).isBefore(dayjs('1950-01-01'))){
               return undefined
             }
             return dayjs(params.value).toDate()
           },
           valueFormatter: (params) => {
+            if(!params.value){
+              return undefined
+            }
             if(dayjs(params.value).isBefore(dayjs('1950-01-01'))){
               return undefined
             }
@@ -274,14 +280,29 @@ const DataTableContext = ({children}) => {
           }
         };
       }
-      if(items.name === 'SongReleaseYear'){
+      if(items.name === 'SongReleaseYear' || items.name === 'year'){
         return {
           field: items.name,
           headerName: ColumnHeadersMap[items.name],
-          // type: 'dateTime',
+          type: 'string',
           width: ColumnWidthMap[items.name] ?? 150,
+          renderCell: (params) => {
+            if(!params.value){
+              return null
+            }
+            return (<span>{params.value} </span>)
+          },
+          valueGetter: (params) => {
+            if(params.value > 0){
+              return params.value
+            }
+            return undefined
+          },
           valueFormatter: (params) => {
-            return params?.row?.SongReleaseYear?.toString()
+            if(params.value > 0){
+              return params.value?.toString()
+            }
+            return undefined
           }
         };
       }

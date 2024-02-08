@@ -108,9 +108,9 @@ export const basicInformationDefault = {
   Duration: "",
   Mixes: "",
   MixRendered: "",
-  SongReleaseYear: "",
+  SongReleaseYear: undefined,
   Description: "",
-  ReleaseScheduledFor: dayjs(),
+  ReleaseScheduledFor: undefined,
   DateAdded: dayjs(),
   Writer: "",
 }

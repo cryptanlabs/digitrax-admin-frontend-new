@@ -171,7 +171,6 @@ console.log('STM pages-CreateSong.jsx:174', bucketList); // todo remove dev item
         return;
       }
 
-      console.log('STM pages-SongDetails.jsx:145', val); // todo remove dev item
       setOpenGenreDialog(!openGenreDialog)
       if(newGenreOrSub !== '' && openGenreDialogType !== ''){
         await addGenre({Genre: newGenreOrSub, Type: openGenreDialogType})

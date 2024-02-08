@@ -19,7 +19,7 @@ import {UserContext} from '../context/UserContext.jsx';
 
 const drawerWidth = 240;
 
-const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Files To Buckets", "Query Builder", "Users", "Status Dashboard", "Batch Upload", "Lookup Song Details", "Batch Media", "Usage"]
+const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Files To Buckets", "Query Builder", "Users", "Status Dashboard", "Batch Update", "Lookup Song Details", "Batch Upload", "Usage"]
 const externalNav = ["Home", "Dashboard"]
 
 export default function SideNav() {

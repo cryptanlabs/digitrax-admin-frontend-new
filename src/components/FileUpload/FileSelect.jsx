@@ -73,7 +73,6 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
     return files;
   }
 
-  // onClick={handleFileUploadClick}
   return (
     <>
       <div className="w-full flex flex-col ">
@@ -91,9 +90,9 @@ export function FileSelect({songNumber, uploadingProgress, submitFile, uploadEna
                   marginTop: '30px',
                   marginLeft: '50px',
                   borderColor: 'gray',
-                  color: 'white',
+                  color: '#000000',
                   height: '60px',
-                  backgroundColor: '#00b00e',
+                  backgroundColor: '#ffffff',
                   '&:hover': {
                     borderColor: '#F1EFEF',
                     backgroundColor: '#F5F7F8',

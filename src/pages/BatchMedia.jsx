@@ -1,4 +1,13 @@
-import {Button, MenuItem, Select, TextField, Typography} from '@mui/material';
+import {
+  Alert,
+  Button,
+  IconButton,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  Typography
+} from '@mui/material';
 import {axiosBase} from '../helpers/requests.js';
 import React, {useContext, useEffect, useState} from 'react';
 import {addIdForDataTable, isWhiteSpace, upperCaseKey} from '../helpers/utils.js';
@@ -7,15 +16,18 @@ import WithFilters from '../components/WithFilter.jsx';
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
 import {FileUpload} from '../components/FileUpload/FileUpload.jsx';
 import {DataTableData} from '../context/DataTableContext.jsx';
+import CloseIcon from '@mui/icons-material/Close.js';
 
 export default function BatchMedia () {
   try {
+    const [openSnackBar, setOpenSnackBar] = useState(true);
+    const [snackBarMessage, setSnackBarMessage] = useState('Upload Complete');
+    const [uploadError, setUploadError] = useState(false);
     const [modelDetails, setModelDetails] = useState({});
     const [showFileUpload, setShowFileUpload] = useState(false);
-    const [generatedMedia, setGeneratedMedia] = useState([]);
+    const [uploadComplete, setUploadComplete] = useState(false);
     const [songsNotCreated, setSongsNotCreated] = useState([]);
     const {
-
       uploadMultipleMediaFiles
     } = useContext(SongDetailsContext);
     const {bucketList, getBuckets} = useContext(DataTableData);
@@ -26,27 +38,57 @@ export default function BatchMedia () {
         .then(res => setListedBuckets(res))
     }, []);
 
+    const handleSnackBarOpen = (message) => {
+      setSnackBarMessage(message)
+      setOpenSnackBar(true)
+    }
+
+    const handleSnackBarClose = () => {
+      setSnackBarMessage('')
+      setOpenSnackBar(false)
+      setUploadError(false)
+    }
+
+
+
+
+    const action = (
+      <React.Fragment>
+        <IconButton
+          size="medium"
+          aria-label="close"
+          color="inherit"
+          onClick={handleSnackBarClose}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </React.Fragment>
+    );
+
     const uploadMediaFileAndRefresh = async (data) => {
       console.log('STM pages-BatchMedia.jsx:41', data); // todo remove dev item
-      // await uploadMediaFile(data);
-      // const songData = await getDetailsForSong(basicInformation.SongNumber);
-      // setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
-      //
     };
 
     const handleUploadMultipleMediaFiles = async (data) => {
-      setSongsNotCreated([])
-      const result = await uploadMultipleMediaFiles(data)
-      if(result?.songNumberDoesNotExist){
-        setSongsNotCreated(result.songNumberDoesNotExist)
+      try {
+        setSongsNotCreated([]);
+        const result = await uploadMultipleMediaFiles(data);
+        if (result?.songNumberDoesNotExist) {
+          setSongsNotCreated(result.songNumberDoesNotExist);
+        }
+        console.log('STM pages-BatchMedia.jsx:50', result); // todo remove dev item
+
+        handleSnackBarOpen('Upload Complete');
+      } catch (e) {
+        setUploadError(true)
+        handleSnackBarOpen('Upload Error');
       }
-      console.log('STM pages-BatchMedia.jsx:50', result); // todo remove dev item
-      // songNumberDoesNotExist
     }
 
     return (
       <>
         <div className="w-[90%] mt-4 ml-20 flex items-center justify-center">
+
           <FileUpload
             buttonOnly
             submit={uploadMediaFileAndRefresh}
@@ -56,13 +98,20 @@ export default function BatchMedia () {
             }}
             uploadMultipleMediaFiles={handleUploadMultipleMediaFiles}
           ></FileUpload>
-
         </div>
         <div className="w-[90%] mt-4 ml-20">
           {songsNotCreated.map((song, idx) => (
             <Typography key={idx} sx={{color: 'red'}} >No Catalog Entry For {song}</Typography>
           ))}
         </div>
+        <Snackbar
+          open={openSnackBar}
+          onClose={handleSnackBarClose}
+          action={action}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert severity={`${uploadError ? 'error' : 'success'}`} onClose={handleSnackBarClose}>{snackBarMessage}</Alert>
+        </Snackbar>
       </>
     );
   } catch (e) {

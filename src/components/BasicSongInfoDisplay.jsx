@@ -12,12 +12,7 @@ export function BasicSongInfoDisplay({newSong, handleChange, basicInformation, g
   const [showNextSuggestion, setShowNextSuggestion] = useState(true);
     const [primaryGenresWithExisting, setPrimaryGenresWithExisting] = useState([]);
     const [subgenresWithExisting, setSubgenresWithExisting] = useState([]);
-  // const [openGenreDialog, setOpenGenreDialog] = useState(false);
-  //
-  //
-  // const handleDialogOpen = () => {
-  //   setOpenGenreDialog(!openGenreDialog)
-  // }
+
   const SetNextCat = () => {
     handleChange({target: {name: 'SongNumber', value: nextCatNumberToSuggest?.toString()?.padStart(5, '0')}})
     setShowNextSuggestion(false)
@@ -142,9 +137,12 @@ console.log('STM components-BasicSongInfoDisplay.jsx:27', genres); // todo remov
                   <DatePicker
                       sx={{ marginTop: 1 }}
                       name="ReleaseScheduledFor"
-                      value={basicInformation.ReleaseScheduledFor || dayjs()}
+                      value={basicInformation.ReleaseScheduledFor?.isAfter(dayjs('1950-01-01')) ? basicInformation.ReleaseScheduledFor : undefined}
                       onChange={(val) => {
                           handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
+                      }}
+                      slotProps={{
+                        field: { clearable: true, onClear: () => handleChange({target: {value: undefined, name: 'ReleaseScheduledFor'}})},
                       }}
                   />
               </Box>
@@ -158,10 +156,10 @@ console.log('STM components-BasicSongInfoDisplay.jsx:27', genres); // todo remov
                   <Typography sx={{fontWeight: 'bold'}}>Date Added</Typography>
                   <DatePicker
                       sx={{ marginTop: 1 }}
-                      name="ReleaseScheduledFor"
-                      value={basicInformation.ReleaseScheduledFor || dayjs()}
+                      name="DateAdded"
+                      value={basicInformation.DateAdded || dayjs()}
                       onChange={(val) => {
-                          handleChange({target: {value: dayjs(val), name: 'ReleaseScheduledFor'}});
+                          handleChange({target: {value: dayjs(val), name: 'DateAdded'}});
                       }}
                   />
               </Box>
@@ -433,7 +431,7 @@ console.log('STM components-BasicSongInfoDisplay.jsx:27', genres); // todo remov
               type="number"
               name="SongReleaseYear"
               onChange={handleChange}
-              value={basicInformation.SongReleaseYear}
+              value={basicInformation.SongReleaseYear > 0 ? basicInformation.SongReleaseYear : ''}
               variant="outlined"
             />
           </div>
