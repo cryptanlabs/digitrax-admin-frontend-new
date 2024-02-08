@@ -221,17 +221,47 @@ const DataTableContext = ({children}) => {
           width: 300,
         }
       }
+      if(items.name === 'ReleaseScheduledFor'){
+        return {
+          field: items.name,
+          headerName: ColumnHeadersMap[items.name],
+          type: 'dateTime',
+          width: ColumnWidthMap[items.name] ?? 150,
+          renderCell: (params) => {
+            if(!params.value){
+              return null
+            }
+            return (<span>{dayjs(params.value).format('MM/DD/YYYY')} </span>)
+          },
+          valueGetter: (params) => {
+            if(dayjs(params.value).isBefore(dayjs('2011-01-01'))){
+              return undefined
+            }
+            return dayjs(params.value).toDate()
+          },
+          valueFormatter: (params) => {
+            if(dayjs(params.value).isBefore(dayjs('2011-01-01'))){
+              return undefined
+            }
+            return dayjs(params.value).format('MM/DD/YYYY')
+          }
+        };
+      }
       if(items.type === 'DateTime'){
         return {
           field: items.name,
           headerName: ColumnHeadersMap[items.name],
           type: 'dateTime',
           width: ColumnWidthMap[items.name] ?? 150,
-          valueGetter: (params) => {
-            return dayjs(params.value).toDate()
+          // valueGetter: (params) => {
+          //   return dayjs(params.value).toDate()
+          // },
+          valueFormatter: (params) => {
+            return dayjs(params.value).format('MM/DD/YYYY')
           }
         };
       }
+
       if(items.name === 'GeneratedMedia'){
         return {
           field: items.name,
