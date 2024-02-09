@@ -6,10 +6,12 @@ import JSZip from 'jszip'
 import {base_url} from '../helpers/requests.js';
 import { saveAs } from 'file-saver';
 import {SongDetailsContext} from '../context/SongDetailsContext.jsx';
+import {UserContext} from '../context/UserContext.jsx';
 
 const ExportDashboard = () => {
   try {
     const [showSearch, setShowSearch] = useState(false);
+    const {adminDashToken} = useContext(UserContext);
     const {
       columnDetails,
       crossClearDataSet,
@@ -68,7 +70,7 @@ const ExportDashboard = () => {
         for(let song of allSelected){
           for (let entry of generatedMedia) {
             console.log('STM pages-SongDetails.jsx:373', entry); // todo remove dev item
-            const tempPromise = [Promise.resolve(entry), fetch(`${base_url}/fileGetInternal/${entry.requestString}`)];
+            const tempPromise = [Promise.resolve(entry), fetch(`${base_url}/fileGetInternal/${entry.requestString}`, {headers: {'x-access-token': adminDashToken}})];
             promises.push(Promise.all(tempPromise));
           }
         }

@@ -30,6 +30,7 @@ import {axiosBase, base_url} from '../helpers/requests.js';
 import { saveAs } from 'file-saver';
 import {SimpleDialog} from '../components/SimpleDialog.jsx';
 import dayjs from 'dayjs';
+import {UserContext} from '../context/UserContext.jsx';
 
 console.log('STM pages-SongDetails.jsx:29', JSZip); // todo remove dev item
 const publishingHeaders = [
@@ -95,6 +96,7 @@ const demoComments = [democomment, democomment2];
 const SongDetails = () => {
   const location = useLocation();
   const routeParams = useParams();
+  const {adminDashToken} = useContext(UserContext);
   const {
     generatedSets,
     bucketList,
@@ -499,7 +501,10 @@ const SongDetails = () => {
       const promises = [];
       for (let entry of generatedMedia) {
         console.log('STM pages-SongDetails.jsx:373', entry); // todo remove dev item
-        const tempPromise = [Promise.resolve(entry), fetch(`${base_url}/fileGetInternal/${entry.requestString}`)];
+        const tempPromise = [
+          Promise.resolve(entry),
+          fetch(`${base_url}/fileGetInternal/${entry.requestString}`, {headers: {'x-access-token': adminDashToken}})
+        ];
 
 
         promises.push(Promise.all(tempPromise));

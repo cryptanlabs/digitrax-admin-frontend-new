@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Button,
   Dialog,
@@ -13,6 +13,7 @@ import EditIcon from '@mui/icons-material/Edit.js';
 import CloseIcon from '@mui/icons-material/Close.js';
 import SaveIcon from '@mui/icons-material/Save.js';
 import DeleteIcon from '@mui/icons-material/Delete.js';
+import {UserContext} from '../../context/UserContext.jsx';
 
 
 export function ShowFile ({mediaItem = {}, songNumber, handleMetadataChange, handleRequestDeleteMediaEntry}) {
@@ -27,6 +28,8 @@ export function ShowFile ({mediaItem = {}, songNumber, handleMetadataChange, han
     fullFilename: '',
     requestString: ''
   });
+
+  const {adminDashToken} = useContext(UserContext);
 
   useEffect(() => {
     setMediaMetaData({
@@ -142,7 +145,7 @@ export function ShowFile ({mediaItem = {}, songNumber, handleMetadataChange, han
           </div>
         </div>
         <div className="flex-none ml-8">
-          <a href={`${base_url}/fileGetInternal/${mediaItem.requestString}`} target="_blank"
+          <a href={`${base_url}/fileGetInternal/${mediaItem.requestString}?x-access-token=${adminDashToken}`} target="_blank"
              download>
             <Button
               variant="outlined"

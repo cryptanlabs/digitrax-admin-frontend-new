@@ -13,12 +13,13 @@ import {
     CircularProgress, Snackbar, Alert, IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {base_url} from '../helpers/requests.js';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {isWhiteSpace} from '../helpers/utils.js';
+import {UserContext} from '../context/UserContext.jsx';
 
 export function FileAdd({
                             newSong,
@@ -38,6 +39,8 @@ export function FileAdd({
                             },
                             getBuckets = () => {}
                         }) {
+
+    const {adminDashToken} = useContext(UserContext);
     // notifications
     const [uploadingProgress, setUploadingProgress] = useState(false);
     const [openSnackBar, setOpenSnackBar] = useState(false);
@@ -476,7 +479,7 @@ export function FileAdd({
                         </div>
                     </div>
                     <div className="flex-none ml-8">
-                        <a href={`${base_url}/fileGetInternal/${mediaItem.requestString}`} target="_blank"
+                        <a href={`${base_url}/fileGetInternal/${mediaItem.requestString}?x-access-token=${adminDashToken}`} target="_blank"
                            download>
                             <Button
                                 variant="outlined"

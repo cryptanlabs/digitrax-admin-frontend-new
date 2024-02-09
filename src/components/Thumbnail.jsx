@@ -1,7 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Box, Button, TextField, Typography} from '@mui/material';
 import {base_url} from '../helpers/requests.js';
 import {isWhiteSpace} from '../helpers/utils.js';
+import {UserContext} from '../context/UserContext.jsx';
 
 
 export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile = () => {}, handleMetadataChange = () => {}}){
@@ -9,7 +10,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
     const [selectedFile, setSelectedFile] = useState(null);
     const [generatedMedia, setGeneratedMedia] = useState({});
     const [imageSource, setImageSource] = useState('');
-
+    const {adminDashToken} = useContext(UserContext);
     // Form Data For Upload
     const formData = new FormData();
 
@@ -21,7 +22,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
         if(newSong){
             setImageSource('')
         } else {
-            setImageSource(`${base_url}/thumbnail/${songNumber}`)
+            setImageSource(`${base_url}/thumbnail/${songNumber}?x-access-token=${adminDashToken}`)
         }
 
     }, [thumbnailObject]);
@@ -175,7 +176,7 @@ export function Thumbnail({newSong, songNumber, thumbnailObject = {}, uploadFile
                     />
                 </Box>
                 {!newSong && (<div className="flex-none ml-8">
-                    <a href={`${base_url}/thumbnail/${songNumber}`} target="_blank" download>
+                    <a href={`${base_url}/thumbnail/${songNumber}?x-access-token=${adminDashToken}`} target="_blank" download>
                         <Button
                             variant="outlined"
                             onClick={() => {setShowFileUpload(true)}}
