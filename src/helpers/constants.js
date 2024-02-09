@@ -50,6 +50,7 @@ export const ColumnHeadersMap = {
   MixRendered: "Mix Rendered",
   SongReleaseYear: "Song Release Year",
   Description: "Description",
+  ReleaseScheduledFor: "Release Scheduled For",
 }
 
 // Mapping of column width based on db table name
@@ -110,7 +111,7 @@ export const basicInformationDefault = {
   MixRendered: "",
   SongReleaseYear: undefined,
   Description: "",
-  ReleaseScheduledFor: undefined,
+  ReleaseScheduledFor: null,
   DateAdded: dayjs(),
   Writer: "",
 }

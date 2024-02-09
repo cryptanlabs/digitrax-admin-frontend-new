@@ -235,19 +235,19 @@ const DataTableContext = ({children}) => {
           },
           valueGetter: (params) => {
             if(!params.value){
-              return undefined
+              return null
             }
             if(dayjs(params.value).isBefore(dayjs('1950-01-01'))){
-              return undefined
+              return null
             }
             return dayjs(params.value).toDate()
           },
           valueFormatter: (params) => {
             if(!params.value){
-              return undefined
+              return null
             }
             if(dayjs(params.value).isBefore(dayjs('1950-01-01'))){
-              return undefined
+              return null
             }
             return dayjs(params.value).format('MM/DD/YYYY')
           }
