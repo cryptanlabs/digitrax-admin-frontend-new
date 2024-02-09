@@ -197,13 +197,14 @@ console.log('STM FileUpload-FileUpload.jsx:208', formData); // todo remove dev i
             setSelectedFiles((prev) => (
               [...prev, ...updatedArray]
             ));
+            setUploadEnabled(true)
         }
     };
 
     const handleBucketNameChange = (e) => {
         const {name, value} = e.target;
         setBucketName(value);
-        setUploadEnabled(value !== '' && selectedFiles);
+        setUploadEnabled(value !== '' && selectedFiles?.length > 0);
     };
 
     const handleFileNameChange = (e) => {
@@ -298,7 +299,7 @@ console.log('STM FileUpload-FileUpload.jsx:208', formData); // todo remove dev i
                       handleFileChange={handleFileChange}
                     />
                     <div className="flex flex-col mb-2 mt-3">
-                        {uploadingProgress && <CircularProgress />}
+
                         {!uploadingProgress &&
                           (<Button
                           variant="outlined"

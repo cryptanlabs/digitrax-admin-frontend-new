@@ -1,12 +1,12 @@
 import {
-  Alert,
-  Button,
-  IconButton,
-  MenuItem,
-  Select,
-  Snackbar,
-  TextField,
-  Typography
+    Alert,
+    Button, CircularProgress,
+    IconButton,
+    MenuItem,
+    Select,
+    Snackbar,
+    TextField,
+    Typography
 } from '@mui/material';
 import {axiosBase} from '../helpers/requests.js';
 import React, {useContext, useEffect, useState} from 'react';
@@ -20,12 +20,12 @@ import CloseIcon from '@mui/icons-material/Close.js';
 
 export default function BatchMedia () {
   try {
-    const [openSnackBar, setOpenSnackBar] = useState(true);
+    const [openSnackBar, setOpenSnackBar] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState('Upload Complete');
     const [uploadError, setUploadError] = useState(false);
     const [modelDetails, setModelDetails] = useState({});
     const [showFileUpload, setShowFileUpload] = useState(false);
-    const [uploadComplete, setUploadComplete] = useState(false);
+    const [uploadComplete, setUploadComplete] = useState(true);
     const [songsNotCreated, setSongsNotCreated] = useState([]);
     const {
       uploadMultipleMediaFiles
@@ -71,6 +71,8 @@ export default function BatchMedia () {
 
     const handleUploadMultipleMediaFiles = async (data) => {
       try {
+          setUploadComplete(false)
+          handleSnackBarOpen("Upload Started")
         setSongsNotCreated([]);
         const result = await uploadMultipleMediaFiles(data);
         if (result?.songNumberDoesNotExist) {
@@ -79,8 +81,10 @@ export default function BatchMedia () {
         console.log('STM pages-BatchMedia.jsx:50', result); // todo remove dev item
 
         handleSnackBarOpen('Upload Complete');
+          setUploadComplete(true)
       } catch (e) {
         setUploadError(true)
+          setUploadComplete(true)
         handleSnackBarOpen('Upload Error');
       }
     }
@@ -99,6 +103,7 @@ export default function BatchMedia () {
             uploadMultipleMediaFiles={handleUploadMultipleMediaFiles}
           ></FileUpload>
         </div>
+          {!uploadComplete && <CircularProgress />}
         <div className="w-[90%] mt-4 ml-20">
           {songsNotCreated.map((song, idx) => (
             <Typography key={idx} sx={{color: 'red'}} >No Catalog Entry For {song}</Typography>

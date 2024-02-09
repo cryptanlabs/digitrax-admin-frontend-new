@@ -26,7 +26,7 @@ import StatusDisplayEdit from '../components/StatusDisplayEdit.jsx';
 import DisplayMediaListing from '../components/DisplayMediaListing.jsx';
 import {Thumbnail} from '../components/Thumbnail.jsx';
 import JSZip from 'jszip'
-import {axiosBase, base_url} from '../helpers/requests.js';
+import {axiosBase, axiosBaseWithKey, base_url} from '../helpers/requests.js';
 import { saveAs } from 'file-saver';
 import {SimpleDialog} from '../components/SimpleDialog.jsx';
 import dayjs from 'dayjs';
@@ -501,16 +501,26 @@ const SongDetails = () => {
       const promises = [];
       for (let entry of generatedMedia) {
         console.log('STM pages-SongDetails.jsx:373', entry); // todo remove dev item
+        // (`${base_url}/fileGetInternal/${entry.requestString}`, {headers: {'x-access-token': adminDashToken}})
+        const res1 = await axiosBaseWithKey(adminDashToken)(`${base_url}/fileGetPresigned/${entry.requestString}`)
+            .then((res) => {
+              console.log('STM pages-SongDetails.jsx:509', res.data.redirect); // todo remove dev item
+              return fetch(res.data.redirect)
+            })
+
         const tempPromise = [
-          Promise.resolve(entry),
-          fetch(`${base_url}/fileGetInternal/${entry.requestString}`, {headers: {'x-access-token': adminDashToken}})
+          entry,
+          res1
         ];
 
-
-        promises.push(Promise.all(tempPromise));
+        promises.push(tempPromise);
+        // promises.push(Promise.all(tempPromise));
       }
 
-      const results = await Promise.all(promises);
+      const image = await fetch(`${base_url}/thumbnail/${basicInformation.SongNumber}?x-access-token=${adminDashToken}`)
+
+      promises.push([{location: 'thumbnail.jpg'}, image]);
+      const results = promises //await Promise.all(promises);
 
       console.log('STM pages-SongDetails.jsx:381', results); // todo remove dev item
       console.log('STM pages-SongDetails.jsx:382', results[0]); // todo remove dev item
@@ -814,6 +824,7 @@ const SongDetails = () => {
         </div>
         <div className="w-1/3 mt-3">
           <Button
+              disabled={buildingExport}
             variant="outlined"
             onClick={handleExportAllMedia}
             sx={{
@@ -829,8 +840,10 @@ const SongDetails = () => {
           >
             Export Media
           </Button>
+          {buildingExport && <CircularProgress />}
+        {/*  BuildingExport */}
         </div>
-        <div className="w-1/3 mt-3">
+{/*        <div className="w-1/3 mt-3">
           <Button
             variant="outlined"
             onClick={() => {
@@ -849,7 +862,7 @@ const SongDetails = () => {
           >
             ReFetch Media
           </Button>
-        </div>
+        </div>*/}
       </div>
 
       <div className="w-full flex flex-row justify-start">
