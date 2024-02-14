@@ -202,8 +202,8 @@ export default function ViewSongDetails () {
 
   useEffect(() => {
     if(results.length === 1){
-      addToRecentSongs(results['SongNumber']);
-      navigate(`/songdata/${results['SongNumber']}`, {state: {rowData: results}});
+      addToRecentSongs(results[0]['SongNumber']);
+      navigate(`/songdata/${results[0]['SongNumber']}`, {state: {rowData: results[0]}});
     } else if(results.length === 0 && !disableRequestButton){
       setNoSongFoundForCatalogNumber(true)
     } else if(results.length > 1 && !disableRequestButton){

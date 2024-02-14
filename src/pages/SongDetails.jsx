@@ -150,6 +150,7 @@ const SongDetails = () => {
   const [openGenreDialog, setOpenGenreDialog] = useState(false);
   const [openGenreDialogType, setOpenGenreDialogType] = useState(null);
   const [newGenreOrSub, setNewGenreOrSub] = useState('');
+  const [errorMessage, setErrorMessage] = useState(false);
 
 
   const handleDialogOpen = async (val) => {
@@ -173,66 +174,69 @@ const SongDetails = () => {
   }
 
   const regenerateMediaMap = async (generatedMedia) => {
-    console.log('STM pages-SongDetails.jsx:139', generatedMedia); // todo remove dev item
-    console.log('STM pages-SongDetails.jsx:173', bucketList); // todo remove dev item
-    let localBucketList = bucketList
+    if(generatedMedia){
+      console.log('STM pages-SongDetails.jsx:139', generatedMedia); // todo remove dev item
+      console.log('STM pages-SongDetails.jsx:173', bucketList); // todo remove dev item
+      let localBucketList = bucketList
 
 
 
-    // generatedMedia = generatedMedia.map(item => {
-    //   if(item?.bucket === '720all'){
-    //     item.bucket = '720-motion-background-mp4-video'
-    //     item.generatedSet = '720-motion-background-mp4-video'
-    //   }
-    //   if(item?.bucket === '720-blk-background'){
-    //     item.bucket = '720-no-background-mp4-video'
-    //     item.generatedSet = '720-no-background-mp4-video'
-    //   }
-    //   return item
-    // })
+      // generatedMedia = generatedMedia.map(item => {
+      //   if(item?.bucket === '720all'){
+      //     item.bucket = '720-motion-background-mp4-video'
+      //     item.generatedSet = '720-motion-background-mp4-video'
+      //   }
+      //   if(item?.bucket === '720-blk-background'){
+      //     item.bucket = '720-no-background-mp4-video'
+      //     item.generatedSet = '720-no-background-mp4-video'
+      //   }
+      //   return item
+      // })
 
 
-    if(localBucketList?.folder?.length === 0 || localBucketList?.bucket?.length === 0){
-      localBucketList = await getBuckets()
-    }
-    // setIsLoading(true)
-    // if(bucketList?.folder)
-    const assignedBucketFolders = (localBucketList?.folder || []).reduce((acc, cur) => {
-      acc[cur] = true;
-      return acc;
-    }, {});
-
-    const assignedBucketBuckets = (localBucketList?.bucket || []).reduce((acc, cur) => {
-      acc[cur] = false;
-      return acc;
-    }, {});
-
-
-
-    setBucketTypeMap({...assignedBucketBuckets, ...assignedBucketFolders})
-    // console.log('STM components-DisplayMediaListing.jsx:36', assignedBuckets.bucketType); // todo remove dev item
-    const localDisplayBuckets = [...generatedSets, ...Object.keys({...assignedBucketBuckets, ...assignedBucketFolders})]
-
-    setDisplayBuckets(localDisplayBuckets)
-
-
-    const bucketGroups = generatedMedia.reduce((acc, cur) => {
-      acc[cur['bucket']] = [];
-      return acc;
-    }, {});
-
-
-    const generatedGroupsLocal = generatedMedia.reduce((acc, cur) => {
-      if (bucketGroups[cur?.bucket]) {
-        bucketGroups[cur?.bucket].push(cur);
-        setGeneratedCount(1 + generatedCount);
+      if(localBucketList?.folder?.length === 0 || localBucketList?.bucket?.length === 0){
+        localBucketList = await getBuckets()
       }
-      return bucketGroups;
-    }, bucketGroups);
+      // setIsLoading(true)
+      // if(bucketList?.folder)
+      const assignedBucketFolders = (localBucketList?.folder || []).reduce((acc, cur) => {
+        acc[cur] = true;
+        return acc;
+      }, {});
 
-    console.log('STM pages-SongDetails.jsx:152', generatedGroupsLocal); // todo remove dev item
-    setGeneratedGroups(generatedGroupsLocal);
-    setLoadingMedia(false)
+      const assignedBucketBuckets = (localBucketList?.bucket || []).reduce((acc, cur) => {
+        acc[cur] = false;
+        return acc;
+      }, {});
+
+
+
+      setBucketTypeMap({...assignedBucketBuckets, ...assignedBucketFolders})
+      // console.log('STM components-DisplayMediaListing.jsx:36', assignedBuckets.bucketType); // todo remove dev item
+      const localDisplayBuckets = [...generatedSets, ...Object.keys({...assignedBucketBuckets, ...assignedBucketFolders})]
+
+      setDisplayBuckets(localDisplayBuckets)
+
+
+      const bucketGroups = generatedMedia.reduce((acc, cur) => {
+        acc[cur['bucket']] = [];
+        return acc;
+      }, {});
+
+
+      const generatedGroupsLocal = generatedMedia.reduce((acc, cur) => {
+        if (bucketGroups[cur?.bucket]) {
+          bucketGroups[cur?.bucket].push(cur);
+          setGeneratedCount(1 + generatedCount);
+        }
+        return bucketGroups;
+      }, bucketGroups);
+
+      console.log('STM pages-SongDetails.jsx:152', generatedGroupsLocal); // todo remove dev item
+      setGeneratedGroups(generatedGroupsLocal);
+      setLoadingMedia(false)
+    }
+
   };
 
   const reset = () => {
@@ -256,6 +260,10 @@ const SongDetails = () => {
     setComments([])
   }
   const setup = async (rowData) => {
+    if(!rowData){
+      setErrorMessage(true);
+      return;
+    }
     setGeneratedMedia(rowData.GeneratedMedia);
 
 
@@ -287,6 +295,11 @@ const SongDetails = () => {
   };
 
   const setupBySongNumber = (songNumber) => {
+    console.log('STM pages-SongDetails.jsx:298', songNumber); // todo remove dev item
+    if(!songNumber){
+      setErrorMessage(true);
+      throw Error("No Song Number in setupBySongNumber")
+    }
     setLoadingDetails(true)
     getDetailsForSong(songNumber)
       .then(songDetails => {
@@ -378,12 +391,15 @@ const SongDetails = () => {
 
   const handleSongLookupChange = (e) => {
     const {value} = e.target
+    console.log('STM pages-SongDetails.jsx:393', value); // todo remove dev item
     setSongNumberLookup(value)
     setDisableLookupRequestButton(value?.length !== 5)
     setNoSongFoundForCatalogNumber(false)
   }
 
   const handleSongLookup = () => {
+    setErrorMessage(false)
+    console.log('STM pages-SongDetails.jsx:401', songNumberLookup); // todo remove dev item
     setupBySongNumber(songNumberLookup)
   }
 
@@ -570,6 +586,21 @@ const SongDetails = () => {
   }
 
 
+  if(errorMessage){
+    return (
+      <div className="w-[90%] mt-4 ml-20 flex flex-col items-center justify-between">
+        <div className="w-full mt-4 flex items-center justify-between">
+          <h1 className="text-4xl font-medium">Song Data</h1>
+          {loadingDetails && (<div>
+            <CircularProgress />
+          </div>)}
+          {errorMessage && (<div>
+            <Typography sx={{ fontWeight: "bold", color: 'red' }}>No song data received to view </Typography>
+          </div>)}
+        </div>
+      </div>
+    )
+  }
 
   // handleSongLookupChange
 
@@ -579,6 +610,9 @@ const SongDetails = () => {
         <h1 className="text-4xl font-medium">Song Data</h1>
         {loadingDetails && (<div>
           <CircularProgress />
+        </div>)}
+        {errorMessage && (<div>
+          <Typography sx={{ fontWeight: "bold", color: 'red' }}>No song data received to view </Typography>
         </div>)}
         <Button
           variant="outlined"
