@@ -51,6 +51,9 @@ export const ColumnHeadersMap = {
   SongReleaseYear: "Song Release Year",
   Description: "Description",
   ReleaseScheduledFor: "Release Scheduled For",
+  MechanicalRegistrationNumberA: "Mech. Reg. Num. A",
+  MechanicalRegistrationNumberC: "Mech. Reg. Num. C",
+  MechanicalRegistrationNumberD: "Mech. Reg. Num. D"
 }
 
 // Mapping of column width based on db table name
@@ -58,16 +61,18 @@ export const ColumnWidthMap = {
   Title: 250,
   Artist: 100,
   Genre: 100,
-  SongNumber: 100,
+  SongNumber: 150,
   SubGenre: 150,
   BarIntro: 100,
   SongKey: 100,
   Duration: 100,
   Mixes: 100,
   MixRendered: 50,
-  SongReleaseYear: 100,
+  SongReleaseYear: 150,
   Description: 100,
-  Status: 450
+  Status: 450,
+  DateAdded: 100,
+
 }
 
 
