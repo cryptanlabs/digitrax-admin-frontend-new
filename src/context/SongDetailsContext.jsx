@@ -22,6 +22,9 @@ const SongDetailsProvider = ({children}) => {
       if(error?.response?.data){
         message = error?.response?.data
       }
+      if(error?.response?.data?.message){
+        message = error?.response?.data?.message
+      }
     } else if(error?.message) {
       message = error.message
     } else if(error?.error){
@@ -43,10 +46,37 @@ const SongDetailsProvider = ({children}) => {
   }
 
   const updateSong = async (data) => {
+    if(["c7663412-7233-45b4-9665-b61f3080354c"].includes(user.UserId)){
+      handleNotifyOfError({message:"Update Not Allowed For User"})
+      return
+    }
     setBackgroundStatus(true)
     const result = await axiosBaseWithKey(adminDashToken)({
       method: 'put',
       url: '/updateSong',
+      data: data
+    })
+      .catch(error => {
+        console.error(error?.response?.data?.message);
+        handleNotifyOfError(error)
+      });
+    getData();
+    return result.data;
+  };
+
+  const deleteSong = async (data) => {
+    if(["c7663412-7233-45b4-9665-b61f3080354c"].includes(user.UserId)){
+      handleNotifyOfError({message:"Deletion Not Allowed For User"})
+      return
+    }
+    // if(!["5ca700cb-405c-49fc-9f6c-aab023d363b2", "354d5e33-c1e9-4188-a88b-64a749d7aed2"].includes(user.UserId)){
+    //   handleNotifyOfError({message:"Deletion Not Allowed For User"})
+    //   return
+    // }
+    setBackgroundStatus(true)
+    const result = await axiosBaseWithKey(adminDashToken)({
+      method: 'delete',
+      url: '/removeSongEntry',
       data: data
     })
       .catch(error => {
@@ -122,6 +152,10 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadMediaFile = async (data) => {
+    if(["c7663412-7233-45b4-9665-b61f3080354c"].includes(user.UserId)){
+      handleNotifyOfError({message:"Upload Media Not Allowed For User"})
+      return
+    }
     setBackgroundStatus(true)
     const timeToUpload = Math.ceil(data.get(data.get('bucketName')).size/100)
     const result = await axiosBaseWithKey(adminDashToken)({
@@ -378,6 +412,7 @@ console.log('STM context-SongDetailsContext.jsx:246', result.data); // todo remo
       bucketList,
       addPublisher,
       addSong,
+      deleteSong,
       removePublisher,
       getDetailsForSong,
       uploadMediaFile,

@@ -1,8 +1,17 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {useLocation, useParams} from 'react-router-dom';
-import {Button, Typography, TextField, CircularProgress} from '@mui/material';
+import {useLocation, useParams, useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Typography,
+  TextField,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent, DialogActions
+} from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {SongDetailsContext} from '../context/SongDetailsContext';
 import {FileAdd} from '../components/fileAdd.jsx';
 import {InfoDisplayRow} from '../components/InfoDisplayRow.jsx';
@@ -96,6 +105,7 @@ const demoComments = [democomment, democomment2];
 const SongDetails = () => {
   const location = useLocation();
   const routeParams = useParams();
+  const navigate = useNavigate();
   const {adminDashToken} = useContext(UserContext);
   const {
     generatedSets,
@@ -116,7 +126,8 @@ const SongDetails = () => {
     handleNotifyOfError,
     addStatusChange,
     genres,
-    addGenre
+    addGenre,
+    deleteSong
   } = useContext(SongDetailsContext);
   const [comments, setComments] = useState([]);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -151,6 +162,8 @@ const SongDetails = () => {
   const [openGenreDialogType, setOpenGenreDialogType] = useState(null);
   const [newGenreOrSub, setNewGenreOrSub] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteConfirmationCheck, setDeleteConfirmationCheck] = useState('');
 
 
   const handleDialogOpen = async (val) => {
@@ -585,6 +598,15 @@ const SongDetails = () => {
     setGeneratedMedia(songData?.GeneratedMedia ?? generatedMedia);
   }
 
+  const deleteSongHandler = async (requestString) => {
+    await deleteSong({SongNumber: requestString, Title: basicInformation.Title, InTheStyleOfArtist: basicInformation.InTheStyleOfArtist})
+    navigate("/dashboard")
+  }
+
+  const handleDeleteDialogOpen = () => {
+    setDeleteConfirmationCheck("")
+    setDeleteConfirmOpen(!deleteConfirmOpen)
+  }
 
   if(errorMessage){
     return (
@@ -928,6 +950,24 @@ const SongDetails = () => {
         bucketTypeMapExternal={bucketTypeMap}
       />
       </div>
+      <Button
+        variant="outlined"
+        startIcon={<DeleteIcon/>}
+        onClick={handleDeleteDialogOpen}
+        sx={{
+          marginTop: 1,
+          borderColor: 'gray',
+          backgroundColor: 'red',
+          marginLeft: '15px',
+          color: 'white',
+          '&:hover': {
+            borderColor: '#F1EFEF',
+            backgroundColor: '#86A789',
+          },
+        }}
+      >
+        Delete
+      </Button>
       <SimpleDialog open={openGenreDialog} onClose={handleDialogOpen} title={`${openGenreDialogType === 'SubGenre' ? 'Add SubGenre' : 'Add Genre'}`}>
         <TextField
           autoFocus
@@ -941,6 +981,56 @@ const SongDetails = () => {
           variant="standard"
         />
       </SimpleDialog>
+      <div>
+        <Dialog
+          open={deleteConfirmOpen}
+        >
+          <DialogTitle>
+            <b style={{color: 'red'}}>Confirm Delete Song Entry.</b>
+          </DialogTitle>
+          <DialogContent>
+            <p style={{color: 'red'}}><b>Note That This Cannot Be Undone</b></p>
+            <p>Catalog Number: <b>{basicInformation.SongNumber}</b></p>
+            <p>In The Style Of Artist: <b>{basicInformation.InTheStyleOfArtist}</b></p>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Enter Song Title of song to delete"
+              type="text"
+              value={deleteConfirmationCheck}
+              onChange={(e) => {
+                setDeleteConfirmationCheck(e.target.value);
+              }}
+              fullWidth
+              variant="standard"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={handleDeleteDialogOpen}>
+              Cancel
+            </Button>
+            <Button
+              disabled={deleteConfirmationCheck !== basicInformation.Title}
+              sx={{
+                borderColor: 'gray',
+                backgroundColor: 'red',
+                color: 'white',
+                '&:hover': {
+                  borderColor: '#F1EFEF',
+                  backgroundColor: '#7e2121',
+                },
+              }}
+              onClick={() => deleteSongHandler(basicInformation.SongNumber)}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
     </div>
   );
 };
