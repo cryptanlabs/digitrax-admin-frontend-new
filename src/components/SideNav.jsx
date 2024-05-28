@@ -16,7 +16,7 @@ import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import {useContext} from 'react';
 import {DataTableData} from '../context/DataTableContext.jsx';
 import {UserContext} from '../context/UserContext.jsx';
-
+import { saveAs } from 'file-saver';
 const drawerWidth = 240;
 
 const internalNav = ["Dashboard", "CrossClear Dashboard", "Create Song", "Files To Buckets", "Query Builder", "Users", "Status Dashboard", "Batch Update", "Lookup Song Details", "Batch Upload", "Usage"]
@@ -30,6 +30,12 @@ export default function SideNav() {
 
   const navigateToRecentSong = (song) => {
     navigate(`/songdata/${song}`, { state: { SongNumber: song } });
+  }
+
+  const downloadConsoleLogs = () => {
+    let blob = new Blob([JSON.stringify(console.logs)], {type: 'text/plain'})
+    saveAs(blob, `console_logs.txt`)
+    // let url = URL.createObjectURL(blob)
   }
 
 
@@ -174,6 +180,11 @@ export default function SideNav() {
                 </ListItemButton>
               </ListItem>
             ))}
+            <ListItem>
+              <ListItemButton onClick={downloadConsoleLogs}>
+                Export Browser Logs
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
 
