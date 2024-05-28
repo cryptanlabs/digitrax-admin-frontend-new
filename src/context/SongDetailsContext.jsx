@@ -45,10 +45,18 @@ const SongDetailsProvider = ({children}) => {
     setOpenSnackBar(false)
   }
 
+  const excludedFromAccessControl = (active, ids = []) =>{
+    if(active){
+      console.log('STM context-SongDetailsContext.jsx:50', user); // todo remove dev item
+      return ids.includes(user.UserId)
+    }
+    return false
+  }
+
   const updateSong = async (data) => {
-    if(["c7663412-7233-45b4-9665-b61f3080354c"].includes(user.UserId)){
-      handleNotifyOfError({message:"Update Not Allowed For User"})
-      return
+    if(excludedFromAccessControl(true, ["c7663412-7233-45b4-9665-b61f3080354c"])){
+      handleNotifyOfError({message:`Update Not Allowed For User: ${user.Name}`})
+      return data
     }
     setBackgroundStatus(true)
     const result = await axiosBaseWithKey(adminDashToken)({
@@ -65,8 +73,8 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const deleteSong = async (data) => {
-    if(["c7663412-7233-45b4-9665-b61f3080354c"].includes(user.UserId)){
-      handleNotifyOfError({message:"Deletion Not Allowed For User"})
+    if(excludedFromAccessControl(true, ["c7663412-7233-45b4-9665-b61f3080354c"])){
+      handleNotifyOfError({message:`Deletion Not Allowed For User ${user.Name}`})
       return
     }
     // if(!["5ca700cb-405c-49fc-9f6c-aab023d363b2", "354d5e33-c1e9-4188-a88b-64a749d7aed2"].includes(user.UserId)){
@@ -152,8 +160,8 @@ const SongDetailsProvider = ({children}) => {
   };
 
   const uploadMediaFile = async (data) => {
-    if(["c7663412-7233-45b4-9665-b61f3080354c"].includes(user.UserId)){
-      handleNotifyOfError({message:"Upload Media Not Allowed For User"})
+    if(excludedFromAccessControl(false, ["c7663412-7233-45b4-9665-b61f3080354c"])){
+      handleNotifyOfError({message:`Upload Not Allowed For User: ${user.Name}`})
       return
     }
     setBackgroundStatus(true)
