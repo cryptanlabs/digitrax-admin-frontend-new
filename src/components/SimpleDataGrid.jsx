@@ -20,7 +20,8 @@ export function SimpleDataGrid ({
                                   autoHeight,
                                   rowSelectionModel = [],
                                   setRowSelectionModel = () => {},
-                                  checkboxSelection
+                                  checkboxSelection,
+                                  exportFileName
                                 }) {
 
   //
@@ -40,7 +41,13 @@ export function SimpleDataGrid ({
   function CustomToolbar () {
     const apiRef = useGridApiContext();
 
-    const handleExport = (options) => apiRef.current.exportDataAsCsv(options);
+    const handleExport = (options) => {
+
+      if(exportFileName){
+        return apiRef.current.exportDataAsCsv({...options, fileName: exportFileName});
+      }
+      return apiRef.current.exportDataAsCsv(options);
+    }
 
     const buttonBaseProps = {
       color: 'primary',

@@ -6,6 +6,20 @@ import {SimpleDataGrid} from '../components/SimpleDataGrid.jsx';
 import WithFilters from '../components/WithFilter.jsx';
 import {UserContext} from '../context/UserContext.jsx';
 
+function formatedDate(){
+  const date = new Date();
+
+  const monthName = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  return `${monthName}-${day}-${year}_${hours}${minutes}${seconds}`;
+}
+
 export default function QueryBuilder () {
   try {
     const {adminDashToken} = useContext(UserContext);
@@ -23,6 +37,7 @@ export default function QueryBuilder () {
     const [showQuerySaveComplete, setShowQuerySaveComplete] = useState(false);
     const [savedQueries, setSavedQueries] = useState([]);
     const [loadedSavedQuery, setLoadedSavedQuery] = useState({});
+    const [exportFileName, setExportFileName] = useState(false);
 
     const getSavedQueries = async () => {
       const result = await axiosBaseWithKey(adminDashToken)({
@@ -208,6 +223,8 @@ export default function QueryBuilder () {
       }
 
       setResults(addIdForDataTable(data));
+      const exportFileNameString = `${tableName}_${formatedDate()}`
+      setExportFileName(exportFileNameString)
     }
 
     const getTableNames = () => {
@@ -367,6 +384,7 @@ export default function QueryBuilder () {
               <SimpleDataGrid
                 columns={resultColumns}
                 rows={results}
+                exportFileName={exportFileName}
               />
             </div>
             <div className="w-[90%] flex flex-row mb-20 items-center justify-end">
